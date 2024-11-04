@@ -3,4 +3,8 @@
     <string name="nmedia" translatable="false">NMedia!</string>
     <string name="description_post_author_avatar">description_post_author_avatar</string>
     <string name="description_post_menu">description_post_menu</string>
+    <string name="likes_button_description">likes_button_description</string>
+    <string name="menu_button_description">menu_button_description</string>
+    <string name="share_button_description">share_button_description</string>
+    <string name="views_button_description">views_button_description</string>
 </resources>

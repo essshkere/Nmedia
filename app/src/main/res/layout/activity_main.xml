@@ -41,6 +41,7 @@
         android:layout_height="48dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/menu_button_description"
         app:srcCompat="@drawable/baseline_more_vert_24" />
 
     <TextView
@@ -97,7 +98,8 @@
         app:layout_constraintStart_toEndOf="@+id/likes"
         app:layout_constraintTop_toBottomOf="@id/barrier_content"
         app:srcCompat="@drawable/baseline_volunteer_activism_24"
-     />
+        android:contentDescription="@drawable/baseline_thumb_up_alt_24"
+        />
 
     <TextView
         android:id="@+id/share"
@@ -117,6 +119,7 @@
         app:layout_constraintStart_toEndOf="@+id/share"
         app:layout_constraintTop_toBottomOf="@id/barrier_content"
         app:srcCompat="@drawable/baseline_share_24"
+        android:contentDescription="@string/share_button_description"
         />
 
 
@@ -138,12 +141,10 @@
         android:background="?selectableItemBackgroundBorderless"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/barrier_content"
+        android:contentDescription="@string/views_button_description"
         app:srcCompat="@drawable/baseline_visibility_24" />
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat= />
+
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
