@@ -8,22 +8,38 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import ru.tatalaraydar.nmedia.databinding.ActivityMainBinding
+import ru.tatalaraydar.nmedia.dto.Post
 
 class MainActivity : AppCompatActivity() {
-    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)
-        findViewById<ImageView>(R.id.button_likes).setOnClickListener {
-        println("rddf")
-
+        val post = Post(
+            1, "Нетология. Университет интернет-профессий будущего", "net", "10 мая",
+            "Привет, это новая Нетология! Когда-то Нетология начиналась с интенсивов по онлайн-маркетингу. Затем появились курсы по дизайну, разработке, аналитике и управлению.",
+            10, 5, 10, false
+        )
+        binding.content.text = post.content
+        binding.published.text = post.published
+        binding.author.text = post.author
+        updatelike(binding,post)
+        binding.buttonLikes.setOnClickListener {
+            post.likedByMe = !post.likedByMe
+            updatelike(binding,post)
         }
-    //        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.menu)) { v, insets ->
-//            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-//            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-//            insets
-//        }
+    }
+
+    private fun updatelike(binding: ActivityMainBinding, post: Post) {
+        binding.buttonLikes.setImageResource(
+            if (post.likedByMe) {
+                R.drawable.baseline_thumb_up_red
+            } else {
+                R.drawable.baseline_thumb_up_alt_24
+            }
+        )
     }
 }
+
