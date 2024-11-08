@@ -18,9 +18,16 @@ class MainActivity : AppCompatActivity() {
 //        enableEdgeToEdge()
         setContentView(binding.root)
         val post = Post(
+<<<<<<< HEAD
             1, "Нетология. Университет интернет-профессий будущего", "net", "10 мая в 19:45",
             "Привет, это новая Нетология! Когда-то Нетология начиналась с интенсивов по онлайн-маркетингу. Затем появились курсы по дизайну, разработке, аналитике и управлению. Мы растём сами и помогаем расти студентам: от новичков до уверенных профессионалов. Но самое важное остаётся с нами: мы верим, что в каждом уже есть сила, которая заставляет хотеть больше, целиться выше, бежать быстрее. Наша миссия — помочь встать на путь роста и начать цепочку перемен → http://netolo.gy/fyb",
             100000, 5, 10, false  )
+=======
+            1, "Нетология. Университет интернет-профессий будущего", "net", "10 мая",
+            "Привет, это новая Нетология! Когда-то Нетология начиналась с интенсивов по онлайн-маркетингу. Затем появились курсы по дизайну, разработке, аналитике и управлению.",
+            10, 5, 10, false
+        )
+>>>>>>> 1891fb9b82c1d67cda5a4ae29a60df37220cb175
         binding.content.text = post.content
         binding.published.text = post.published
         binding.author.text = post.author
@@ -29,6 +36,7 @@ class MainActivity : AppCompatActivity() {
             post.likedByMe = !post.likedByMe
             updatelike(binding,post)
         }
+<<<<<<< HEAD
     }
 
     private fun updatelike(binding: ActivityMainBinding, post: Post) {
@@ -41,5 +49,18 @@ class MainActivity : AppCompatActivity() {
                 R.drawable.baseline_thumb_up_alt_24
             }
         )
+=======
+>>>>>>> 1891fb9b82c1d67cda5a4ae29a60df37220cb175
+    }
+
+    private fun updatelike(binding: ActivityMainBinding, post: Post) {
+        binding.buttonLikes.setImageResource(
+            if (post.likedByMe) {
+                R.drawable.baseline_thumb_up_red
+            } else {
+                R.drawable.baseline_thumb_up_alt_24
+            }
+        )
     }
 }
+
