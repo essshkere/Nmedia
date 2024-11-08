@@ -12,7 +12,7 @@
         android:layout_width="@dimen/posts_avatar_size"
         android:layout_height="@dimen/posts_avatar_size"
         android:layout_marginStart="5dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="50dp"
         android:layout_marginBottom="5dp"
         android:contentDescription="@string/description_post_author_avatar"
         app:layout_constraintBottom_toBottomOf="@id/barrier"
@@ -25,6 +25,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
+        android:layout_marginTop="50dp"
         android:ellipsize="end"
         android:singleLine="true"
         app:layout_constraintEnd_toStartOf="@id/menu"
@@ -39,6 +40,7 @@
         android:background="?selectableItemBackgroundBorderless"
         android:layout_width="48dp"
         android:layout_height="48dp"
+        android:layout_marginTop="50dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:contentDescription="@string/menu_button_description"
@@ -82,9 +84,10 @@
 
     <TextView
         android:id="@+id/likes"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
+        android:layout_marginStart="20dp"
         app:layout_constraintBottom_toBottomOf="@+id/button_likes"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/barrier_content"
@@ -130,7 +133,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/button_views"
         app:layout_constraintEnd_toStartOf = "@+id/button_views"
         app:layout_constraintTop_toBottomOf="@id/barrier_content"
-
         tools:text="@sample/posts.json/data/views_post" />
 
     <ImageButton
@@ -144,13 +146,12 @@
         app:srcCompat="@drawable/baseline_visibility_24" />
 
 
-
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_begin="20dp" />
+        app:layout_constraintGuide_begin="26dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
