@@ -8,6 +8,6 @@ data class Post (
     val content: String = "",
     var likes : Int = 0,
     var share : Int = 0,
-    var views_post : Int = 0,
-    var likedByMe: Boolean = false,
+    val views_post : Int = 0,
+    var likedByMe: Boolean = false
 )
