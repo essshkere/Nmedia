@@ -20,27 +20,51 @@ class MainActivity : AppCompatActivity() {
         val post = Post(
             1, "Нетология. Университет интернет-профессий будущего", "net", "10 мая в 19:45",
             "Привет, это новая Нетология! Когда-то Нетология начиналась с интенсивов по онлайн-маркетингу. Затем появились курсы по дизайну, разработке, аналитике и управлению. Мы растём сами и помогаем расти студентам: от новичков до уверенных профессионалов. Но самое важное остаётся с нами: мы верим, что в каждом уже есть сила, которая заставляет хотеть больше, целиться выше, бежать быстрее. Наша миссия — помочь встать на путь роста и начать цепочку перемен → http://netolo.gy/fyb",
-            100000, 5, 10, false)
+            1000, 999_999, 1100_000, false
+        )
 
         binding.content.text = post.content
         binding.published.text = post.published
         binding.author.text = post.author
-        updatelike(binding,post)
+        binding.likes.text = formatCount(post.likes)
+        binding.viewsPost.text = formatCount(post.views_post)
+        binding.share.text = formatCount(post.share)
+
+        updatelike(binding, post)
+
+        binding.buttonShare.setOnClickListener { updateShare(binding, post) }
         binding.buttonLikes.setOnClickListener {
             post.likedByMe = !post.likedByMe
-            updatelike(binding,post)
+            updatelike(binding, post)
         }
-
     }
 
     private fun updatelike(binding: ActivityMainBinding, post: Post) {
         binding.buttonLikes.setImageResource(
             if (post.likedByMe) {
+                post.likes += 1
+                binding.likes.text = formatCount(post.likes)
                 R.drawable.baseline_thumb_up_red
             } else {
+                post.likes -= 1
+                binding.likes.text = formatCount(post.likes)
                 R.drawable.baseline_thumb_up_alt_24
             }
         )
     }
+
+    private fun updateShare(binding: ActivityMainBinding, post: Post) {
+        post.share++
+        binding.share.text = formatCount(post.share)
+    }
+
+    fun formatCount(count: Int): String {
+        return when {
+            count >= 1_000_000 -> String.format("%.1fM", count / 1_000_000.0).replace(",", ".")
+            count >= 1_000 -> "${count / 1_000}K"
+            else -> count.toString()
+        }
+    }
+
 }
 
