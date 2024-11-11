@@ -59,6 +59,7 @@ class MainActivity : AppCompatActivity() {
             count >= 1_000_000 -> String.format("%.1fM", floor(count / 1_000_000.0 * 10) / 10).replace(",", ".")
             count >= 1_000 -> String.format("%.1fK", floor(count / 1_000.0 * 10) / 10).replace(",", ".")
             else -> count.toString()
+            
         }
     }
 
