@@ -7,6 +7,7 @@ import ru.tatalaraydar.nmedia.databinding.ActivityMainBinding
 import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.viewmodel.PostViewModel
 import androidx.activity.viewModels
+import kotlin.math.floor
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,12 +56,12 @@ class MainActivity : AppCompatActivity() {
 
     fun formatCount(count: Int): String {
         return when {
-            count >= 1_000_000 -> String.format("%.1fM", count / 1_000_000.0).replace(",", ".")
-            count >= 1_100 -> String.format("%.1fK", count / 1_000.0).replace(",", ".")
-            count >= 1_000 -> "${count / 1_000}K"
+            count >= 1_000_000 -> String.format("%.1fM", floor(count / 1_000_000.0 * 10) / 10).replace(",", ".")
+            count >= 1_000 -> String.format("%.1fK", floor(count / 1_000.0 * 10) / 10).replace(",", ".")
             else -> count.toString()
         }
     }
+
     fun updatelike(binding: ActivityMainBinding, post: Post) {
         binding.buttonLikes.setImageResource(
             if (post.likedByMe) {
