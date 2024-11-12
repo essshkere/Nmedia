@@ -6,4 +6,5 @@ import ru.tatalaraydar.nmedia.dto.Post
 interface PostRepository {
     fun getPost(): LiveData<Post>
     fun like()
+
 }

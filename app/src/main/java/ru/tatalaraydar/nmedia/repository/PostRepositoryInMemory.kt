@@ -2,7 +2,10 @@ package ru.tatalaraydar.nmedia.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import ru.tatalaraydar.nmedia.R
+import ru.tatalaraydar.nmedia.databinding.ActivityMainBinding
 import ru.tatalaraydar.nmedia.dto.Post
+import kotlin.math.floor
 
 class PostRepositoryInMemory : PostRepository {
     private val data = MutableLiveData(
@@ -30,4 +33,34 @@ class PostRepositoryInMemory : PostRepository {
         )
         data.value = updatedPost
     }
+    fun formatCount(count: Int): String {
+        return when {
+            count >= 1_000_000 -> String.format("%.1fM", floor(count / 1_000_000.0 * 10) / 10).replace(",", ".")
+            count >= 1_000 -> String.format("%.1fK", floor(count / 1_000.0 * 10) / 10).replace(",", ".")
+            else -> count.toString()
+
+        }
+    }
+
+    fun updatelike(binding: ActivityMainBinding, post: Post) {
+        binding.buttonLikes.setImageResource(
+            if (post.likedByMe) {
+                post.likes += 1
+                binding.likes.text = formatCount(post.likes)
+                R.drawable.baseline_thumb_up_red
+            } else {
+                post.likes -= 1
+                binding.likes.text = formatCount(post.likes)
+                R.drawable.baseline_thumb_up_alt_24
+            }
+        )
+    }
+    fun updateShare(binding: ActivityMainBinding, post: Post) {
+        post.share++
+        binding.share.text = formatCount(post.share)
+    }
+
+    companion object
+
+
 }
