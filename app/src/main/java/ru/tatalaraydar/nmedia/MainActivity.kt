@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
                 binding.root.setOnClickListener {
                 }
                 binding.buttonShare.setOnClickListener {
-                    PostRepositoryInMemory.updateShare(binding, post)
+                    PostRepositoryInMemory.updateShare()
                 }
                 binding.avatar.setOnClickListener {
                 }
