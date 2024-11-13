@@ -26,7 +26,7 @@ class MainActivity : AppCompatActivity() {
                 binding.likes.text = PostRepositoryInMemory.formatCount(post.likes)
                 binding.viewsPost.text = PostRepositoryInMemory.formatCount(post.views_post)
                 binding.share.text = PostRepositoryInMemory.formatCount(post.share)
-                PostRepositoryInMemory.updatelike(binding, post)
+                PostRepositoryInMemory.updatelike()
                 binding.root.setOnClickListener {
                 }
                 binding.buttonShare.setOnClickListener {
@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 binding.buttonLikes.setOnClickListener {
                     post.likedByMe = !post.likedByMe
-                    PostRepositoryInMemory.updatelike(binding, post)
+                    PostRepositoryInMemory.updatelike()
                 }
             }
         }

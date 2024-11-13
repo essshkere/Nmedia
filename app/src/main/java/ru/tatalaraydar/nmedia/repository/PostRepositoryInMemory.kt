@@ -33,6 +33,44 @@ class PostRepositoryInMemory : PostRepository {
         )
         data.value = updatedPost
     }
+
+    fun updatelike() {
+        val currentPost = data.value ?: return
+        val updatedPost = currentPost.copy(
+            likedByMe = !currentPost.likedByMe,
+            likes = if (currentPost.likedByMe) currentPost.likes - 1 else currentPost.likes + 1
+        )
+        data.value = updatedPost
+    }
+
+//    fun updatelike(binding: ActivityMainBinding, post: Post) {
+//        binding.buttonLikes.setImageResource(
+//            if (post.likedByMe) {
+//                post.likes += 1
+//                binding.likes.text = formatCount(post.likes)
+//                R.drawable.baseline_thumb_up_red
+//            } else {
+//                post.likes -= 1
+//                binding.likes.text = formatCount(post.likes)
+//                R.drawable.baseline_thumb_up_alt_24
+//            }
+//        )
+//    }
+
+    fun updateShare() {
+        val currentPost = data.value ?: return
+        val updatedPost = currentPost.copy(
+            share = currentPost.share + 1
+        )
+        data.value = updatedPost
+    }
+
+
+//    fun updateShare(binding: ActivityMainBinding, post: Post) {
+//        post.share++
+//        binding.share.text = formatCount(post.share)
+//    }
+
     fun formatCount(count: Int): String {
         return when {
             count >= 1_000_000 -> String.format("%.1fM", floor(count / 1_000_000.0 * 10) / 10).replace(",", ".")
@@ -41,26 +79,6 @@ class PostRepositoryInMemory : PostRepository {
 
         }
     }
-
-    fun updatelike(binding: ActivityMainBinding, post: Post) {
-        binding.buttonLikes.setImageResource(
-            if (post.likedByMe) {
-                post.likes += 1
-                binding.likes.text = formatCount(post.likes)
-                R.drawable.baseline_thumb_up_red
-            } else {
-                post.likes -= 1
-                binding.likes.text = formatCount(post.likes)
-                R.drawable.baseline_thumb_up_alt_24
-            }
-        )
-    }
-    fun updateShare(binding: ActivityMainBinding, post: Post) {
-        post.share++
-        binding.share.text = formatCount(post.share)
-    }
-
-    companion object
 
 
 }
