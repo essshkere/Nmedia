@@ -26,17 +26,17 @@ class MainActivity : AppCompatActivity() {
                 binding.likes.text = PostRepositoryInMemory.formatCount(post.likes)
                 binding.viewsPost.text = PostRepositoryInMemory.formatCount(post.views_post)
                 binding.share.text = PostRepositoryInMemory.formatCount(post.share)
-                PostRepositoryInMemory.updatelike()
+                PostRepositoryInMemory.updatelike(binding,post)
                 binding.root.setOnClickListener {
                 }
                 binding.buttonShare.setOnClickListener {
-                    PostRepositoryInMemory.updateShare()
+                    PostRepositoryInMemory.updateShare(binding,post)
                 }
                 binding.avatar.setOnClickListener {
                 }
                 binding.buttonLikes.setOnClickListener {
                     post.likedByMe = !post.likedByMe
-                    PostRepositoryInMemory.updatelike()
+                    PostRepositoryInMemory.updatelike(binding,post)
                 }
             }
         }

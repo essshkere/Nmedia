@@ -15,7 +15,7 @@ class PostRepositoryInMemory : PostRepository {
             "net",
             "10 мая в 19:45",
             "Привет, это новая Нетология! Когда-то Нетология начиналась с интенсивов по онлайн-маркетингу. Затем появились курсы по дизайну, разработке, аналитике и управлению. Мы растём сами и помогаем расти студентам: от новичков до уверенных профессионалов. Но самое важное остаётся с нами: мы верим, что в каждом уже есть сила, которая заставляет хотеть больше, целиться выше, бежать быстрее. Наша миссия — помочь встать на путь роста и начать цепочку перемен → http://netolo.gy/fyb",
-            11111,
+            11,
             999_999,
             1000_000,
             false
@@ -34,35 +34,31 @@ class PostRepositoryInMemory : PostRepository {
         data.value = updatedPost
     }
 
-    fun updatelike() {
+    fun updatelike(binding: ActivityMainBinding, post: Post) {
         val currentPost = data.value ?: return
         val updatedPost = currentPost.copy(
             likedByMe = !currentPost.likedByMe,
-            likes = if (currentPost.likedByMe) currentPost.likes - 1 else currentPost.likes + 1
+            likes = if (currentPost.likedByMe) currentPost.likes + 1 else currentPost.likes - 1
         )
         data.value = updatedPost
+
+        binding.likes.text = formatCount(updatedPost.likes)
+        binding.buttonLikes.setImageResource(
+            if (post.likedByMe) {
+                R.drawable.baseline_thumb_up_red
+            } else {
+                R.drawable.baseline_thumb_up_alt_24
+            }
+        )
     }
 
-//    fun updatelike(binding: ActivityMainBinding, post: Post) {
-//        binding.buttonLikes.setImageResource(
-//            if (post.likedByMe) {
-//                post.likes += 1
-//                binding.likes.text = formatCount(post.likes)
-//                R.drawable.baseline_thumb_up_red
-//            } else {
-//                post.likes -= 1
-//                binding.likes.text = formatCount(post.likes)
-//                R.drawable.baseline_thumb_up_alt_24
-//            }
-//        )
-//    }
-
-    fun updateShare() {
+    fun updateShare(binding: ActivityMainBinding, post: Post) {
         val currentPost = data.value ?: return
         val updatedPost = currentPost.copy(
             share = currentPost.share + 1
         )
         data.value = updatedPost
+        binding.share.text = formatCount(updatedPost.share)
     }
 
 
