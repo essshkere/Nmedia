@@ -44,6 +44,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.room.ktx)
 
     val activity_version = "1.9.3"
     val lifecycle_version = "2.8.7"
