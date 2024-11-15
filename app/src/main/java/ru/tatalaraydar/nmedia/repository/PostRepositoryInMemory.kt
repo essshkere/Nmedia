@@ -26,55 +26,39 @@ class PostRepositoryInMemory : PostRepository {
     override fun getPost(): LiveData<Post> = data
 
     override fun like() {
-        val currentPost = data.value?: return
+        val currentPost = data.value ?: return
         val updatedPost = currentPost?.copy(
             likedByMe = currentPost.likedByMe,
-            likes = if (currentPost.likedByMe){0} else {1}
+            likes = if (currentPost.likedByMe) {
+                0
+            } else {
+                1
+            }
         )
         data.value = updatedPost
     }
 
-    fun updatelike(binding: ActivityMainBinding, post: Post) {
+    fun updateLike() {
         val currentPost = data.value ?: return
         val updatedPost = currentPost.copy(
             likedByMe = !currentPost.likedByMe,
-            likes = if (currentPost.likedByMe) currentPost.likes + 1 else currentPost.likes - 1
-        )
+            likes = if (currentPost.likedByMe) currentPost.likes + 1 else currentPost.likes - 1)
         data.value = updatedPost
-
-        binding.likes.text = formatCount(updatedPost.likes)
-        binding.buttonLikes.setImageResource(
-            if (post.likedByMe) {
-                R.drawable.baseline_thumb_up_red
-            } else {
-                R.drawable.baseline_thumb_up_alt_24
-            }
-        )
     }
 
-    fun updateShare(binding: ActivityMainBinding, post: Post) {
+    fun updateShare() {
         val currentPost = data.value ?: return
-        val updatedPost = currentPost.copy(
-            share = currentPost.share + 1
-        )
+        val updatedPost = currentPost.copy(share = currentPost.share + 1)
         data.value = updatedPost
-        binding.share.text = formatCount(updatedPost.share)
     }
-
-
-//    fun updateShare(binding: ActivityMainBinding, post: Post) {
-//        post.share++
-//        binding.share.text = formatCount(post.share)
-//    }
 
     fun formatCount(count: Int): String {
         return when {
-            count >= 1_000_000 -> String.format("%.1fM", floor(count / 1_000_000.0 * 10) / 10).replace(",", ".")
-            count >= 1_000 -> String.format("%.1fK", floor(count / 1_000.0 * 10) / 10).replace(",", ".")
+            count >= 1_000_000 -> String.format("%.1fM", floor(count / 1_000_000.0 * 10) / 10)
+                .replace(",", ".")
+            count >= 1_000 -> String.format("%.1fK", floor(count / 1_000.0 * 10) / 10)
+                .replace(",", ".")
             else -> count.toString()
-
         }
     }
-
-
 }

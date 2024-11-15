@@ -6,7 +6,13 @@ import ru.tatalaraydar.nmedia.repository.PostRepositoryInMemory
 class PostViewModel : ViewModel(){
     private val repository = PostRepositoryInMemory()
     val post = repository.getPost()
+
+
     fun like () {
-        repository.like()
+        repository.updateLike()
+    }
+
+    fun share () {
+        repository.updateShare()
     }
 }
