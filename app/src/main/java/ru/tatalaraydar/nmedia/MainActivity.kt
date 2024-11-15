@@ -38,6 +38,10 @@ class MainActivity : AppCompatActivity() {
                 binding.buttonLikes.setOnClickListener {
                     viewModel.like()
                 }
+                binding.buttonLikes.setImageResource(
+                    if (post.likedByMe) R.drawable.ic_likent_24 else R.drawable.ic_like_24
+                )
+
             }
         }
     }

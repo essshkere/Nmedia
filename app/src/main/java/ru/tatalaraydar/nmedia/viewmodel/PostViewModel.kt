@@ -15,4 +15,6 @@ class PostViewModel : ViewModel(){
     fun share () {
         repository.updateShare()
     }
+
+
 }
