@@ -47,7 +47,9 @@ dependencies {
 
     val activity_version = "1.9.3"
     val lifecycle_version = "2.8.7"
+    val recyclerview_version = "1.3.2"
 
+    implementation ("androidx.recyclerview:recyclerview:$recyclerview_version")
     implementation("androidx.activity:activity-ktx:$activity_version")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
