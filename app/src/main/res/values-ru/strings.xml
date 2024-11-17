@@ -8,4 +8,9 @@
     <string name="menu_button_description">Кнопка меню</string>
     <string name="share_button_description">Кнопка поделиться</string>
     <string name="views_button_description">кнопка просмотров</string>
+    <string name="description_post_like">Описание поста</string>
+    <string name="post_text">Введите текст</string>
+    <string name="error_empty_content">пустой контент</string>
+    <string name="menu_remove">Удалить</string>
+    <string name="menu_edit">Изменить</string>
 </resources>
