@@ -11,9 +11,6 @@ class PostViewModel : ViewModel() {
     val data = repository.getAll()
     fun likeById(id: Long) = repository.likeById(id)
 
-    private val _isEditing = MutableLiveData<Boolean>(false)
-    val isEditing: LiveData<Boolean> get() = _isEditing
-
     private val empty = Post(
         id = 0,
         content = "",
@@ -36,7 +33,6 @@ class PostViewModel : ViewModel() {
 
         edited.value?.let {
             repository.save(it)
-            _isEditing.value = false
         }
         edited.value = empty
     }
@@ -44,11 +40,12 @@ class PostViewModel : ViewModel() {
     fun edit(post: Post) {
 
         edited.value = post
-        _isEditing.value = true
+
     }
+
     fun cancelEdit() {
         edited.value = empty
-        _isEditing.value = false
+
 
     }
 
@@ -61,6 +58,11 @@ class PostViewModel : ViewModel() {
     }
 
     fun remove(id: Long) = repository.removeById(id)
-}
 
+    fun isPostBeingEdited(postId: Long): Boolean {
+        return edited.value?.id == postId
+
+
+    }
+}
 
