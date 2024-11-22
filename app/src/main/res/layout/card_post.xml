@@ -28,8 +28,8 @@
         android:layout_marginTop="50dp"
         android:ellipsize="end"
         android:singleLine="true"
-        app:layout_constraintEnd_toStartOf="@id/menu"
         app:layout_constraintBottom_toTopOf="@+id/published"
+        app:layout_constraintEnd_toStartOf="@id/menu"
         app:layout_constraintStart_toEndOf="@id/avatar"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="packed"
@@ -38,23 +38,23 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/menu"
         style="@style/Widget.AppTheme.MenuButton"
-        android:background="?selectableItemBackgroundBorderless"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:layout_marginTop="50dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:background="?selectableItemBackgroundBorderless"
         android:contentDescription="@string/menu_button_description"
-        app:icon="@drawable/baseline_more_vert_24" />
+        app:icon="@drawable/baseline_more_vert_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/published"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
-        app:layout_constraintEnd_toStartOf="@id/menu"
         android:layout_marginBottom="@dimen/common_spacing"
         app:layout_constraintBottom_toBottomOf="@id/barrier"
+        app:layout_constraintEnd_toStartOf="@id/menu"
         app:layout_constraintStart_toEndOf="@id/avatar"
         app:layout_constraintTop_toBottomOf="@id/author"
         tools:text="@sample/posts.json/data/published" />
@@ -83,49 +83,25 @@
         app:barrierDirection="bottom"
         app:constraint_referenced_ids="content" />
 
-    <TextView
-        android:id="@+id/likes"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="20dp"
-        app:layout_constraintBottom_toBottomOf="@+id/button_likes"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/barrier_content"
-        tools:text="@sample/posts.json/data/likes" />
-
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_likes"
         style="@style/Widget.AppTheme.LikeButton"
-
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:checkable="true"
-        app:layout_constraintStart_toEndOf="@+id/likes"
-        app:layout_constraintTop_toBottomOf="@id/barrier_content"
+        android:contentDescription="@drawable/ic_likent_24"
         app:icon="@drawable/like_selector"
-        android:contentDescription="@drawable/ic_likent_24"   />
-
-    <TextView
-        android:id="@+id/share"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="6dp"
-        app:layout_constraintBottom_toBottomOf="@+id/button_share"
-        app:layout_constraintStart_toEndOf="@+id/button_likes"
-        app:layout_constraintTop_toBottomOf="@id/barrier_content"
-        tools:text="@sample/posts.json/data/share" />
+        app:layout_constraintTop_toBottomOf="@id/barrier_content" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_share"
         style="@style/Widget.AppTheme.ShareButton"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        app:layout_constraintStart_toEndOf="@+id/share"
-        app:layout_constraintTop_toBottomOf="@id/barrier_content"
-        app:icon="@drawable/share_button"
         android:contentDescription="@string/share_button_description"
-        />
-
+        app:icon="@drawable/share_button"
+        app:layout_constraintStart_toEndOf="@+id/button_likes"
+        app:layout_constraintTop_toBottomOf="@id/barrier_content" />
 
     <TextView
         android:id="@+id/views_post"
@@ -133,7 +109,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="0dp"
         app:layout_constraintBottom_toBottomOf="@+id/button_views"
-        app:layout_constraintEnd_toStartOf = "@+id/button_views"
+        app:layout_constraintEnd_toStartOf="@+id/button_views"
         app:layout_constraintTop_toBottomOf="@id/barrier_content"
         tools:text="@sample/posts.json/data/views_post" />
 
@@ -142,11 +118,10 @@
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:background="?selectableItemBackgroundBorderless"
+        android:contentDescription="@string/views_button_description"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/barrier_content"
-        android:contentDescription="@string/views_button_description"
         app:srcCompat="@drawable/baseline_visibility_24" />
-
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline"
@@ -154,6 +129,5 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="26dp" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
