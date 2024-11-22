@@ -1,0 +1,18 @@
+<resources>
+
+    <style name="Widget.AppTheme.LikeCheckBox" parent="Widget.MaterialComponents.CompoundButton.CheckBox">
+        <item name="buttonTint">@color/like_color</item>
+    </style>
+
+    <style name="Widget.AppTheme.LikeButton" parent="Widget.MaterialComponents.Button.TextButton.Icon">
+        <item name="iconTint">@color/like_color</item>
+    </style>
+
+    <style name="Widget.AppTheme.ShareButton" parent="Widget.MaterialComponents.Button.TextButton.Icon">
+        <item name="iconTint">@color/share_color</item>
+    </style>
+
+    <style name="Widget.AppTheme.MenuButton" parent="Widget.MaterialComponents.Button.TextButton.Icon">
+        <item name="iconTint">@color/menu_color</item>
+    </style>
+</resources>

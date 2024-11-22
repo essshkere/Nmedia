@@ -35,8 +35,9 @@
         app:layout_constraintVertical_chainStyle="packed"
         tools:text="@sample/posts.json/data/author" />
 
-    <ImageButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/menu"
+        style="@style/Widget.AppTheme.MenuButton"
         android:background="?selectableItemBackgroundBorderless"
         android:layout_width="48dp"
         android:layout_height="48dp"
@@ -44,7 +45,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:contentDescription="@string/menu_button_description"
-        app:srcCompat="@drawable/baseline_more_vert_24" />
+        app:icon="@drawable/baseline_more_vert_24" />
 
     <TextView
         android:id="@+id/published"
@@ -84,7 +85,6 @@
 
     <TextView
         android:id="@+id/likes"
-
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -93,14 +93,16 @@
         app:layout_constraintTop_toBottomOf="@+id/barrier_content"
         tools:text="@sample/posts.json/data/likes" />
 
-    <ImageButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/button_likes"
-        android:background="?selectableItemBackgroundBorderless"
+        style="@style/Widget.AppTheme.LikeButton"
+
         android:layout_width="48dp"
         android:layout_height="48dp"
+        android:checkable="true"
         app:layout_constraintStart_toEndOf="@+id/likes"
         app:layout_constraintTop_toBottomOf="@id/barrier_content"
-        app:srcCompat="@drawable/ic_likent_24"
+        app:icon="@drawable/like_selector"
         android:contentDescription="@drawable/ic_likent_24"   />
 
     <TextView
@@ -113,14 +115,14 @@
         app:layout_constraintTop_toBottomOf="@id/barrier_content"
         tools:text="@sample/posts.json/data/share" />
 
-    <ImageButton
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/button_share"
-        android:background="?selectableItemBackgroundBorderless"
+        style="@style/Widget.AppTheme.ShareButton"
         android:layout_width="48dp"
         android:layout_height="48dp"
         app:layout_constraintStart_toEndOf="@+id/share"
         app:layout_constraintTop_toBottomOf="@id/barrier_content"
-        app:srcCompat="@drawable/baseline_share_24"
+        app:icon="@drawable/share_button"
         android:contentDescription="@string/share_button_description"
         />
 
