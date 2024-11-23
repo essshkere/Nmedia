@@ -42,7 +42,6 @@ class MainActivity : AppCompatActivity() {
 
         binding.container.adapter = adapter
 
-
         viewModel.data.observe(this) { posts ->
             adapter.submitList(posts)
         }
@@ -66,10 +65,8 @@ class MainActivity : AppCompatActivity() {
                     ).show()
                     return@setOnClickListener
                 }
-
                 viewModel.changeContent(text.toString())
                 viewModel.save()
-
                 setText("")
                 clearFocus()
             }
@@ -78,11 +75,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateEditing(post: Post?) {
         val editedPostId = viewModel.edited.value?.id
-
         val isEditing = post?.id == editedPostId
         binding.group.visibility = if (isEditing) View.VISIBLE else View.GONE
-
-
         if (isEditing) {
             binding.content.setText(post?.content)
             binding.content.requestFocus()

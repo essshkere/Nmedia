@@ -10,12 +10,13 @@ import ru.tatalaraydar.nmedia.databinding.CardPostBinding
 import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.R
 import ru.tatalaraydar.nmedia.repository.PostRepositoryInMemory
+import ru.tatalaraydar.nmedia.repository.PostRepositoryInMemory.Companion.formatCount
 
 interface OnInteractionListener {
     fun onLike(post: Post) {}
     fun onEdit(post: Post) {}
     fun onRemove(post: Post) {}
-    fun onShare(post:Post) {}
+    fun onShare(post: Post) {}
 }
 
 class PostsAdapter(
@@ -25,7 +26,6 @@ class PostsAdapter(
         val binding = CardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return PostViewHolder(binding, onInteractionListener)
     }
-
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = getItem(position)
         holder.bind(post)
@@ -41,26 +41,12 @@ class PostViewHolder(
             content.text = post.content
             published.text = post.published
             author.text = post.author
-//            likes.text = PostRepositoryInMemory.formatCount(post.likes)
             viewsPost.text = PostRepositoryInMemory.formatCount(post.views_post)
-//            share.text = PostRepositoryInMemory.formatCount(post.share)
             buttonLikes.isChecked = post.likedByMe
-            buttonLikes.text= post.likes.toString()
-            buttonShare
-            buttonShare.text = post.share.toString()
-            menu
-
-
-            buttonShare.setOnClickListener {
-                onInteractionListener.onShare(post)
-            }
-
-            buttonLikes.setOnClickListener {
-                onInteractionListener.onLike(post)
-            }
-//            buttonLikes.setImageResource(
-//                if (post.likedByMe) R.drawable.ic_like_24 else R.drawable.ic_likent_24
-//            )
+            buttonLikes.text = formatCount(post.likes).toString()
+            buttonShare.text = formatCount(post.share).toString()
+            buttonShare.setOnClickListener { onInteractionListener.onShare(post) }
+            buttonLikes.setOnClickListener {onInteractionListener.onLike(post)}
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)
@@ -70,12 +56,10 @@ class PostViewHolder(
                                 onInteractionListener.onRemove(post)
                                 true
                             }
-
                             R.id.edit -> {
                                 onInteractionListener.onEdit(post)
                                 true
                             }
-
                             else -> false
                         }
                     }
@@ -87,7 +71,5 @@ class PostViewHolder(
 
 object PostDiffCallback : DiffUtil.ItemCallback<Post>() {
     override fun areItemsTheSame(oldItem: Post, newItem: Post) = oldItem.id == newItem.id
-
     override fun areContentsTheSame(oldItem: Post, newItem: Post) = oldItem == newItem
-
 }
