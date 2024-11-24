@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.tatalaraydar.nmedia.databinding.CardPostBinding
 import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.R
-import ru.tatalaraydar.nmedia.repository.PostRepositoryInMemory
 import ru.tatalaraydar.nmedia.repository.PostRepositoryInMemory.Companion.formatCount
 
 interface OnInteractionListener {
@@ -41,10 +40,10 @@ class PostViewHolder(
             content.text = post.content
             published.text = post.published
             author.text = post.author
-            viewsPost.text = PostRepositoryInMemory.formatCount(post.views_post)
+            viewsPost.text = formatCount(post.views_post)
             buttonLikes.isChecked = post.likedByMe
-            buttonLikes.text = formatCount(post.likes).toString()
-            buttonShare.text = formatCount(post.share).toString()
+            buttonLikes.text = formatCount(post.likes)
+            buttonShare.text = formatCount(post.share)
             buttonShare.setOnClickListener { onInteractionListener.onShare(post) }
             buttonLikes.setOnClickListener {onInteractionListener.onLike(post)}
             menu.setOnClickListener {

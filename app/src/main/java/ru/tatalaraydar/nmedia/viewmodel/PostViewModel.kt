@@ -1,6 +1,5 @@
 package ru.tatalaraydar.nmedia.viewmodel
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ru.tatalaraydar.nmedia.dto.Post
@@ -25,31 +24,14 @@ class PostViewModel : ViewModel() {
         repository.updateLikeById(id)
     }
 
-    fun share(id: Long) {
-        repository.updateShareById(id)
-    }
-
     fun save() {
-
         edited.value?.let {
             repository.save(it)
         }
         edited.value = empty
     }
 
-    fun edit(post: Post) {
-
-        edited.value = post
-
-    }
-
-    fun cancelEdit() {
-        edited.value = empty
-
-
-    }
-
-    fun changeContent(content: String) {
+    fun сhangeContent(content: String) {
         val text = content.trim()
         if (edited.value?.content == text) {
             return
@@ -58,11 +40,7 @@ class PostViewModel : ViewModel() {
     }
 
     fun remove(id: Long) = repository.removeById(id)
-
-    fun isPostBeingEdited(postId: Long): Boolean {
-        return edited.value?.id == postId
-
-
-    }
 }
+
+
 
