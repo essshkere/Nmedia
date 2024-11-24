@@ -7,13 +7,12 @@
     tools:context=".activity.NewPostActivity">
 
     <EditText
-        android:id="@+id/edit"
+        android:id="@+id/edit_post_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="start|top"
         android:inputType="textMultiLine"
         android:background="@android:color/transparent"
-        android:autofillHints="editText"
         android:contentDescription="@string/edit_text"
         />
 
@@ -26,12 +25,14 @@
         />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/ok"
+        android:id="@+id/save_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/description_post_save"
         app:srcCompat="@drawable/ic_ok_24dp"
         app:layout_anchor="@id/bottomAppBar"
         />
+
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
