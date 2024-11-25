@@ -14,7 +14,8 @@
         android:inputType="textMultiLine"
         android:background="@android:color/transparent"
         android:autofillHints="editText"
-        android:contentDescription="@string/edit_text"
+        android:padding="4dp"
+        android:hint="@string/edit_text"
         />
 
     <com.google.android.material.bottomappbar.BottomAppBar

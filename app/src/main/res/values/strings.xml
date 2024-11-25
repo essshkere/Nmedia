@@ -17,4 +17,6 @@
     <string name="chooser_share_post">Share post</string>
     <string name="description_post_save">description_post_save</string>
     <string name="edit_text">edit Text</string>
+    <string name="videourl">videoURL</string>
+    <string name="preview_video">preview_video</string>
 </resources>

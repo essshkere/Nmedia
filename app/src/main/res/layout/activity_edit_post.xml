@@ -13,7 +13,7 @@
         android:gravity="start|top"
         android:inputType="textMultiLine"
         android:background="@android:color/transparent"
-        android:contentDescription="@string/edit_text"
+        android:contentDescription = "@string/edit_text"
         />
 
     <com.google.android.material.bottomappbar.BottomAppBar

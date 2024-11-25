@@ -17,4 +17,5 @@
     <string name="chooser_share_post">Выбор поедлиться</string>
     <string name="description_post_save">cсохранить пост</string>
     <string name="edit_text">изменить текст</string>
+    <string name="videourl">ссылка на видео</string>
 </resources>

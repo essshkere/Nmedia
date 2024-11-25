@@ -1,6 +1,9 @@
 package ru.tatalaraydar.nmedia.adapter
 
+import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.recyclerview.widget.DiffUtil
@@ -63,6 +66,20 @@ class PostViewHolder(
                         }
                     }
                 }.show()
+            }
+            if (!post.videoURL.isNullOrEmpty()) {
+                videoLink.text = post.videoURL
+                videoLink.visibility = View.VISIBLE
+                videoPic.visibility = View.VISIBLE
+                videoLink.text = "Смотреть новое видео на канале!"
+
+                videoLink.setOnClickListener {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.videoURL))
+                    itemView.context.startActivity(intent)
+                }
+            } else {
+                videoPic.visibility = View.GONE
+                videoLink.visibility = View.GONE
             }
         }
     }

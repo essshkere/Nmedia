@@ -21,7 +21,6 @@ class NewPostActivity : AppCompatActivity() {
 
             binding.edit.requestFocus()
 
-
             binding.ok.setOnClickListener {
                 val text = binding.edit.text.toString()
                 if (text.isBlank()) {
@@ -33,7 +32,6 @@ class NewPostActivity : AppCompatActivity() {
             }
         }
     }
-
 
     object NewPostContract : ActivityResultContract<Unit, String?>() {
         override fun createIntent(context: Context, input: Unit) = Intent(context, NewPostActivity::class.java)

@@ -2,8 +2,6 @@ package ru.tatalaraydar.nmedia.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import ru.tatalaraydar.nmedia.R
-import ru.tatalaraydar.nmedia.databinding.ActivityMainBinding
 import ru.tatalaraydar.nmedia.dto.Post
 import kotlin.math.floor
 

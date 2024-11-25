@@ -17,7 +17,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val viewModel: PostViewModel by viewModels()
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -57,6 +56,7 @@ class MainActivity : AppCompatActivity() {
                     Intent.createChooser(intent, getString(R.string.chooser_share_post))
                 startActivity(shareIntent)
             }
+
         })
 
         binding.container.adapter = adapter
@@ -79,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
     companion object {
-        private const val EDIT_POST_REQUEST_CODE = 100 // Определите код запроса
+        private const val EDIT_POST_REQUEST_CODE = 100
     }
 }
 
