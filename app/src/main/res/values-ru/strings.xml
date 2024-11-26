@@ -18,4 +18,5 @@
     <string name="description_post_save">cсохранить пост</string>
     <string name="edit_text">изменить текст</string>
     <string name="videourl">ссылка на видео</string>
+    <string name="preview_video">Предпросмотр видео</string>
 </resources>

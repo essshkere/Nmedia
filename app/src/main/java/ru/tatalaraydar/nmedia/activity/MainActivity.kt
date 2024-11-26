@@ -2,6 +2,7 @@ package ru.tatalaraydar.nmedia.activity
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -38,6 +39,8 @@ class MainActivity : AppCompatActivity() {
                 viewModel.like(post.id)
             }
 
+
+
             override fun onEdit(post: Post) {
                 val intent = Intent(this@MainActivity, EditPostActivity::class.java).apply {
                     putExtra("post_id", post.id)
@@ -57,6 +60,11 @@ class MainActivity : AppCompatActivity() {
                 startActivity(shareIntent)
             }
 
+            override fun onVideolink(post:Post) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.videoURL))
+                startActivity(intent)
+            }
+
         })
 
         binding.container.adapter = adapter
@@ -74,8 +82,13 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == EDIT_POST_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             val updatedContent = data?.getStringExtra("updated_content") ?: return
             val postId = data.getLongExtra("post_id", 0L)
-            viewModel.сhangeContent(updatedContent)
-            viewModel.save()
+
+            val postToEdit = viewModel.findPostById(postId)
+            if (postToEdit != null) {
+                viewModel.startEditing(postToEdit)
+                viewModel.сhangeContent(updatedContent)
+                viewModel.save()
+            }
         }
     }
     companion object {

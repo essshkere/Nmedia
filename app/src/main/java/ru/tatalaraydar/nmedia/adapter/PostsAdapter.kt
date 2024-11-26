@@ -19,6 +19,7 @@ interface OnInteractionListener {
     fun onEdit(post: Post) {}
     fun onRemove(post: Post) {}
     fun onShare(post: Post) {}
+    fun onVideolink (post: Post) {}
 }
 
 class PostsAdapter(
@@ -47,8 +48,10 @@ class PostViewHolder(
             buttonLikes.isChecked = post.likedByMe
             buttonLikes.text = formatCount(post.likes)
             buttonShare.text = formatCount(post.share)
+
             buttonShare.setOnClickListener { onInteractionListener.onShare(post) }
             buttonLikes.setOnClickListener {onInteractionListener.onLike(post)}
+
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)
@@ -67,6 +70,7 @@ class PostViewHolder(
                     }
                 }.show()
             }
+
             if (!post.videoURL.isNullOrEmpty()) {
                 videoLink.text = post.videoURL
                 videoLink.visibility = View.VISIBLE
@@ -74,13 +78,13 @@ class PostViewHolder(
                 videoLink.text = "Смотреть новое видео на канале!"
 
                 videoLink.setOnClickListener {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.videoURL))
-                    itemView.context.startActivity(intent)
+
                 }
             } else {
                 videoPic.visibility = View.GONE
                 videoLink.visibility = View.GONE
             }
+
         }
     }
 }

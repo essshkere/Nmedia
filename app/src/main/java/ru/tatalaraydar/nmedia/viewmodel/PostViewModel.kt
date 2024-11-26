@@ -1,9 +1,14 @@
 package ru.tatalaraydar.nmedia.viewmodel
 
+import android.content.Intent
+import android.net.Uri
+import android.view.View
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.repository.PostRepositoryInMemory
+
 
 class PostViewModel : ViewModel() {
     private val repository: PostRepositoryInMemory = PostRepositoryInMemory()
@@ -18,17 +23,26 @@ class PostViewModel : ViewModel() {
         published = ""
     )
 
+    fun findPostById(id: Long): Post? {
+        return data.value?.find { it.id == id } // Получаем текущее значение и ищем пост
+    }
+
     val edited = MutableLiveData(empty)
 
     fun like(id: Long) {
         repository.updateLikeById(id)
     }
 
+
     fun save() {
         edited.value?.let {
             repository.save(it)
         }
         edited.value = empty
+    }
+
+    fun startEditing(post: Post) {
+        edited.value = post
     }
 
     fun сhangeContent(content: String) {

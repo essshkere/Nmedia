@@ -1,5 +1,8 @@
 package ru.tatalaraydar.nmedia.repository
 
+import android.content.Intent
+import android.net.Uri
+import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import ru.tatalaraydar.nmedia.dto.Post
@@ -77,7 +80,7 @@ class PostRepositoryInMemory : PostRepository {
 
     private val data = MutableLiveData(posts)
 
-    override fun getAll(): LiveData<List<Post>> = data
+    override fun getAll(): MutableLiveData<List<Post>> = data
 
     override fun likeById(id: Long) {
         posts = posts.map {
@@ -95,6 +98,8 @@ class PostRepositoryInMemory : PostRepository {
         }
         data.value = posts
     }
+
+
 
     fun updateShareById(id: Long) {
         posts = posts.map {
