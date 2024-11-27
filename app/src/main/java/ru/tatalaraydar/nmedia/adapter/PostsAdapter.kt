@@ -71,6 +71,12 @@ class PostViewHolder(
                 }.show()
             }
 
+            itemView.setOnClickListener {
+                if (!post.videoURL.isNullOrEmpty()) {
+                    onInteractionListener.onVideolink(post)
+                }
+            }
+
             if (!post.videoURL.isNullOrEmpty()) {
                 videoLink.text = post.videoURL
                 videoLink.visibility = View.VISIBLE

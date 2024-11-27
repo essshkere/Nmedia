@@ -24,7 +24,7 @@ class PostViewModel : ViewModel() {
     )
 
     fun findPostById(id: Long): Post? {
-        return data.value?.find { it.id == id } // Получаем текущее значение и ищем пост
+        return data.value?.find { it.id == id }
     }
 
     val edited = MutableLiveData(empty)
