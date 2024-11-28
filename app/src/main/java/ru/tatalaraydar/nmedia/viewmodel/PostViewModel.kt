@@ -1,17 +1,17 @@
 package ru.tatalaraydar.nmedia.viewmodel
 
-import android.content.Intent
-import android.net.Uri
-import android.view.View
-import androidx.lifecycle.LiveData
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import ru.tatalaraydar.nmedia.dto.Post
-import ru.tatalaraydar.nmedia.repository.PostRepositoryInMemory
+import ru.tatalaraydar.nmedia.repository.PostRepository
+import ru.tatalaraydar.nmedia.repository.PostRepositoryFileImpl
 
 
-class PostViewModel : ViewModel() {
-    private val repository: PostRepositoryInMemory = PostRepositoryInMemory()
+
+
+class PostViewModel (application: Application): AndroidViewModel(application) {
+    private val repository: PostRepository = PostRepositoryFileImpl(application)
     val data = repository.getAll()
     fun likeById(id: Long) = repository.likeById(id)
 
@@ -32,7 +32,6 @@ class PostViewModel : ViewModel() {
     fun like(id: Long) {
         repository.updateLikeById(id)
     }
-
 
     fun save() {
         edited.value?.let {

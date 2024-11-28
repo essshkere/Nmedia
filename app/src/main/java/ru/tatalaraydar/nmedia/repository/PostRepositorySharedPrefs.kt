@@ -1,10 +1,18 @@
 package ru.tatalaraydar.nmedia.repository
 
+import android.content.Context
 import androidx.lifecycle.MutableLiveData
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import ru.tatalaraydar.nmedia.dto.Post
 import kotlin.math.floor
 
-class PostRepositoryInMemory : PostRepository {
+class PostRepositorySharedPrefs(
+    context: Context,
+) : PostRepository {
+
+    private val prefs = context.getSharedPreferences("repo", Context.MODE_PRIVATE)
+
     private var nextId = 1L
 
     private var posts = listOf(
@@ -73,6 +81,10 @@ class PostRepositoryInMemory : PostRepository {
             likedByMe = false
         ),
     )
+        set(value) {
+            field = value
+            sync()
+        }
 
     private val data = MutableLiveData(posts)
 
@@ -83,6 +95,7 @@ class PostRepositoryInMemory : PostRepository {
             if (it.id != id) it else it.copy(likedByMe = !it.likedByMe)
         }
         data.value = posts
+        sync()
     }
 
     override fun updateLikeById(id: Long) {
@@ -95,14 +108,13 @@ class PostRepositoryInMemory : PostRepository {
         data.value = posts
     }
 
-
-
     override fun updateShareById(id: Long) {
         posts = posts.map {
             if (it.id != id) it else it.copy(share = it.share + 1)
         }
         data.value = posts
     }
+
     override fun save(post: Post) {
         if (post.id == 0L) {
             posts = listOf(
@@ -128,7 +140,23 @@ class PostRepositoryInMemory : PostRepository {
         data.value = posts
     }
 
+    init {
+        prefs.getString(KEY, null)?.let {
+            posts = gson.fromJson(it, type)
+            data.value = posts
+            nextId = prefs.getLong(ID, nextId)
+        }
+        sync()
+    }
+
     companion object {
+        private const val KEY = "id"
+        private const val ID = "posts"
+        private const val FILENAME = "posts.json"
+        private val gson = Gson()
+        private val type = TypeToken.getParameterized(List::class.java, Post::class.java).type
+
+
         fun formatCount(count: Int): String {
             return when {
                 count >= 1_000_000 -> String.format("%.1fM", floor(count / 1_000_000.0 * 10) / 10)
@@ -139,6 +167,14 @@ class PostRepositoryInMemory : PostRepository {
 
                 else -> count.toString()
             }
+        }
+    }
+
+    private fun sync() {
+        prefs.edit().apply {
+            putString(KEY, gson.toJson(posts))
+            putLong(ID, nextId)
+            apply()
         }
     }
 }
