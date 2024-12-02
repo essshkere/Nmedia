@@ -55,6 +55,7 @@ dependencies {
     val espresso_core_version = "3.6.1"
     val activity_version = "1.9.3"
     val lifecycle_version = "2.8.7"
+    val gson_version = "2.11.0"
 
 
     implementation ("androidx.core:core-ktx:$core_version")
@@ -65,7 +66,7 @@ dependencies {
     implementation ("androidx.activity:activity-ktx:$activity_version")
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
-
+    implementation ("com.google.code.gson:gson:$gson_version")
 
 
     testImplementation ("junit:junit:$junit_version")
