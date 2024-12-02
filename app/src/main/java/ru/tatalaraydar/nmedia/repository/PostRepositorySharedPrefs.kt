@@ -7,7 +7,9 @@ import com.google.gson.reflect.TypeToken
 import ru.tatalaraydar.nmedia.dto.Post
 import kotlin.math.floor
 
-class PostRepositorySharePrefs (context: Context): PostRepository {
+class PostRepositorySharedPrefs(
+    context: Context,
+) : PostRepository {
 
     private val prefs = context.getSharedPreferences("repo", Context.MODE_PRIVATE)
 
@@ -79,6 +81,10 @@ class PostRepositorySharePrefs (context: Context): PostRepository {
             likedByMe = false
         ),
     )
+        set(value) {
+            field = value
+            sync()
+        }
 
     private val data = MutableLiveData(posts)
 
@@ -89,6 +95,7 @@ class PostRepositorySharePrefs (context: Context): PostRepository {
             if (it.id != id) it else it.copy(likedByMe = !it.likedByMe)
         }
         data.value = posts
+        sync()
     }
 
     override fun updateLikeById(id: Long) {
@@ -99,18 +106,15 @@ class PostRepositorySharePrefs (context: Context): PostRepository {
             )
         }
         data.value = posts
-        sync()
     }
 
-
-
-    fun updateShareById(id: Long) {
+    override fun updateShareById(id: Long) {
         posts = posts.map {
             if (it.id != id) it else it.copy(share = it.share + 1)
         }
         data.value = posts
-        sync()
     }
+
     override fun save(post: Post) {
         if (post.id == 0L) {
             posts = listOf(
@@ -122,7 +126,6 @@ class PostRepositorySharePrefs (context: Context): PostRepository {
                 )
             ) + posts
             data.value = posts
-            sync()
             return
         }
 
@@ -130,29 +133,29 @@ class PostRepositorySharePrefs (context: Context): PostRepository {
             if (it.id != post.id) it else it.copy(content = post.content)
         }
         data.value = posts
-        sync()
     }
 
     override fun removeById(id: Long) {
         posts = posts.filter { it.id != id }
         data.value = posts
-        sync()
     }
+
     init {
-        prefs.getString(key, null)?.let {
+        prefs.getString(KEY, null)?.let {
             posts = gson.fromJson(it, type)
             data.value = posts
+            nextId = prefs.getLong(ID, nextId)
         }
         sync()
     }
-    companion object {
 
+    companion object {
+        private const val KEY = "id"
+        private const val ID = "posts"
+        private const val FILENAME = "posts.json"
         private val gson = Gson()
         private val type = TypeToken.getParameterized(List::class.java, Post::class.java).type
-        private val key = "posts"
-        private var nextId = 1L
-        private var posts = emptyList<Post>()
-        private val data = MutableLiveData(posts)
+
 
         fun formatCount(count: Int): String {
             return when {
@@ -166,9 +169,11 @@ class PostRepositorySharePrefs (context: Context): PostRepository {
             }
         }
     }
+
     private fun sync() {
-        with(prefs.edit()) {
-            putString(key, gson.toJson(posts))
+        prefs.edit().apply {
+            putString(KEY, gson.toJson(posts))
+            putLong(ID, nextId)
             apply()
         }
     }

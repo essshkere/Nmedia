@@ -1,19 +1,17 @@
 package ru.tatalaraydar.nmedia.viewmodel
 
 import android.app.Application
-
 import androidx.lifecycle.AndroidViewModel
-
 import androidx.lifecycle.MutableLiveData
-
 import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.repository.PostRepository
-import ru.tatalaraydar.nmedia.repository.PostRepositoryInMemory
-import ru.tatalaraydar.nmedia.repository.PostRepositorySharePrefs
+import ru.tatalaraydar.nmedia.repository.PostRepositoryFileImpl
+
+
 
 
 class PostViewModel (application: Application): AndroidViewModel(application) {
-    private val repository: PostRepository = PostRepositorySharePrefs(application)
+    private val repository: PostRepository = PostRepositoryFileImpl(application)
     val data = repository.getAll()
     fun likeById(id: Long) = repository.likeById(id)
 
