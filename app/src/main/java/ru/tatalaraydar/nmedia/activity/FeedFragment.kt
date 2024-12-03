@@ -4,26 +4,32 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import ru.tatalaraydar.nmedia.R
 import ru.tatalaraydar.nmedia.adapter.OnInteractionListener
 import ru.tatalaraydar.nmedia.adapter.PostsAdapter
-import ru.tatalaraydar.nmedia.databinding.ActivityMainBinding
+import ru.tatalaraydar.nmedia.databinding.FragmentFeedBinding
 import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.viewmodel.PostViewModel
 
-class MainActivity : AppCompatActivity() {
+class FeedFragment : Fragment() {
 
-    private lateinit var binding: ActivityMainBinding
-    private val viewModel: PostViewModel by viewModels()
+    private val viewModel: PostViewModel by viewModels(
+        ownerProducer = ::requireParentFragment
+    )
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        val binding = FragmentFeedBinding.inflate(inflater, container, false)
 
-        val newPostLauncher = registerForActivityResult(NewPostActivity.NewPostContract) { result ->
+        val newPostLauncher = registerForActivityResult(NewPostFragment.NewPostContract) { result ->
             result ?: return@registerForActivityResult
             viewModel.сhangeContent(result)
             viewModel.save()
@@ -39,10 +45,8 @@ class MainActivity : AppCompatActivity() {
                 viewModel.like(post.id)
             }
 
-
-
             override fun onEdit(post: Post) {
-                val intent = Intent(this@MainActivity, EditPostActivity::class.java).apply {
+                val intent = Intent(this@FeedFragment.requireContext(), EditPostActivity::class.java).apply {
                     putExtra("post_id", post.id)
                     putExtra("post_content", post.content)
                 }
@@ -60,23 +64,25 @@ class MainActivity : AppCompatActivity() {
                 startActivity(shareIntent)
             }
 
-            override fun onVideolink(post:Post) {
+            override fun onVideolink(post: Post) {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.videoURL))
                 startActivity(intent)
             }
-
         })
 
         binding.container.adapter = adapter
 
-        viewModel.data.observe(this) { posts ->
+        viewModel.data.observe(viewLifecycleOwner) { posts ->
             adapter.submitList(posts)
         }
 
         binding.save.setOnClickListener {
             newPostLauncher.launch(Unit)
         }
+
+        return binding.root
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == EDIT_POST_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
@@ -91,8 +97,8 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
     companion object {
         private const val EDIT_POST_REQUEST_CODE = 100
     }
 }
-

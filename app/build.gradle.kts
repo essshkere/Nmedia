@@ -44,6 +44,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
 
     val core_version = "1.15.0"
     val appcompat_version = "1.7.0"
@@ -56,7 +58,7 @@ dependencies {
     val activity_version = "1.9.3"
     val lifecycle_version = "2.8.7"
     val gson_version = "2.11.0"
-//    val nav_version = "2.8.4"
+    val nav_version = "2.8.4"
 //    val room_version = "2.6.1"
 //    val firebase_version = "33.6.0"
 //    val play_services_base_version = "18.5.0"
@@ -70,8 +72,8 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
     implementation ("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
     implementation ("com.google.code.gson:gson:$gson_version")
-//    implementation ("androidx.navigation:navigation-fragment-ktx:$nav_version")
-//    implementation ("androidx.navigation:navigation-ui-ktx:$nav_version")
+    implementation ("androidx.navigation:navigation-fragment-ktx:$nav_version")
+    implementation ("androidx.navigation:navigation-ui-ktx:$nav_version")
 //    implementation ("androidx.room:room-runtime:$room_version")
 ////    kapt ("androidx.room:room-compiler:$room_version")
 ////    implementation platform("com.google.firebase:firebase-bom:$firebase_version")
