@@ -9,7 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import ru.tatalaraydar.nmedia.R
+import ru.tatalaraydar.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.tatalaraydar.nmedia.adapter.OnInteractionListener
 import ru.tatalaraydar.nmedia.adapter.PostsAdapter
 import ru.tatalaraydar.nmedia.databinding.FragmentFeedBinding
@@ -29,12 +31,6 @@ class FeedFragment : Fragment() {
     ): View {
         val binding = FragmentFeedBinding.inflate(inflater, container, false)
 
-        val newPostLauncher = registerForActivityResult(NewPostFragment.NewPostContract) { result ->
-            result ?: return@registerForActivityResult
-            viewModel.сhangeContent(result)
-            viewModel.save()
-        }
-
         val adapter = PostsAdapter(object : OnInteractionListener {
 
             override fun onRemove(post: Post) {
@@ -46,7 +42,7 @@ class FeedFragment : Fragment() {
             }
 
             override fun onEdit(post: Post) {
-                val intent = Intent(this@FeedFragment.requireContext(), EditPostActivity::class.java).apply {
+                val intent = Intent(this@FeedFragment.requireContext(), EditPostFragment::class.java).apply {
                     putExtra("post_id", post.id)
                     putExtra("post_content", post.content)
                 }
@@ -76,9 +72,17 @@ class FeedFragment : Fragment() {
             adapter.submitList(posts)
         }
 
-        binding.save.setOnClickListener {
-            newPostLauncher.launch(Unit)
+        viewModel.edited.observe(viewLifecycleOwner)
+        {
+            if(it.id!= 0L){
+                findNavController().navigate(R.id.action_feedFragment_to_editPostFragment, Bundle().apply { textArg=it.content})
+            }
         }
+
+        binding.save.setOnClickListener {
+            findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
+        }
+
 
         return binding.root
     }

@@ -4,15 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.NewPostFragment">
+    tools:context=".activity.EditPostFragment">
 
     <EditText
         android:id="@+id/edit_post_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginTop="48dp"
         android:gravity="start|top"
         android:inputType="textMultiLine"
         android:background="@android:color/transparent"
+
         android:contentDescription = "@string/edit_text"
         />
 

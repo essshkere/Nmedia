@@ -13,23 +13,21 @@
         android:theme="@style/Theme.Nmedia"
         tools:targetApi="31">
         <activity
-            android:name=".activity.EditPostActivity"
+            android:name=".activity.EditPostFragment"
             android:exported="false" />
-        <activity
-            android:name=".activity.NewPostFragment"
-            android:exported="false" />
-        <activity
+          <activity
             android:name=".activity.FeedFragment"
+            android:exported="true">
+
+        </activity>
+        <activity
+            android:name=".activity.AppActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".activity.IntentHandlerActivity"
-            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
 
@@ -39,5 +37,4 @@
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

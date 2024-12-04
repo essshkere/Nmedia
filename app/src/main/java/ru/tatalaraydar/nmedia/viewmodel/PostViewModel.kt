@@ -7,9 +7,6 @@ import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.repository.PostRepository
 import ru.tatalaraydar.nmedia.repository.PostRepositoryFileImpl
 
-
-
-
 class PostViewModel (application: Application): AndroidViewModel(application) {
     private val repository: PostRepository = PostRepositoryFileImpl(application)
     val data = repository.getAll()
