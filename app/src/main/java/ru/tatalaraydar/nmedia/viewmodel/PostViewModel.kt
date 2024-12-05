@@ -41,8 +41,8 @@ class PostViewModel (application: Application): AndroidViewModel(application) {
         edited.value = post
     }
 
-    fun сhangeContent(content: String) {
-        val text = content.trim()
+    fun сhangeContent(updatedContent: String) {
+        val text = updatedContent.trim()
         if (edited.value?.content == text) {
             return
         }
@@ -50,6 +50,7 @@ class PostViewModel (application: Application): AndroidViewModel(application) {
     }
 
     fun remove(id: Long) = repository.removeById(id)
+
 }
 
 

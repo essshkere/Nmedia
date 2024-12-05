@@ -29,11 +29,19 @@ class AppActivity : AppCompatActivity() {
                         finish()
                     }
                     .show()
+                if (text?.contains("edit") == true) {
+                }
+                findNavController(R.id.fragment_container).navigate(
+                    R.id.action_feedFragment_to_newPostFragment,
+                    Bundle().apply { textArg = text }
+                )
+            } else {
+
+                findNavController(R.id.fragment_container).navigate(
+                    R.id.action_feedFragment_to_editPostFragment,
+                    Bundle().apply { textArg = text }
+                )
             }
-            findNavController(R.id.fragment_container).navigate(
-                R.id.action_feedFragment_to_newPostFragment,
-                Bundle().apply { textArg = text }
-            )
         }
     }
 }
