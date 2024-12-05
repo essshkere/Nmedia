@@ -33,8 +33,6 @@ class NewPostFragment : Fragment() {
 
             binding.edit.setText(postText)
 
-            binding.edit.requestFocus()
-
             binding.ok.setOnClickListener {
                 val text = binding.edit.text.toString()
                 if (text.isNotBlank()){

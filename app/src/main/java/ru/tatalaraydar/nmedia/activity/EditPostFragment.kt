@@ -25,20 +25,17 @@ class EditPostFragment : Fragment() {
         val binding = FragmentEditPostBinding.inflate(inflater,container,false)
         val viewModel: PostViewModel by viewModels( ownerProducer = ::requireParentFragment)
         arguments?.textArg?.let(binding.editPostContent::setText)
+        
 
-//        val intent = Intent()
-//        setContentView(binding.root)
-//        val postId = requireActivity().intent.getLongExtra("post_id", 0L)
         val postContent = arguments?.getString("textArg") ?: ""
         binding.editPostContent.setText(postContent)
-
-
 
         binding.saveButton.setOnClickListener {
             val updatedContent = binding.editPostContent.text.toString()
             requireActivity().setResult(Activity.RESULT_OK, Intent().apply {
                 putExtra("updated_content", updatedContent)
-//                putExtra("post_id", postId)
+
+                 putExtra("post_id", postId)
             })
             findNavController().navigateUp()
         }

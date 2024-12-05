@@ -1,14 +1,11 @@
 package ru.tatalaraydar.nmedia.activity
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -21,28 +18,6 @@ import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.viewmodel.PostViewModel
 
 class FeedFragment : Fragment() {
-    private lateinit var editPostLauncher: ActivityResultLauncher<Intent>
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        editPostLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val data = result.data ?: return@registerForActivityResult
-                val updatedContent = data.getStringExtra("updated_content") ?: return@registerForActivityResult
-                val postId = data.getLongExtra("post_id", 0L)
-
-                if (postId != 0L) {
-                    val postToEdit = viewModel.findPostById(postId)
-                    if (postToEdit != null) {
-                        viewModel.startEditing(postToEdit)
-                        viewModel.сhangeContent(updatedContent)
-                        viewModel.save()
-                    }
-                }
-            }
-        }
-    }
 
     private val viewModel: PostViewModel by viewModels(
         ownerProducer = ::requireParentFragment
@@ -66,11 +41,10 @@ class FeedFragment : Fragment() {
             }
 
             override fun onEdit(post: Post) {
-                val intent = Intent(this@FeedFragment.requireContext(), EditPostFragment::class.java).apply {
-                    putExtra("post_id", post.id)
-                    putExtra("post_content", post.content)
+                viewModel.startEditing(post)
+                if (findNavController().currentDestination?.id != R.id.editPostFragment) {
+                    findNavController().navigate(R.id.action_feedFragment_to_editPostFragment)
                 }
-                editPostLauncher.launch(intent)
             }
 
             override fun onShare(post: Post) {
@@ -96,10 +70,9 @@ class FeedFragment : Fragment() {
             adapter.submitList(posts)
         }
 
-        viewModel.edited.observe(viewLifecycleOwner)
-        {
-            if(it.id!= 0L){
-                findNavController().navigate(R.id.action_feedFragment_to_editPostFragment, Bundle().apply { textArg=it.content})
+        viewModel.edited.observe(viewLifecycleOwner) { post ->
+            if (post.id != 0L) {
+                findNavController().navigate(R.id.action_feedFragment_to_editPostFragment, Bundle().apply { textArg = post.content })
             }
         }
 
@@ -108,24 +81,5 @@ class FeedFragment : Fragment() {
         }
 
         return binding.root
-    }
-
-//    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-//        super.onActivityResult(requestCode, resultCode, data)
-//        if (requestCode == EDIT_POST_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-//            val updatedContent = data?.getStringExtra("updated_content") ?: return
-//            val postId = data.getLongExtra("post_id", 0L)
-//
-//            val postToEdit = viewModel.findPostById(postId)
-//            if (postToEdit != null) {
-//                viewModel.startEditing(postToEdit)
-//                viewModel.сhangeContent(updatedContent)
-//                viewModel.save()
-//            }
-//        }
-//    }
-
-    companion object {
-        private const val EDIT_POST_REQUEST_CODE = 100
     }
 }
