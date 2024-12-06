@@ -41,6 +41,17 @@ class PostViewModel (application: Application): AndroidViewModel(application) {
         edited.value = post
     }
 
+    var postId: Long = 0L
+    var updatedContent: String? = null
+
+    fun updatePost(postId: Long, updatedContent: String) {
+        val postToUpdate = data.value?.find { it.id == postId }
+        if (postToUpdate != null) {
+            val updatedPost = postToUpdate.copy(content = updatedContent)
+            repository.save(updatedPost)
+        }
+    }
+
     fun сhangeContent(updatedContent: String) {
         val text = updatedContent.trim()
         if (edited.value?.content == text) {
