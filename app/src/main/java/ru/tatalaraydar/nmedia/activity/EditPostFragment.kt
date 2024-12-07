@@ -32,11 +32,8 @@ class EditPostFragment : Fragment() {
 
 
         binding.saveButton.setOnClickListener {
-
             viewModel.changeContent(binding.editPostContent.text.toString())
-
             viewModel.save()
-
             findNavController().navigateUp()
 
         }
