@@ -15,7 +15,6 @@
         android:gravity="start|top"
         android:inputType="textMultiLine"
         android:background="@android:color/transparent"
-
         android:contentDescription = "@string/edit_text"
         />
 
@@ -35,7 +34,5 @@
         app:srcCompat="@drawable/ic_ok_24dp"
         app:layout_anchor="@id/bottomAppBar"
         />
-
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -13,13 +13,19 @@ import ru.tatalaraydar.nmedia.databinding.CardPostBinding
 import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.R
 import ru.tatalaraydar.nmedia.repository.PostRepositoryInMemory.Companion.formatCount
+import android.os.Bundle
+import android.util.Log
+import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
+
 
 interface OnInteractionListener {
     fun onLike(post: Post) {}
     fun onEdit(post: Post) {}
     fun onRemove(post: Post) {}
     fun onShare(post: Post) {}
-    fun onVideolink (post: Post) {}
+    fun onVideolink(post: Post) {}
+    fun onViewPost(post: Post) {}
 }
 
 class PostsAdapter(
@@ -29,6 +35,7 @@ class PostsAdapter(
         val binding = CardPostBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return PostViewHolder(binding, onInteractionListener)
     }
+
     override fun onBindViewHolder(holder: PostViewHolder, position: Int) {
         val post = getItem(position)
         holder.bind(post)
@@ -36,9 +43,11 @@ class PostsAdapter(
 }
 
 class PostViewHolder(
+
     private val binding: CardPostBinding,
     private val onInteractionListener: OnInteractionListener
 ) : RecyclerView.ViewHolder(binding.root) {
+    private val TAG = "postAdapter"
     fun bind(post: Post) {
         binding.apply {
             content.text = post.content
@@ -50,7 +59,10 @@ class PostViewHolder(
             buttonShare.text = formatCount(post.share)
 
             buttonShare.setOnClickListener { onInteractionListener.onShare(post) }
-            buttonLikes.setOnClickListener {onInteractionListener.onLike(post)}
+            buttonLikes.setOnClickListener { onInteractionListener.onLike(post) }
+            content.setOnClickListener { onInteractionListener.onViewPost(post)
+                Log.i(TAG, "press content")
+            }
 
             menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
@@ -76,9 +88,8 @@ class PostViewHolder(
                 videoLink.visibility = View.VISIBLE
                 videoPic.visibility = View.VISIBLE
                 videoLink.text = "Смотреть новое видео на канале!"
-
                 videoLink.setOnClickListener {
-
+                    Log.i(TAG, "Кнопка была нажата")
                 }
             } else {
                 videoPic.visibility = View.GONE

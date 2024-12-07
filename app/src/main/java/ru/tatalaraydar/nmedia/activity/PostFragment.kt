@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,10 +16,12 @@ import ru.tatalaraydar.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.tatalaraydar.nmedia.adapter.OnInteractionListener
 import ru.tatalaraydar.nmedia.adapter.PostsAdapter
 import ru.tatalaraydar.nmedia.databinding.FragmentFeedBinding
+import ru.tatalaraydar.nmedia.databinding.FragmentPostBinding
 import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.viewmodel.PostViewModel
 
-class FeedFragment : Fragment() {
+class PostFragment : Fragment() {
+    private var postId: Long = 0L
 
     val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
@@ -29,9 +30,20 @@ class FeedFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val binding = FragmentFeedBinding.inflate(inflater, container, false)
+        val binding = FragmentPostBinding.inflate(inflater, container, false)
 
-        val adapter = PostsAdapter(object : OnInteractionListener {
+        arguments?.let {
+            viewModel.postId = it.getLong("post_id")
+        }
+
+        viewModel.findPostById(postId).observe(viewLifecycleOwner) { post ->
+            binding.author.text = post?.author ?: "Автор не указан"
+            binding.content.text = post?.content ?: "Содержимое отсутствует"
+            binding.published.text = post?.published ?: "Дата публикации не указана"
+            binding.viewsPost.text = post?.views_post.toString() ?: "0 просмотров"
+        }
+
+            val adapter = PostsAdapter(object : OnInteractionListener {
 
             override fun onRemove(post: Post) {
                 viewModel.remove(post.id)
@@ -60,27 +72,12 @@ class FeedFragment : Fragment() {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.videoURL))
                 startActivity(intent)
             }
-            private val TAG = "feedFragment"
-
-            override fun onViewPost(post: Post) {
-                val bundle = Bundle().apply {
-                    putLong("postId", post.id) // Передаем ID поста
-                }
-                findNavController().navigate(R.id.action_feedFragment_to_postFragment, bundle)
-                Log.i(TAG, "press content")
-            }
         })
 
 
 
-        binding.container.adapter = adapter
-
         viewModel.data.observe(viewLifecycleOwner) { posts ->
             adapter.submitList(posts)
-        }
-
-        binding.save.setOnClickListener {
-            findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
         }
 
         viewModel.edited.observe(viewLifecycleOwner) { post ->

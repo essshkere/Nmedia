@@ -7,14 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
-import androidx.navigation.fragment.findNavController
 import ru.tatalaraydar.nmedia.databinding.FragmentEditPostBinding
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import ru.tatalaraydar.nmedia.viewmodel.PostViewModel
 
-class EditPostFragment : Fragment() {
 
-    private val viewModel: PostViewModel by activityViewModels()
+class EditPostFragment : Fragment() {
+    private var postId: Long = 0L
+    val viewModel: PostViewModel by viewModels( ownerProducer = ::requireParentFragment)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,16 +30,15 @@ class EditPostFragment : Fragment() {
             binding.editPostContent.setText(postContent)
         }
 
+
         binding.saveButton.setOnClickListener {
-            viewModel.updatedContent = binding.editPostContent.text.toString()
 
-            viewModel.updatePost(viewModel.postId, viewModel.updatedContent ?: "")
+            viewModel.changeContent(binding.editPostContent.text.toString())
 
-            requireActivity().setResult(Activity.RESULT_OK, Intent().apply {
-                putExtra("updated_content", viewModel.updatedContent)
-                putExtra("post_id", viewModel.postId)
-            })
+            viewModel.save()
+
             findNavController().navigateUp()
+
         }
 
         return binding.root
