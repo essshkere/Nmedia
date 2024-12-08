@@ -13,10 +13,8 @@ import ru.tatalaraydar.nmedia.databinding.CardPostBinding
 import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.R
 import ru.tatalaraydar.nmedia.repository.PostRepositoryInMemory.Companion.formatCount
-import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import androidx.appcompat.app.AppCompatActivity
+
 
 
 interface OnInteractionListener {
@@ -60,7 +58,8 @@ class PostViewHolder(
 
             buttonShare.setOnClickListener { onInteractionListener.onShare(post) }
             buttonLikes.setOnClickListener { onInteractionListener.onLike(post) }
-            content.setOnClickListener { onInteractionListener.onViewPost(post)
+            content.setOnClickListener {
+                onInteractionListener.onViewPost(post)
                 Log.i(TAG, "press content")
             }
 
@@ -73,10 +72,12 @@ class PostViewHolder(
                                 onInteractionListener.onRemove(post)
                                 true
                             }
+
                             R.id.edit -> {
                                 onInteractionListener.onEdit(post)
                                 true
                             }
+
                             else -> false
                         }
                     }

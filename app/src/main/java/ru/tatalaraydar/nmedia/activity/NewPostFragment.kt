@@ -22,8 +22,8 @@ class NewPostFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        val binding = FragmentNewPostBinding.inflate(inflater,container,false)
-        val viewModel: PostViewModel by viewModels( ownerProducer = ::requireParentFragment)
+        val binding = FragmentNewPostBinding.inflate(inflater, container, false)
+        val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
         arguments?.textArg?.let(binding.edit::setText)
 
         val intent = Intent()
@@ -35,7 +35,7 @@ class NewPostFragment : Fragment() {
 
             binding.ok.setOnClickListener {
                 val text = binding.edit.text.toString()
-                if (text.isNotBlank()){
+                if (text.isNotBlank()) {
                     viewModel.changeContent(text)
                     viewModel.save()
                 }
@@ -50,7 +50,8 @@ class NewPostFragment : Fragment() {
     }
 
     object NewPostContract : ActivityResultContract<Unit, String?>() {
-        override fun createIntent(context: Context, input: Unit) = Intent(context, NewPostFragment::class.java)
+        override fun createIntent(context: Context, input: Unit) =
+            Intent(context, NewPostFragment::class.java)
 
         override fun parseResult(resultCode: Int, intent: Intent?) = intent?.getStringExtra("text")
     }

@@ -63,15 +63,12 @@ class FeedFragment : Fragment() {
             private val TAG = "feedFragment"
 
             override fun onViewPost(post: Post) {
-                val bundle = Bundle().apply {
-                    putLong("postId", post.id) // Передаем ID поста
-                }
+                val bundle = Bundle().apply {putLong("postId", post.id)}
+                Log.i(TAG, post.id.toString())
                 findNavController().navigate(R.id.action_feedFragment_to_postFragment, bundle)
                 Log.i(TAG, "press content")
             }
         })
-
-
 
         binding.container.adapter = adapter
 
