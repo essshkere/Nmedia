@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import ru.tatalaraydar.nmedia.R
 import ru.tatalaraydar.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.tatalaraydar.nmedia.adapter.OnInteractionListener
+import ru.tatalaraydar.nmedia.adapter.PostViewHolder
 import ru.tatalaraydar.nmedia.adapter.PostsAdapter
 import ru.tatalaraydar.nmedia.databinding.FragmentPostBinding
 import ru.tatalaraydar.nmedia.dto.Post
@@ -34,6 +35,8 @@ class PostFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+
         val binding = FragmentPostBinding.inflate(inflater, container, false)
 
         arguments?.let {
@@ -131,15 +134,6 @@ class PostFragment : Fragment() {
             adapter.submitList(posts)
         }
 
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                val data = result.data ?: return@registerForActivityResult
-                val updatedContent =
-                    data.getStringExtra("updated_content") ?: return@registerForActivityResult
-                val postId = data.getLongExtra("post_id", 0L)
-                viewModel.updatePost(postId, updatedContent)
-            }
-        }
         return binding.root
     }
 

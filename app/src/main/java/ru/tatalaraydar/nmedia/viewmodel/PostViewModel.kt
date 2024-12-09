@@ -8,6 +8,7 @@ import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.repository.PostRepository
 import ru.tatalaraydar.nmedia.repository.PostRepositoryFileImpl
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 
@@ -44,22 +45,31 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 //            null
 //        }
 //    }
-
-    fun findPostIdById(id: Long): LiveData<Post?> {
-        val result = MutableLiveData<Post?>()
+fun findPostIdById(id: Long): LiveData<Post?> {
+    val result = MediatorLiveData<Post?>()
+    result.addSource(data) { posts ->
         Log.d(TAG, "findPostById called with id: $id")
-        val postList = data.value
-        Log.d(TAG, "Current post list: $postList")
-        val post = postList?.find { it.id == id }
-        if (post != null) {
-            Log.d(TAG, "Post found: $post")
-            result.value = post
-        } else {
-            Log.d(TAG, "No post found for id: $id")
-            result.value = null
-        }
-        return result
+        result.value = posts.find { it.id == id }
+ Log.d(TAG, "Post found: $result.value")
     }
+    return result
+}
+
+//    fun findPostIdById(id: Long): LiveData<Post?> {
+//        val result = MutableLiveData<Post?>()
+//        Log.d(TAG, "findPostById called with id: $id")
+//        val postList = data.value
+//        Log.d(TAG, "Current post list: $postList")
+//        val post = postList?.find { it.id == id }
+//        if (post != null) {
+//            Log.d(TAG, "Post found: $post")
+//            result.value = post
+//        } else {
+//            Log.d(TAG, "No post found for id: $id")
+//            result.value = null
+//        }
+//        return result
+//    }
 
     val edited = MutableLiveData(empty)
 
