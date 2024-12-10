@@ -25,7 +25,7 @@ import ru.tatalaraydar.nmedia.viewmodel.PostViewModel
 
 class PostFragment : Fragment() {
     private var postId: Long = 0L
-    private val TAG = "adapter"
+    private val TAG = "post fragment"
 
 
     val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
@@ -72,15 +72,15 @@ class PostFragment : Fragment() {
                                 findNavController().navigateUp()
                                 true
                             }
-
                             R.id.edit -> {
-                                viewModel.edited.observe(viewLifecycleOwner) { post ->
-                                    if (post.id != 0L) {
-                                        findNavController().navigate(
-                                            R.id.action_postFragment_to_editPostFragment,
-                                            Bundle().apply { textArg = post.content })
+                                viewModel.edited.value = post
+                                findNavController().navigate(
+                                    R.id.action_postFragment_to_editPostFragment,
+                                    Bundle().apply {
+                                        putLong("post_id", post?.id ?: 0)
+                                        putString("textArg", post?.content)
                                     }
-                                }
+                                )
                                 true
                             }
 
@@ -122,13 +122,15 @@ class PostFragment : Fragment() {
             }
         })
 
-        viewModel.edited.observe(viewLifecycleOwner) { post ->
-            if (post.id != 0L) {
-                findNavController().navigate(
-                    R.id.action_feedFragment_to_editPostFragment,
-                    Bundle().apply { textArg = post.content })
-            }
-        }
+
+
+//        viewModel.edited.observe(viewLifecycleOwner) { post ->
+//            if (post.id != 0L) {
+//                findNavController().navigate(
+//                    R.id.action_feedFragment_to_editPostFragment,
+//                    Bundle().apply { textArg = post.content })
+//            }
+//        }
 
         viewModel.data.observe(viewLifecycleOwner) { posts ->
             adapter.submitList(posts)
