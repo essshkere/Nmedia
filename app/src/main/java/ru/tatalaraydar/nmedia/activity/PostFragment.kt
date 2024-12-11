@@ -73,7 +73,7 @@ class PostFragment : Fragment() {
                                 true
                             }
                             R.id.edit -> {
-                                viewModel.edited.value = post
+                                post?.let { it1 -> viewModel.startEditing(it1) }
                                 findNavController().navigate(
                                     R.id.action_postFragment_to_editPostFragment,
                                     Bundle().apply {
