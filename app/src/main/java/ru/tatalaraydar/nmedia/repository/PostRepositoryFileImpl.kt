@@ -88,13 +88,13 @@ class PostRepositoryFileImpl(
 
     override fun getAll(): MutableLiveData<List<Post>> = data
 
-    override fun likeById(id: Long) {
-        posts = posts.map {
-            if (it.id != id) it else it.copy(likedByMe = !it.likedByMe)
-        }
-        data.value = posts
-        sync()
-    }
+//    override fun likeById(id: Long) {
+//        posts = posts.map {
+//            if (it.id != id) it else it.copy(likedByMe = !it.likedByMe)
+//        }
+//        data.value = posts
+//        sync()
+//    }
 
     override fun updateLikeById(id: Long) {
         posts = posts.map {

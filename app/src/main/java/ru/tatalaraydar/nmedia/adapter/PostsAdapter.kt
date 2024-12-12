@@ -15,8 +15,6 @@ import ru.tatalaraydar.nmedia.R
 import ru.tatalaraydar.nmedia.repository.PostRepositoryInMemory.Companion.formatCount
 import android.util.Log
 
-
-
 interface OnInteractionListener {
     fun onLike(post: Post) {}
     fun onEdit(post: Post) {}

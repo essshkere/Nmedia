@@ -11,65 +11,42 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import ru.netology.nmedia.db.AppDb
+import ru.netology.nmedia.dao.PostDaoImpl
+import ru.tatalaraydar.nmedia.repository.PostRepositorySQLiteImpl
+
+
+private val empty = Post(
+    id = 0,
+    content = "",
+    author = "",
+    likedByMe = false,
+    published = ""
+)
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val TAG = "view"
     var postId: Long = 0L
-    private val repository: PostRepository = PostRepositoryFileImpl(application)
-    val data = repository.getAll()
-    fun likeById(id: Long) = repository.likeById(id)
 
-    private val empty = Post(
-        id = 0,
-        content = "",
-        author = "",
-        likedByMe = false,
-        published = ""
+
+    private val repository: PostRepository = PostRepositorySQLiteImpl(
+        AppDb.getInstance(application).postDao
     )
 
-//    fun findPostById(id: Long): Post? {
-//        return data.value?.find { it.id == id }
-//    }
+        val data = repository . getAll ()
 
-//    fun findPostIdById(id: Long): Long? {
-//        Log.d(TAG, "findPostIdById called with id: $id")
-//        val postList = data.value
-//        Log.d(TAG, "Current post list: $postList")
-//        val post = postList?.find { it.id == id }
-//
-//        return if (post != null) {
-//            Log.d(TAG, "Post found: $post")
-//            post.id
-//        } else {
-//            Log.d(TAG, "No post found for id: $id")
-//            null
-//        }
-//    }
-fun findPostIdById(id: Long): LiveData<Post?> {
-    val result = MediatorLiveData<Post?>()
-    result.addSource(data) { posts ->
-        Log.d(TAG, "findPostById called with id: $id")
-        result.value = posts.find { it.id == id }
- Log.d(TAG, "Post found: $result.value")
+
+
+
+    fun findPostIdById(id: Long): LiveData<Post?> {
+        val result = MediatorLiveData<Post?>()
+        result.addSource(data) { posts ->
+            Log.d(TAG, "findPostById called with id: $id")
+            result.value = posts.find { it.id == id }
+            Log.d(TAG, "Post found: $result.value")
+        }
+        return result
     }
-    return result
-}
-
-//    fun findPostIdById(id: Long): LiveData<Post?> {
-//        val result = MutableLiveData<Post?>()
-//        Log.d(TAG, "findPostById called with id: $id")
-//        val postList = data.value
-//        Log.d(TAG, "Current post list: $postList")
-//        val post = postList?.find { it.id == id }
-//        if (post != null) {
-//            Log.d(TAG, "Post found: $post")
-//            result.value = post
-//        } else {
-//            Log.d(TAG, "No post found for id: $id")
-//            result.value = null
-//        }
-//        return result
-//    }
 
     val edited = MutableLiveData(empty)
 
