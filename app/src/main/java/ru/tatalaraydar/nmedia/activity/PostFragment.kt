@@ -136,6 +136,7 @@ class PostFragment : Fragment() {
         return binding.root
     }
 
+
     private fun sharePost(post: Post) {
         viewModel.share(post.id)
         val intent = Intent().apply {
