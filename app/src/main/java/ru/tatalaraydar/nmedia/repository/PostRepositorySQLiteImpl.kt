@@ -1,6 +1,7 @@
 package ru.tatalaraydar.nmedia.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -54,81 +55,15 @@ class PostRepositorySQLiteImpl(
         data.value = posts
     }
 
-//    override fun likeById(id: Long) {
-//        dao.likeById(id)
-//        posts = posts.map {
-//            if (it.id != id) it else it.copy(
-//                likedByMe = !it.likedByMe,
-//                likes = if (it.likedByMe) it.likes - 1 else it.likes + 1
-//            )
-//        }
-//        data.value = posts
-//    }
-
-
     override fun updateShareById(id: Long) {
+        dao.updateShareById(id)
+        Log.d("UpdateShare", "Обновление в базе данных прошло успешно.")
         posts = posts.map {
             if (it.id != id) it else it.copy(share = it.share + 1)
         }
         data.value = posts
+        Log.d("UpdateShare", "Обновление списка постов прошло успешно. Новый список: $posts")
     }
-
-
-//    override fun updateLikeById(id: Long) {
-//        posts = posts.map {
-//            if (it.id != id) it else it.copy(
-//                likedByMe = !it.likedByMe,
-//                likes = if (!it.likedByMe) it.likes + 1 else it.likes - 1
-//            )
-//        }
-//        data.value = posts
-//    }
-
-    //    override fun likeById(id: Long) {
-//        posts = posts.map {
-//            if (it.id != id) it else it.copy(likedByMe = !it.likedByMe)
-//        }
-//        data.value = posts
-//        sync()
-//    }
-
-
-//    override fun save(post: Post) {
-//        if (post.id == 0L) {
-//            posts = listOf(
-//                post.copy(
-//                    id = nextId++,
-//                    author = "Me",
-//                    likedByMe = false,
-//                    published = "now"
-//                )
-//            ) + posts
-//            data.value = posts
-//            return
-//        }
-//
-//        posts = posts.map {
-//            if (it.id != post.id) it else it.copy(content = post.content)
-//        }
-//        data.value = posts
-//    }
-
-//    override fun removeById(id: Long) {
-//        posts = posts.filter { it.id != id }
-//        data.value = posts
-//    }
-
-//    init {
-//        val file = context.filesDir.resolve(FILENAME)
-//        if (file.exists()){
-//            context.openFileInput(FILENAME).bufferedReader().use{
-//                posts = gson.fromJson(it, type)
-//                nextId = posts.maxOfOrNull { it.id }?.plus(1) ?: 1
-//                data.value = posts
-//            }
-//        }else {sync()}
-//
-//    }
 
     companion object {
         private const val KEY = "id"
@@ -150,10 +85,4 @@ class PostRepositorySQLiteImpl(
             }
         }
     }
-
-//    private fun sync() {
-//        context.openFileOutput(FILENAME,Context.MODE_PRIVATE).bufferedWriter().use{
-//            it.write(gson.toJson(posts))
-//        }
-//    }
 }

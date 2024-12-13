@@ -3,6 +3,7 @@ package ru.tatalaraydar.nmedia.dao
 import android.content.ContentValues
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import android.util.Log
 import ru.tatalaraydar.nmedia.dto.Post
 
 class PostDaoImpl(private val db: SQLiteDatabase) : PostDao {
@@ -15,7 +16,7 @@ class PostDaoImpl(private val db: SQLiteDatabase) : PostDao {
         ${PostColumns.COLUMN_PUBLISHED} TEXT NOT NULL,
         ${PostColumns.COLUMN_LIKED_BY_ME} BOOLEAN NOT NULL DEFAULT 0,
         ${PostColumns.COLUMN_LIKES} INTEGER NOT NULL DEFAULT 999,
-        ${PostColumns.COLUMN_SHARE} INTEGER NOT NULL DEFAULT 1000,
+        ${PostColumns.COLUMN_SHARE} INTEGER NOT NULL DEFAULT 100,
         ${PostColumns.COLUMN_VIEWS_POST} INTEGER NOT NULL DEFAULT 1000000,
         ${PostColumns.COLUMN_AUTHOR_AVATAR} TEXT DEFAULT '',
         ${PostColumns.COLUMN_VIDEO_URL} TEXT DEFAULT ''
@@ -117,6 +118,18 @@ class PostDaoImpl(private val db: SQLiteDatabase) : PostDao {
             "${PostColumns.COLUMN_ID} = ?",
             arrayOf(id.toString())
         )
+    }
+
+    override fun updateShareById(id: Long) {
+        Log.d("UpdateShare", "Попытка обновления шеров для поста с id: $id")
+        db.execSQL(
+            """
+           UPDATE posts SET
+               share = share + 1
+           WHERE id = ?;
+        """.trimIndent(), arrayOf(id)
+        )
+        Log.d("UpdateShare", "Обновление шеров для поста с id: $id прошло успешно.")
     }
 
     private fun map(cursor: Cursor): Post {

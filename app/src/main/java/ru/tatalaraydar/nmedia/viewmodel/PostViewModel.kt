@@ -78,6 +78,10 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun remove(id: Long) = repository.removeById(id)
+
+    fun share(id: Long) {
+        repository.updateShareById(id)
+    }
 }
 
 
