@@ -1,6 +1,5 @@
 package ru.tatalaraydar.nmedia.activity
 
-import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -9,19 +8,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import ru.tatalaraydar.nmedia.R
-import ru.tatalaraydar.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.tatalaraydar.nmedia.adapter.OnInteractionListener
-import ru.tatalaraydar.nmedia.adapter.PostViewHolder
 import ru.tatalaraydar.nmedia.adapter.PostsAdapter
 import ru.tatalaraydar.nmedia.databinding.FragmentPostBinding
 import ru.tatalaraydar.nmedia.dto.Post
-import ru.tatalaraydar.nmedia.repository.PostRepositoryInMemory.Companion.formatCount
+
 import ru.tatalaraydar.nmedia.viewmodel.PostViewModel
+import ru.tatalaraydar.nmedia.repository.PostRepositorySQLiteImpl.Companion.formatCount
+
 
 class PostFragment : Fragment() {
     private var postId: Long = 0L
@@ -35,7 +33,6 @@ class PostFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
 
         val binding = FragmentPostBinding.inflate(inflater, container, false)
 
@@ -121,8 +118,6 @@ class PostFragment : Fragment() {
                 startActivity(intent)
             }
         })
-
-
 
 //        viewModel.edited.observe(viewLifecycleOwner) { post ->
 //            if (post.id != 0L) {

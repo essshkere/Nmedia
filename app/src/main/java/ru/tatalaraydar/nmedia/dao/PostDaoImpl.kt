@@ -1,4 +1,4 @@
-package ru.netology.nmedia.dao
+package ru.tatalaraydar.nmedia.dao
 
 import android.content.ContentValues
 import android.database.Cursor
@@ -16,7 +16,7 @@ class PostDaoImpl(private val db: SQLiteDatabase) : PostDao {
         ${PostColumns.COLUMN_LIKED_BY_ME} BOOLEAN NOT NULL DEFAULT 0,
         ${PostColumns.COLUMN_LIKES} INTEGER NOT NULL DEFAULT 999,
         ${PostColumns.COLUMN_SHARE} INTEGER NOT NULL DEFAULT 1000,
-        ${PostColumns.COLUMN_VIEWS_POST} INTEGER NOT NULL DEFAULT 1_000_000,
+        ${PostColumns.COLUMN_VIEWS_POST} INTEGER NOT NULL DEFAULT 1000000,
         ${PostColumns.COLUMN_AUTHOR_AVATAR} TEXT DEFAULT '',
         ${PostColumns.COLUMN_VIDEO_URL} TEXT DEFAULT ''
     );

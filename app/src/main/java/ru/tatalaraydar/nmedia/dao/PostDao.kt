@@ -1,4 +1,4 @@
-package ru.netology.nmedia.dao
+package ru.tatalaraydar.nmedia.dao
 
 import ru.tatalaraydar.nmedia.dto.Post
 

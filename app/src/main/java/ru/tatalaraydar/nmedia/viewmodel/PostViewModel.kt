@@ -6,13 +6,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.repository.PostRepository
-import ru.tatalaraydar.nmedia.repository.PostRepositoryFileImpl
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
-import ru.netology.nmedia.db.AppDb
-import ru.netology.nmedia.dao.PostDaoImpl
+import ru.tatalaraydar.nmedia.db.AppDb
 import ru.tatalaraydar.nmedia.repository.PostRepositorySQLiteImpl
 
 
