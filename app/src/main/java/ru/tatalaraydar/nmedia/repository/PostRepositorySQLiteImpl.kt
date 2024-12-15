@@ -18,23 +18,23 @@ class PostRepositorySQLiteImpl(
     private var posts = emptyList<Post>()
     private val data = MutableLiveData(posts)
 
-    init {
-        posts = dao.getAll()
-        data.value = posts
-    }
+//    init {
+//        posts = dao.getAll()
+//        data.value = posts
+//    }
 
     override fun getAll(): MutableLiveData<List<Post>> = data
 
     override fun save(post: Post) {
-        val id = post.id
-        val saved = dao.save(post)
-        posts = if (id == 0L) {
-            listOf(saved) + posts
-        } else {
-            posts.map {
-                if (it.id != id) it else saved
-            }
-        }
+//        val id = post.id
+//        val saved = dao.save(post)
+//        posts = if (id == 0L) {
+//            listOf(saved) + posts
+//        } else {
+//            posts.map {
+//                if (it.id != id) it else saved
+//            }
+//        }
         data.value = posts
     }
 
