@@ -1,5 +1,6 @@
 package ru.tatalaraydar.nmedia.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
@@ -10,7 +11,7 @@ import ru.tatalaraydar.nmedia.entity.PostEntity
 interface PostDao {
     @Query("SELECT * FROM PostEntity ORDER BY id DESC")
 
-    fun getAll(): List<PostEntity>
+    fun getAll(): LiveData<List<PostEntity>>
 
     @Insert
     fun insert(post: PostEntity)

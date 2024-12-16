@@ -9,7 +9,7 @@ import ru.tatalaraydar.nmedia.repository.PostRepository
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import ru.tatalaraydar.nmedia.db.AppDb
-import ru.tatalaraydar.nmedia.repository.PostRepositorySQLiteImpl
+import ru.tatalaraydar.nmedia.repository.PostRepositoryRoomImpl
 
 
 private val empty = Post(
@@ -24,15 +24,11 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val TAG = "view"
     var postId: Long = 0L
 
-
-    private val repository: PostRepository = PostRepositorySQLiteImpl(
+    private val repository: PostRepository = PostRepositoryRoomImpl(
         AppDb.getInstance(application).postDao()
     )
 
         val data = repository . getAll ()
-
-
-
 
     fun findPostIdById(id: Long): LiveData<Post?> {
         val result = MediatorLiveData<Post?>()

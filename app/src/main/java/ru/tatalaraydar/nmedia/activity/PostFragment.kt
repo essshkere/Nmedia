@@ -18,7 +18,7 @@ import ru.tatalaraydar.nmedia.databinding.FragmentPostBinding
 import ru.tatalaraydar.nmedia.dto.Post
 
 import ru.tatalaraydar.nmedia.viewmodel.PostViewModel
-import ru.tatalaraydar.nmedia.repository.PostRepositorySQLiteImpl.Companion.formatCount
+import ru.tatalaraydar.nmedia.repository.PostRepositoryRoomImpl.Companion.formatCount
 
 
 class PostFragment : Fragment() {

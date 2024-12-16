@@ -1,7 +1,5 @@
 package ru.tatalaraydar.nmedia.adapter
 
-import android.content.Intent
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.tatalaraydar.nmedia.databinding.CardPostBinding
 import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.R
-import ru.tatalaraydar.nmedia.repository.PostRepositorySQLiteImpl.Companion.formatCount
+import ru.tatalaraydar.nmedia.repository.PostRepositoryRoomImpl.Companion.formatCount
 import android.util.Log
 
 
