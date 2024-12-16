@@ -79,9 +79,9 @@ dependencies {
     implementation ("androidx.navigation:navigation-ui-ktx:$nav_version")
     implementation ("androidx.room:room-runtime:$room_version")
     kapt ("androidx.room:room-compiler:$room_version")
-        //implementation platform("com.google.firebase:firebase-bom:$firebase_version")
-//    implementation ("com.google.firebase:firebase-messaging-ktx")
-//    implementation ("com.google.android.gms:play-services-base:$play_services_base_version")
+    implementation(platform("com.google.firebase:firebase-bom:$firebase_version"))
+    implementation ("com.google.firebase:firebase-messaging-ktx")
+    implementation ("com.google.android.gms:play-services-base:$play_services_base_version")
 
     testImplementation ("junit:junit:$junit_version")
     androidTestImplementation ("androidx.test.ext:junit:$ext_junit_version")
