@@ -21,7 +21,7 @@ class AppActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         requestNotificationsPermission()
-        
+
         intent?.let {
             if (it.action != Intent.ACTION_SEND) {
                 return@let
@@ -36,6 +36,7 @@ class AppActivity : AppCompatActivity() {
                     .show()
                 if (text?.contains("edit") == true) {
                 }
+                
                 findNavController(R.id.fragment_container).navigate(
                     R.id.action_feedFragment_to_newPostFragment,
                     Bundle().apply { textArg = text }
