@@ -19,4 +19,10 @@
     <string name="edit_text">edit Text</string>
     <string name="videourl">videoURL</string>
     <string name="preview_video">preview_video</string>
+    <string name="notification_post" translatable="false">User %1$s posted a new post:</string>
+
+    <string name="notification_other" translatable="false">The notification has arrived</string>
+    <string name="notification_user_liked" translatable="false">User %1$s liked %2$s\'s post</string>
+    <string name="channel_remote_name">Server notifications</string>
+    <string name="channel_remote_description">Notifications from remote server</string>
 </resources>

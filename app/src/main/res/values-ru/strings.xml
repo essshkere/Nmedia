@@ -19,4 +19,6 @@
     <string name="edit_text">изменить текст</string>
     <string name="videourl">ссылка на видео</string>
     <string name="preview_video">Предпросмотр видео</string>
+    <string name="channel_remote_name">уведомление имя</string>
+    <string name="channel_remote_description">уведомление описание</string>
 </resources>
