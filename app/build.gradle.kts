@@ -35,6 +35,7 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
     buildFeatures {
         viewBinding = true
     }
@@ -65,6 +66,8 @@ dependencies {
     val room_version = "2.6.1"
     val firebase_version = "33.6.0"
     val play_services_base_version = "18.5.0"
+    val okhttp_version = "4.12.0"
+
 
     implementation ("androidx.core:core-ktx:$core_version")
     implementation ("androidx.appcompat:appcompat:$appcompat_version")
@@ -82,6 +85,7 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:$firebase_version"))
     implementation ("com.google.firebase:firebase-messaging-ktx")
     implementation ("com.google.android.gms:play-services-base:$play_services_base_version")
+    implementation ("com.squareup.okhttp3:okhttp:$okhttp_version")
 
     testImplementation ("junit:junit:$junit_version")
     androidTestImplementation ("androidx.test.ext:junit:$ext_junit_version")
