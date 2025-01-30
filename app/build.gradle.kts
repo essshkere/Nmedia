@@ -26,8 +26,13 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            manifestPlaceholders["usesCleartextTraffic"] = false
+        }
+        debug {
+            manifestPlaceholders["usesCleartextTraffic"] = true
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -66,6 +71,7 @@ dependencies {
     val room_version = "2.6.1"
     val firebase_version = "33.6.0"
     val play_services_base_version = "18.5.0"
+
     val okhttp_version = "4.12.0"
 
 

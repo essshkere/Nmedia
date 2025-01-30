@@ -53,7 +53,7 @@ class PostFragment : Fragment() {
             binding.buttonLikes.text = post?.likes?.let { formatCount(it) } ?: "0 лайков"
             binding.buttonShare.text = post?.share?.let { formatCount(it) } ?: "0 поделились"
             binding.buttonLikes.isChecked = post?.likedByMe == true
-            binding.buttonLikes.setOnClickListener { viewModel.like(post?.id ?: 0) }
+            binding.buttonLikes.setOnClickListener { viewModel.likeById(post?.id ?: 0) }
             binding.buttonShare.setOnClickListener {
                 if (post != null) {
                     sharePost(post)
@@ -65,7 +65,7 @@ class PostFragment : Fragment() {
                     setOnMenuItemClickListener { item ->
                         when (item.itemId) {
                             R.id.remove -> {
-                                viewModel.remove(post?.id ?: 0)
+                                viewModel.removeById(post?.id ?: 0)
                                 findNavController().navigateUp()
                                 true
                             }
@@ -91,11 +91,11 @@ class PostFragment : Fragment() {
         val adapter = PostsAdapter(object : OnInteractionListener {
 
             override fun onRemove(post: Post) {
-                viewModel.remove(post.id)
+                viewModel.removeById(post.id)
             }
 
             override fun onLike(post: Post) {
-                viewModel.like(post.id)
+                viewModel.likeById(post.id)
             }
 
             override fun onEdit(post: Post) {
@@ -129,9 +129,9 @@ class PostFragment : Fragment() {
 //            }
 //        }
 
-        viewModel.data.observe(viewLifecycleOwner) { posts ->
-            adapter.submitList(posts)
-        }
+//        viewModel.data.observe(viewLifecycleOwner) { posts ->
+//            adapter.submitList(posts)
+//        }
 
         return binding.root
     }

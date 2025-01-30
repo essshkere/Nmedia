@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -19,6 +20,9 @@ import ru.tatalaraydar.nmedia.adapter.PostsAdapter
 import ru.tatalaraydar.nmedia.databinding.FragmentFeedBinding
 import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.viewmodel.PostViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.observe
 
 class FeedFragment : Fragment() {
 
@@ -34,11 +38,11 @@ class FeedFragment : Fragment() {
         val adapter = PostsAdapter(object : OnInteractionListener {
 
             override fun onRemove(post: Post) {
-                viewModel.remove(post.id)
+                viewModel.removeById(post.id)
             }
 
             override fun onLike(post: Post) {
-                viewModel.like(post.id)
+                viewModel.likeById(post.id)
             }
 
             override fun onEdit(post: Post) {
@@ -73,8 +77,15 @@ class FeedFragment : Fragment() {
 
         binding.container.adapter = adapter
 
-        viewModel.data.observe(viewLifecycleOwner) { posts ->
-            adapter.submitList(posts)
+        viewModel.data.observe(viewLifecycleOwner) { state ->
+            adapter.submitList(state.posts)
+            binding.progress.isVisible = state.loading
+            binding.errorGroup.isVisible = state.error
+            binding.emptyText.isVisible = state.empty
+        }
+
+        binding.retryButton.setOnClickListener {
+            viewModel.loadPosts()
         }
 
         binding.save.setOnClickListener {

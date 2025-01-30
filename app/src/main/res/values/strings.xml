@@ -8,7 +8,9 @@
     <string name="share_button_description">button share</string>
     <string name="views_button_description">button views</string>
     <string name="description_post_like">description post like\n</string>
-
+    <string name="retry_loading">Retry</string>
+    <string name="empty_posts">There are no posts.\nIf you create a new post, it will appear here</string>
+    <string name="error_loading">Something went wrong. Try again later</string>
     <string name="error_empty_content">Content can\'t be empty</string>
     <string name="menu_remove">Remove</string>
     <string name="post_text">Post Text</string>
