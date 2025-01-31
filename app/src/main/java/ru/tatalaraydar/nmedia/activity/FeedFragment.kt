@@ -39,6 +39,7 @@ class FeedFragment : Fragment() {
 
             override fun onRemove(post: Post) {
                 viewModel.removeById(post.id)
+
             }
 
             override fun onLike(id: Long) {
@@ -47,6 +48,7 @@ class FeedFragment : Fragment() {
 
             override fun onEdit(post: Post) {
                 viewModel.startEditing(post)
+
             }
 
             override fun onShare(post: Post) {
@@ -59,6 +61,7 @@ class FeedFragment : Fragment() {
                 val shareIntent =
                     Intent.createChooser(intent, getString(R.string.chooser_share_post))
                 startActivity(shareIntent)
+
             }
 
             override fun onVideolink(post: Post) {
@@ -90,6 +93,7 @@ class FeedFragment : Fragment() {
 
         binding.save.setOnClickListener {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
+            viewModel.loadPosts()
         }
 
         viewModel.edited.observe(viewLifecycleOwner) { post ->
@@ -98,6 +102,7 @@ class FeedFragment : Fragment() {
                     R.id.action_feedFragment_to_editPostFragment,
                     Bundle().apply { textArg = post.content })
             }
+            viewModel.loadPosts()
         }
 
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->

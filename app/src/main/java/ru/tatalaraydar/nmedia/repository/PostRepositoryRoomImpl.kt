@@ -45,19 +45,6 @@ class PostRepositoryRoomImpl : PostRepository {
         }
     }
 
-//    override fun getAll(): List<Post> {
-//        val request: Request = Request.Builder()
-//            .url("${BASE_URL}/api/slow/posts")
-//            .build()
-//
-//        return client.newCall(request)
-//            .execute()
-//            .let { it.body?.string() ?: throw RuntimeException("body is null") }
-//            .let {
-//                gson.fromJson(it, typeToken.type)
-//            }
-//    }
-
     override fun save(post: Post) {
         val request: Request = Request.Builder()
             .post(gson.toJson(post).toRequestBody(jsonType))
@@ -68,8 +55,9 @@ class PostRepositoryRoomImpl : PostRepository {
             .execute()
             .close()
 
-        val currentPosts = _posts.value ?: emptyList()
-        _posts.value = currentPosts + post
+        val currentPosts = posts.value ?: emptyList()
+        _posts.postValue(currentPosts + post)
+
     }
 
     override fun removeById(id: Long) {
@@ -109,6 +97,7 @@ class PostRepositoryRoomImpl : PostRepository {
         _posts.postValue(currentPosts.map {
             if (it.id == id) it.copy(likedByMe = !it.likedByMe) else it
         })
+
     }
 
     private fun getPostById(id: Long): Post {
