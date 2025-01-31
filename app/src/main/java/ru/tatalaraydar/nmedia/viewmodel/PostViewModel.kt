@@ -62,23 +62,19 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     var postId: Long = 0L
 
 
-
-
-
     fun findPostIdById(id: Long): LiveData<Post?> {
         val result = MediatorLiveData<Post?>()
-//        result.addSource(data) { posts ->
-//            Log.d(TAG, "findPostById called with id: $id")
-//            result.value = posts.find { it.id == id }
-//            Log.d(TAG, "Post found: $result.value")
-//        }
+
         return result
     }
 
 
 
+
     fun likeById(id: Long) {
-        thread { repository.likeById(id) }
+        thread {
+            repository.likeById(id)
+        }
     }
 
     fun save() {
