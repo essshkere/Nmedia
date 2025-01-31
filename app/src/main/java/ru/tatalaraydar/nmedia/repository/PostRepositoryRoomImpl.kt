@@ -12,6 +12,7 @@ import ru.tatalaraydar.nmedia.entity.PostEntity
 import kotlin.math.floor
 import java.util.concurrent.TimeUnit
 import okhttp3.Request
+import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
 class PostRepositoryRoomImpl: PostRepository {
@@ -36,19 +37,47 @@ class PostRepositoryRoomImpl: PostRepository {
     }
 
     override fun save(post: Post) {
-        TODO("Not yet implemented")
+        val request: Request = Request.Builder()
+            .post(gson.toJson(post).toRequestBody(jsonType))
+            .url("${BASE_URL}/api/slow/posts")
+            .build()
+
+        client.newCall(request)
+            .execute()
+            .close()
     }
 
     override fun removeById(id: Long) {
-        TODO("Not yet implemented")
+        val request: Request = Request.Builder()
+            .delete()
+            .url("${BASE_URL}/api/slow/posts/$id")
+            .build()
+
+        client.newCall(request)
+            .execute()
+            .close()
     }
 
     override fun likeById(id: Long) {
-        TODO("Not yet implemented")
+        val request: Request = Request.Builder()
+            .post(RequestBody.create(jsonType, "{}"))
+            .url("${BASE_URL}/api/slow/posts/$id/likes")
+            .build()
+
+        client.newCall(request)
+            .execute()
+            .close()
     }
 
     override fun updateShareById(id: Long) {
-        TODO("Not yet implemented")
+        val request: Request = Request.Builder()
+            .post(RequestBody.create(jsonType, "{}"))
+            .url("${BASE_URL}/api/slow/posts/$id/shares")
+            .build()
+
+        client.newCall(request)
+            .execute()
+            .close()
     }
 
 //    override fun save(post: Post) {
