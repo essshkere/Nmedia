@@ -7,7 +7,7 @@ interface PostRepository {
     fun getAll(): List<Post>
     fun save(post: Post)
     fun removeById(id: Long)
-    fun likeById(id: Long)
+    fun likeById(post: Post): Post
     fun updateShareById(id: Long)
 
 }

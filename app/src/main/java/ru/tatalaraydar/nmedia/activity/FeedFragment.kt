@@ -26,7 +26,7 @@ import androidx.lifecycle.observe
 
 class FeedFragment : Fragment() {
 
-    val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,7 +34,7 @@ class FeedFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val binding = FragmentFeedBinding.inflate(inflater, container, false)
-
+        val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
         val adapter = PostsAdapter(object : OnInteractionListener {
 
             override fun onRemove(post: Post) {
@@ -42,8 +42,8 @@ class FeedFragment : Fragment() {
 
             }
 
-            override fun onLike(id: Long) {
-                viewModel.likeById(id)
+            override fun onLike(post: Post) {
+                viewModel.likeById(post)
             }
 
             override fun onEdit(post: Post) {
@@ -102,7 +102,6 @@ class FeedFragment : Fragment() {
                     R.id.action_feedFragment_to_editPostFragment,
                     Bundle().apply { textArg = post.content })
             }
-            viewModel.loadPosts()
         }
 
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -114,6 +113,8 @@ class FeedFragment : Fragment() {
                 viewModel.updatePost(postId, updatedContent)
             }
         }
+
+
         return binding.root
     }
 }

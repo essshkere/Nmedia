@@ -74,31 +74,51 @@ class PostRepositoryRoomImpl : PostRepository {
         _posts.postValue(currentPosts.filter { it.id != id })
     }
 
-    override fun likeById(id: Long) {
-        val post = getPostById(id)
-        if (post.likedByMe) {
+
+    override fun likeById(post: Post): Post {
+        val response = if (post.likedByMe) {
             val request: Request = Request.Builder()
                 .delete()
-                .url("${BASE_URL}/api/slow/posts/$id/likes")
+                .url("${BASE_URL}/api/slow/posts/${post.id}/likes")
                 .build()
-            client.newCall(request)
-                .execute()
-                .close()
+            client.newCall(request).execute()
         } else {
             val request: Request = Request.Builder()
                 .post("{}".toRequestBody(jsonType))
-                .url("${BASE_URL}/api/slow/posts/$id/likes")
+                .url("${BASE_URL}/api/slow/posts/${post.id}/likes")
                 .build()
-            client.newCall(request)
-                .execute()
-                .close()
+            client.newCall(request).execute()
         }
-        val currentPosts = _posts.value ?: emptyList()
-        _posts.postValue(currentPosts.map {
-            if (it.id == id) it.copy(likedByMe = !it.likedByMe) else it
-        })
 
+        val responseBody = response.body?.string() ?: throw RuntimeException("body is null")
+        return gson.fromJson(responseBody, Post::class.java)
     }
+
+//    override fun likeById(id: Long) {
+//        val post = getPostById(id)
+//        if (post.likedByMe) {
+//            val request: Request = Request.Builder()
+//                .delete()
+//                .url("${BASE_URL}/api/slow/posts/$id/likes")
+//                .build()
+//            client.newCall(request)
+//                .execute()
+//                .close()
+//        } else {
+//            val request: Request = Request.Builder()
+//                .post("{}".toRequestBody(jsonType))
+//                .url("${BASE_URL}/api/slow/posts/$id/likes")
+//                .build()
+//            client.newCall(request)
+//                .execute()
+//                .close()
+//        }
+//        val currentPosts = _posts.value ?: emptyList()
+//        _posts.postValue(currentPosts.map {
+//            if (it.id == id) it.copy(likedByMe = !it.likedByMe) else it
+//        })
+//
+//    }
 
     private fun getPostById(id: Long): Post {
         val request: Request = Request.Builder()

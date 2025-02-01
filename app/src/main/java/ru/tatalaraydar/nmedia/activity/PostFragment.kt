@@ -53,7 +53,7 @@ class PostFragment : Fragment() {
             binding.buttonLikes.text = post?.likes?.let { formatCount(it) } ?: "0 лайков"
             binding.buttonShare.text = post?.share?.let { formatCount(it) } ?: "0 поделились"
             binding.buttonLikes.isChecked = post?.likedByMe == true
-            binding.buttonLikes.setOnClickListener { viewModel.likeById(post?.id ?: 0) }
+            binding.buttonLikes.setOnClickListener { post?.let { it1 -> viewModel.likeById(it1) } }
             binding.buttonShare.setOnClickListener {
                 if (post != null) {
                     sharePost(post)
@@ -94,8 +94,8 @@ class PostFragment : Fragment() {
                 viewModel.removeById(post.id)
             }
 
-            override fun onLike(id:Long) {
-                viewModel.likeById(id)
+            override fun onLike(post: Post) {
+                viewModel.likeById(post)
             }
 
             override fun onEdit(post: Post) {

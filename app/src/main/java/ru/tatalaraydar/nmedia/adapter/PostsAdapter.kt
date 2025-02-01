@@ -15,7 +15,7 @@ import android.util.Log
 
 
 interface OnInteractionListener {
-    fun onLike(id: Long) {}
+    fun onLike(post: Post) {}
     fun onEdit(post: Post) {}
     fun onRemove(post: Post) {}
     fun onShare(post: Post) {}
@@ -54,7 +54,7 @@ class PostViewHolder(
             buttonShare.text = formatCount(post.share)
 
             buttonShare.setOnClickListener { onInteractionListener.onShare(post) }
-            buttonLikes.setOnClickListener { onInteractionListener.onLike(post.id) }
+            buttonLikes.setOnClickListener { onInteractionListener.onLike(post) }
             content.setOnClickListener {
                 onInteractionListener.onViewPost(post)
                 Log.i(TAG, "press content")
