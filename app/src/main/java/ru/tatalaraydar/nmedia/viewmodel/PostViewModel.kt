@@ -43,14 +43,11 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun loadPosts() {
         thread {
-            // Начинаем загрузку
             _data.postValue(FeedModel(loading = true))
             try {
-                // Данные успешно получены
                 val posts = repository.getAll()
                 FeedModel(posts = posts, empty = posts.isEmpty())
             } catch (e: IOException) {
-                // Получена ошибка
                 FeedModel(error = true)
             }.also(_data::postValue)
         }
@@ -73,9 +70,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun likeById(post: Post) {
         thread {
-            repository.likeById(post)
+            val currentPosts = _data.value?.posts ?: emptyList()
+            _data.postValue(_data.value?.copy(posts = currentPosts.map {
+                if (it.id == post.id) repository.likeById(post) else it
+            }))
         }
     }
+
 
     fun save() {
         edited.value?.let {

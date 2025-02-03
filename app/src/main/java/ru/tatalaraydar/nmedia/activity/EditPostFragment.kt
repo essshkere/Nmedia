@@ -33,8 +33,10 @@ class EditPostFragment : Fragment() {
         binding.saveButton.setOnClickListener {
             viewModel.changeContent(binding.editPostContent.text.toString())
             viewModel.save()
-            findNavController().navigateUp()
+        }
 
+        viewModel.postCreated.observe(viewLifecycleOwner) {
+            findNavController().navigateUp()
         }
 
         return binding.root
