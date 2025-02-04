@@ -36,8 +36,10 @@ class EditPostFragment : Fragment() {
         }
 
         viewModel.postCreated.observe(viewLifecycleOwner) {
+            viewModel.loadPosts()
             findNavController().navigateUp()
         }
+
 
         return binding.root
     }

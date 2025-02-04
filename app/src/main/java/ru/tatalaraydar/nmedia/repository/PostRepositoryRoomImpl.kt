@@ -5,16 +5,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-
-import ru.tatalaraydar.nmedia.dto.Post
-
 import kotlin.math.floor
-import java.util.concurrent.TimeUnit
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
-
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.OkHttpClient
+import ru.tatalaraydar.nmedia.dto.Post
+import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 class PostRepositoryRoomImpl : PostRepository {
 
@@ -43,6 +42,28 @@ class PostRepositoryRoomImpl : PostRepository {
         } catch (e: Exception) {
             emptyList()
         }
+    }
+
+    override fun getAllAsync(callback: PostRepository.GetAllCallback) {
+        val request: Request = Request.Builder()
+            .url("${BASE_URL}/api/slow/posts")
+            .build()
+
+        client.newCall(request)
+            .enqueue(object : Callback {
+                override fun onResponse(call: Call, response: Response) {
+                    val body = response.body?.string() ?: throw RuntimeException("body is null")
+                    try {
+                        callback.onSuccess(gson.fromJson(body, typeToken.type))
+                    } catch (e: Exception) {
+                        callback.onError(e)
+                    }
+                }
+
+                override fun onFailure(call: Call, e: IOException) {
+                    callback.onError(e)
+                }
+            })
     }
 
     override fun save(post: Post) {
@@ -74,7 +95,6 @@ class PostRepositoryRoomImpl : PostRepository {
         _posts.postValue(currentPosts.filter { it.id != id })
     }
 
-
     override fun likeById(post: Post): Post {
         val response = if (post.likedByMe) {
             val request: Request = Request.Builder()
@@ -93,32 +113,6 @@ class PostRepositoryRoomImpl : PostRepository {
         val responseBody = response.body?.string() ?: throw RuntimeException("body is null")
         return gson.fromJson(responseBody, Post::class.java)
     }
-
-//    override fun likeById(id: Long) {
-//        val post = getPostById(id)
-//        if (post.likedByMe) {
-//            val request: Request = Request.Builder()
-//                .delete()
-//                .url("${BASE_URL}/api/slow/posts/$id/likes")
-//                .build()
-//            client.newCall(request)
-//                .execute()
-//                .close()
-//        } else {
-//            val request: Request = Request.Builder()
-//                .post("{}".toRequestBody(jsonType))
-//                .url("${BASE_URL}/api/slow/posts/$id/likes")
-//                .build()
-//            client.newCall(request)
-//                .execute()
-//                .close()
-//        }
-//        val currentPosts = _posts.value ?: emptyList()
-//        _posts.postValue(currentPosts.map {
-//            if (it.id == id) it.copy(likedByMe = !it.likedByMe) else it
-//        })
-//
-//    }
 
     private fun getPostById(id: Long): Post {
         val request: Request = Request.Builder()

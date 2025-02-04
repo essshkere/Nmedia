@@ -39,7 +39,6 @@ class NewPostFragment : Fragment() {
                     viewModel.changeContent(text)
                     viewModel.save()
                 }
-                findNavController().navigateUp()
             }
         }
         viewModel.postCreated.observe(viewLifecycleOwner) {
