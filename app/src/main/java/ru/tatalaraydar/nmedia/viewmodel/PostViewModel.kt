@@ -6,14 +6,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
-import okhttp3.*
-import okhttp3.Request
+
 import okhttp3.OkHttpClient
-import okhttp3.Call
-import okhttp3.Callback
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.IOException
 import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.model.FeedModel
 import ru.tatalaraydar.nmedia.repository.PostRepository
@@ -38,6 +32,9 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     val edited = MutableLiveData(empty)
 
+    private val _error = MutableLiveData<Throwable>()
+    val error: LiveData<Throwable> get() = _error
+
     private val _postCreated = SingleLiveEvent<Unit>()
 
     val postCreated: LiveData<Unit>
@@ -56,45 +53,65 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun save() {
         edited.value?.let { post ->
-            val json = gson.toJson(post)
-            val request = Request.Builder()
-                .url("https://your-api.com/save")
-                .post(json.toRequestBody("application/json".toMediaTypeOrNull()))
-                .build()
-            client.newCall(request).enqueue(object : Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    e.printStackTrace()
+            repository.save(post, object : PostRepository.CustomCallback<Unit> {
+                override fun onSuccess(result: Unit) {
+                    _postCreated.postValue(Unit)
                 }
-                override fun onResponse(call: Call, response: Response) {
-                    if (response.isSuccessful) {
-                        _postCreated.postValue(Unit)
-                    }
+                override fun onError(error: Throwable) {
+                    _error.postValue(error)
                 }
             })
         }
         edited.value = empty
     }
 
-    fun likeById(post: Post) {
-        val request = Request.Builder()
-            .url("https://your-api.com/like/${post.id}")
-            .post("".toRequestBody("application/json".toMediaTypeOrNull()))
-            .build()
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
+    fun removeById(id: Long) {
+        val old = _data.value?.posts.orEmpty()
+        _data.value = _data.value?.copy(posts = _data.value?.posts.orEmpty().filter { it.id != id })
+        repository.removeById(id, object : PostRepository.CustomCallback<Unit> {
+            override fun onSuccess(result: Unit) {
             }
-
-            override fun onResponse(call: Call, response: Response) {
-                if (response.isSuccessful) {
-                    val currentPosts = _data.value?.posts ?: emptyList()
-                    _data.postValue(_data.value?.copy(posts = currentPosts.map {
-                        if (it.id == post.id) repository.likeById(post) else it
-                    }))
-                }
+            override fun onError(error: Throwable) {
+                _data.postValue(_data.value?.copy(posts = old))
             }
         })
     }
+
+
+    fun likeById(post: Post) {
+        repository.likeById(post, object : PostRepository.CustomCallback<Post> {
+            override fun onSuccess(updatedPost: Post) {
+                val updatedPostWithLike = updatedPost.copy(likes = updatedPost.likes + 1)
+                val currentPosts = _data.value?.posts ?: emptyList()
+                _data.postValue(
+                    _data.value?.copy(
+                        posts = currentPosts.map {
+                            if (it.id == updatedPostWithLike.id) updatedPostWithLike else it
+                        }))}
+            override fun onError(error: Throwable) {
+                error.printStackTrace()
+            }})}
+
+//    fun likeByIdOld(post: Post) {
+//        val request = Request.Builder()
+//            .url("https://your-api.com/like/${post.id}")
+//            .post("".toRequestBody("application/json".toMediaTypeOrNull()))
+//            .build()
+//        client.newCall(request).enqueue(object : Callback {
+//            override fun onFailure(call: Call, e: IOException) {
+//                e.printStackTrace()
+//            }
+//
+//            override fun onResponse(call: Call, response: Response) {
+//                if (response.isSuccessful) {
+//                    val currentPosts = _data.value?.posts ?: emptyList()
+//                    _data.postValue(_data.value?.copy(posts = currentPosts.map {
+//                        if (it.id == post.id) repository.likeById(post) else it
+//                    }))
+//                }
+//            }
+//        })
+//    }
 
     //    fun likeById(post: Post) {
 //        thread {
@@ -104,25 +121,7 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 //            }))
 //        }
 //    }
-    fun removeById(id: Long) {
-        val old = _data.value?.posts.orEmpty()
-        _data.value = _data.value?.copy(posts = _data.value?.posts.orEmpty().filter { it.id != id })
-        val request = Request.Builder()
-            .url("https://your-api-url/posts/$id")
-            .delete()
-            .build()
-        val client = OkHttpClient()
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                _data.postValue(_data.value?.copy(posts = old))
-            }
-            override fun onResponse(call: Call, response: Response) {
-                if (!response.isSuccessful) {
-                    _data.postValue(_data.value?.copy(posts = old))
-                }
-            }
-        })
-    }
+
 
 //    fun removeById(id: Long) {
 //        thread {

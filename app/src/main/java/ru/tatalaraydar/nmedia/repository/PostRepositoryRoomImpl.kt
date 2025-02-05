@@ -8,6 +8,7 @@ import com.google.gson.reflect.TypeToken
 import kotlin.math.floor
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.OkHttpClient
@@ -66,53 +67,116 @@ class PostRepositoryRoomImpl : PostRepository {
             })
     }
 
-    override fun save(post: Post) {
-        val request: Request = Request.Builder()
-            .post(gson.toJson(post).toRequestBody(jsonType))
-            .url("${BASE_URL}/api/slow/posts")
+//    fun saveOld(post: Post) {
+//        val request: Request = Request.Builder()
+//            .post(gson.toJson(post).toRequestBody(jsonType))
+//            .url("${BASE_URL}/api/slow/posts")
+//            .build()
+//
+//        client.newCall(request)
+//            .execute()
+//            .close()
+//
+//        val currentPosts = posts.value ?: emptyList()
+//        _posts.postValue(currentPosts + post)
+//
+//    }
+
+    override fun save(post: Post, callback: PostRepository.CustomCallback<Unit>) {
+        val json = gson.toJson(post)
+        val request = Request.Builder()
+            .url("https://your-api.com/save")
+            .post(json.toRequestBody("application/json".toMediaTypeOrNull()))
             .build()
 
-        client.newCall(request)
-            .execute()
-            .close()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                callback.onError(e)
+            }
 
-        val currentPosts = posts.value ?: emptyList()
-        _posts.postValue(currentPosts + post)
-
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    callback.onSuccess(Unit)
+                } else {
+                    callback.onError(IOException("Unexpected response code: ${response.code}"))
+                }
+            }
+        })
     }
 
-    override fun removeById(id: Long) {
-        val request: Request = Request.Builder()
+
+    override fun removeById (id: Long, callback: PostRepository.CustomCallback<Unit>){
+        val request = Request.Builder()
+            .url("https://your-api-url/posts/$id")
             .delete()
-            .url("${BASE_URL}/api/slow/posts/$id")
             .build()
-
-        client.newCall(request)
-            .execute()
-            .close()
-
-        val currentPosts = _posts.value ?: emptyList()
-        _posts.postValue(currentPosts.filter { it.id != id })
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                callback.onError(e)
+            }
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    callback.onSuccess(Unit)
+                } else {
+                    callback.onError(IOException("Unexpected response code: ${response.code}"))
+                }
+            }
+        })
     }
 
-    override fun likeById(post: Post): Post {
-        val response = if (post.likedByMe) {
-            val request: Request = Request.Builder()
-                .delete()
-                .url("${BASE_URL}/api/slow/posts/${post.id}/likes")
-                .build()
-            client.newCall(request).execute()
-        } else {
-            val request: Request = Request.Builder()
-                .post("{}".toRequestBody(jsonType))
-                .url("${BASE_URL}/api/slow/posts/${post.id}/likes")
-                .build()
-            client.newCall(request).execute()
-        }
 
-        val responseBody = response.body?.string() ?: throw RuntimeException("body is null")
-        return gson.fromJson(responseBody, Post::class.java)
+//    override fun removeById(id: Long) {
+//        val request: Request = Request.Builder()
+//            .delete()
+//            .url("${BASE_URL}/api/slow/posts/$id")
+//            .build()
+//
+//        client.newCall(request)
+//            .execute()
+//            .close()
+//
+//        val currentPosts = _posts.value ?: emptyList()
+//        _posts.postValue(currentPosts.filter { it.id != id })
+//    }
+
+    override fun likeById(post: Post, callback: PostRepository.CustomCallback<Post>): Post {
+        val request = Request.Builder()
+            .url("https://your-api.com/like/${post.id}")
+            .post("".toRequestBody("application/json".toMediaTypeOrNull()))
+            .build()
+        client.newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                callback.onError(e)
+            }
+            override fun onResponse(call: Call, response: Response) {
+                if (response.isSuccessful) {
+                    callback.onSuccess(post)
+                } else {
+                    callback.onError(IOException("Unexpected response code: ${response.code}"))
+                }
+            }
+        })
+        return post
     }
+
+//    override fun likeById(post: Post): Post {
+//        val response = if (post.likedByMe) {
+//            val request: Request = Request.Builder()
+//                .delete()
+//                .url("${BASE_URL}/api/slow/posts/${post.id}/likes")
+//                .build()
+//            client.newCall(request).execute()
+//        } else {
+//            val request: Request = Request.Builder()
+//                .post("{}".toRequestBody(jsonType))
+//                .url("${BASE_URL}/api/slow/posts/${post.id}/likes")
+//                .build()
+//            client.newCall(request).execute()
+//        }
+//
+//        val responseBody = response.body?.string() ?: throw RuntimeException("body is null")
+//        return gson.fromJson(responseBody, Post::class.java)
+//    }
 
     private fun getPostById(id: Long): Post {
         val request: Request = Request.Builder()
@@ -134,7 +198,6 @@ class PostRepositoryRoomImpl : PostRepository {
         client.newCall(request)
             .execute()
             .close()
-
         val currentPosts = _posts.value ?: emptyList()
         _posts.postValue(currentPosts.map {
             if (it.id == id) it.copy(share = it.share + 1) else it
