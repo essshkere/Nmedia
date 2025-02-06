@@ -85,7 +85,7 @@ class PostRepositoryRoomImpl : PostRepository {
     override fun save(post: Post, callback: PostRepository.CustomCallback<Unit>) {
         val json = gson.toJson(post)
         val request = Request.Builder()
-            .url("https://your-api.com/save")
+            .url("${BASE_URL}/api/slow/posts")
             .post(json.toRequestBody("application/json".toMediaTypeOrNull()))
             .build()
 
@@ -107,7 +107,7 @@ class PostRepositoryRoomImpl : PostRepository {
 
     override fun removeById (id: Long, callback: PostRepository.CustomCallback<Unit>){
         val request = Request.Builder()
-            .url("https://your-api-url/posts/$id")
+            .url("${BASE_URL}/api/slow/posts/$id")
             .delete()
             .build()
         client.newCall(request).enqueue(object : Callback {
@@ -140,8 +140,9 @@ class PostRepositoryRoomImpl : PostRepository {
 //    }
 
     override fun likeById(post: Post, callback: PostRepository.CustomCallback<Post>): Post {
+
         val request = Request.Builder()
-            .url("https://your-api.com/like/${post.id}")
+            .url("${BASE_URL}/api/slow/posts/${post.id}/likes")
             .post("".toRequestBody("application/json".toMediaTypeOrNull()))
             .build()
         client.newCall(request).enqueue(object : Callback {
@@ -149,8 +150,10 @@ class PostRepositoryRoomImpl : PostRepository {
                 callback.onError(e)
             }
             override fun onResponse(call: Call, response: Response) {
+                val body = response.body?.string() ?: throw RuntimeException("body is null")
+
                 if (response.isSuccessful) {
-                    callback.onSuccess(post)
+                    callback.onSuccess(gson.fromJson(body, Post::class.java))
                 } else {
                     callback.onError(IOException("Unexpected response code: ${response.code}"))
                 }
