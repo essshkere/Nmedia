@@ -73,20 +73,16 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             }
             override fun onError(error: Throwable) {
                 _data.postValue(_data.value?.copy(posts = old))
-            }
-        })
-    }
-
+            }})}
 
     fun likeById(post: Post) {
         repository.likeById(post, object : PostRepository.CustomCallback<Post> {
             override fun onSuccess(updatedPost: Post) {
-                val updatedPostWithLike = updatedPost.copy(likes = updatedPost.likes + 1)
                 val currentPosts = _data.value?.posts ?: emptyList()
                 _data.postValue(
                     _data.value?.copy(
                         posts = currentPosts.map {
-                            if (it.id == updatedPostWithLike.id) updatedPostWithLike else it
+                            if (it.id == updatedPost.id) updatedPost else it
                         }))}
             override fun onError(error: Throwable) {
                 error.printStackTrace()

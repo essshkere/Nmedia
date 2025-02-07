@@ -140,25 +140,21 @@ class PostRepositoryRoomImpl : PostRepository {
 //    }
 
     override fun likeById(post: Post, callback: PostRepository.CustomCallback<Post>): Post {
-
+        val method = if (post.likedByMe) "DELETE" else "POST"
         val request = Request.Builder()
             .url("${BASE_URL}/api/slow/posts/${post.id}/likes")
-            .post("".toRequestBody("application/json".toMediaTypeOrNull()))
+            .method(method, "".toRequestBody("application/json".toMediaTypeOrNull()))
             .build()
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                callback.onError(e)
-            }
+                callback.onError(e)            }
             override fun onResponse(call: Call, response: Response) {
                 val body = response.body?.string() ?: throw RuntimeException("body is null")
-
                 if (response.isSuccessful) {
                     callback.onSuccess(gson.fromJson(body, Post::class.java))
                 } else {
                     callback.onError(IOException("Unexpected response code: ${response.code}"))
-                }
-            }
-        })
+                }}})
         return post
     }
 
