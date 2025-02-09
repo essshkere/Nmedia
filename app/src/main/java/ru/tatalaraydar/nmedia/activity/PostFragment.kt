@@ -56,16 +56,9 @@ class PostFragment : Fragment() {
                 }
             }
 
-            val avatarUrl = "http://10.0.2.2:9999/avatars/${post?.authorAvatar}"
-            Log.d("AvatarURL", avatarUrl)
 
-            Glide.with(requireContext())
-                .load(avatarUrl)
-                .circleCrop()
-                .placeholder(R.drawable.baseline_visibility_24)
-                .error(R.drawable.ic_cancel_48)
-                .timeout(10_000)
-                .into(binding.avatar)
+
+
 
             binding.menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {

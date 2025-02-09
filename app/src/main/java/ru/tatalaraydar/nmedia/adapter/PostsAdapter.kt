@@ -12,6 +12,8 @@ import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.R
 import ru.tatalaraydar.nmedia.repository.PostRepositoryRoomImpl.Companion.formatCount
 import android.util.Log
+import androidx.core.content.ContentProviderCompat.requireContext
+import com.bumptech.glide.Glide
 
 
 interface OnInteractionListener {
@@ -95,6 +97,14 @@ class PostViewHolder(
             }
 
         }
+        val avatarUrl = "http://10.0.2.2:9999/avatars/${post?.authorAvatar}"
+        Glide.with(binding.avatar)
+            .load(avatarUrl)
+            .circleCrop()
+            .placeholder(R.drawable.baseline_visibility_24)
+            .error(R.drawable.ic_cancel_48)
+            .timeout(10_000)
+            .into(binding.avatar)
     }
 }
 
