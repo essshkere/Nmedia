@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("org.jetbrains.kotlin.kapt")
-    id ("com.google.gms.google-services")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.media3.common.ktx)
 
+
     val core_version = "1.15.0"
     val appcompat_version = "1.7.0"
     val mdc_version = "1.12.0"
@@ -74,26 +75,32 @@ dependencies {
 
     val okhttp_version = "4.12.0"
 
+    val glide_version = "4.16.0"
 
-    implementation ("androidx.core:core-ktx:$core_version")
-    implementation ("androidx.appcompat:appcompat:$appcompat_version")
-    implementation ("com.google.android.material:material:$mdc_version")
-    implementation ("androidx.constraintlayout:constraintlayout:$constraintlayout_version")
-    implementation ("androidx.recyclerview:recyclerview:$recyclerview_version")
-    implementation ("androidx.activity:activity-ktx:$activity_version")
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
-    implementation ("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
-    implementation ("com.google.code.gson:gson:$gson_version")
-    implementation ("androidx.navigation:navigation-fragment-ktx:$nav_version")
-    implementation ("androidx.navigation:navigation-ui-ktx:$nav_version")
-    implementation ("androidx.room:room-runtime:$room_version")
-    kapt ("androidx.room:room-compiler:$room_version")
+
+
+    implementation("androidx.core:core-ktx:$core_version")
+    implementation("androidx.appcompat:appcompat:$appcompat_version")
+    implementation("com.google.android.material:material:$mdc_version")
+    implementation("androidx.constraintlayout:constraintlayout:$constraintlayout_version")
+    implementation("androidx.recyclerview:recyclerview:$recyclerview_version")
+    implementation("androidx.activity:activity-ktx:$activity_version")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version")
+    implementation("com.google.code.gson:gson:$gson_version")
+    implementation("androidx.navigation:navigation-fragment-ktx:$nav_version")
+    implementation("androidx.navigation:navigation-ui-ktx:$nav_version")
+    implementation("androidx.room:room-runtime:$room_version")
+    kapt("androidx.room:room-compiler:$room_version")
     implementation(platform("com.google.firebase:firebase-bom:$firebase_version"))
-    implementation ("com.google.firebase:firebase-messaging-ktx")
-    implementation ("com.google.android.gms:play-services-base:$play_services_base_version")
-    implementation ("com.squareup.okhttp3:okhttp:$okhttp_version")
+    implementation("com.google.firebase:firebase-messaging-ktx")
+    implementation("com.google.android.gms:play-services-base:$play_services_base_version")
+    implementation("com.squareup.okhttp3:okhttp:$okhttp_version")
 
-    testImplementation ("junit:junit:$junit_version")
-    androidTestImplementation ("androidx.test.ext:junit:$ext_junit_version")
-    androidTestImplementation ("androidx.test.espresso:espresso-core:$espresso_core_version")
+    implementation ("com.github.bumptech.glide:glide:$glide_version")
+
+
+    testImplementation("junit:junit:$junit_version")
+    androidTestImplementation("androidx.test.ext:junit:$ext_junit_version")
+    androidTestImplementation("androidx.test.espresso:espresso-core:$espresso_core_version")
 }

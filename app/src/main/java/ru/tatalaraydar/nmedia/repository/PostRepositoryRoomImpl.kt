@@ -67,21 +67,6 @@ class PostRepositoryRoomImpl : PostRepository {
             })
     }
 
-//    fun saveOld(post: Post) {
-//        val request: Request = Request.Builder()
-//            .post(gson.toJson(post).toRequestBody(jsonType))
-//            .url("${BASE_URL}/api/slow/posts")
-//            .build()
-//
-//        client.newCall(request)
-//            .execute()
-//            .close()
-//
-//        val currentPosts = posts.value ?: emptyList()
-//        _posts.postValue(currentPosts + post)
-//
-//    }
-
     override fun save(post: Post, callback: PostRepository.CustomCallback<Unit>) {
         val json = gson.toJson(post)
         val request = Request.Builder()
@@ -104,7 +89,6 @@ class PostRepositoryRoomImpl : PostRepository {
         })
     }
 
-
     override fun removeById (id: Long, callback: PostRepository.CustomCallback<Unit>){
         val request = Request.Builder()
             .url("${BASE_URL}/api/slow/posts/$id")
@@ -124,21 +108,6 @@ class PostRepositoryRoomImpl : PostRepository {
         })
     }
 
-
-//    override fun removeById(id: Long) {
-//        val request: Request = Request.Builder()
-//            .delete()
-//            .url("${BASE_URL}/api/slow/posts/$id")
-//            .build()
-//
-//        client.newCall(request)
-//            .execute()
-//            .close()
-//
-//        val currentPosts = _posts.value ?: emptyList()
-//        _posts.postValue(currentPosts.filter { it.id != id })
-//    }
-
     override fun likeById(post: Post, callback: PostRepository.CustomCallback<Post>): Post {
         val method = if (post.likedByMe) "DELETE" else "POST"
         val request = Request.Builder()
@@ -157,25 +126,6 @@ class PostRepositoryRoomImpl : PostRepository {
                 }}})
         return post
     }
-
-//    override fun likeById(post: Post): Post {
-//        val response = if (post.likedByMe) {
-//            val request: Request = Request.Builder()
-//                .delete()
-//                .url("${BASE_URL}/api/slow/posts/${post.id}/likes")
-//                .build()
-//            client.newCall(request).execute()
-//        } else {
-//            val request: Request = Request.Builder()
-//                .post("{}".toRequestBody(jsonType))
-//                .url("${BASE_URL}/api/slow/posts/${post.id}/likes")
-//                .build()
-//            client.newCall(request).execute()
-//        }
-//
-//        val responseBody = response.body?.string() ?: throw RuntimeException("body is null")
-//        return gson.fromJson(responseBody, Post::class.java)
-//    }
 
     private fun getPostById(id: Long): Post {
         val request: Request = Request.Builder()

@@ -16,6 +16,8 @@ import ru.tatalaraydar.nmedia.adapter.OnInteractionListener
 import ru.tatalaraydar.nmedia.adapter.PostsAdapter
 import ru.tatalaraydar.nmedia.databinding.FragmentPostBinding
 import ru.tatalaraydar.nmedia.dto.Post
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 
 import ru.tatalaraydar.nmedia.viewmodel.PostViewModel
 import ru.tatalaraydar.nmedia.repository.PostRepositoryRoomImpl.Companion.formatCount
@@ -23,8 +25,6 @@ import ru.tatalaraydar.nmedia.repository.PostRepositoryRoomImpl.Companion.format
 
 class PostFragment : Fragment() {
     private var postId: Long = 0L
-    private val TAG = "post fragment"
-
 
     val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
@@ -36,16 +36,12 @@ class PostFragment : Fragment() {
 
         val binding = FragmentPostBinding.inflate(inflater, container, false)
 
-        arguments?.let {
-            postId = it.getLong("postId", -1)
-            if (postId == -1L) {
-                Log.e(TAG, "Post ID not found")
-            } else {
-                Log.i(TAG, "Received post ID: $postId")
-            }
-        }
+        arguments?.let { postId = it.getLong("postId", -1) }
+
+
 
         viewModel.findPostIdById(postId).observe(viewLifecycleOwner) { post ->
+
             binding.author.text = post?.author ?: "Автор не указан"
             binding.content.text = post?.content ?: "Содержимое отсутствует"
             binding.published.text = post?.published ?: "Дата публикации не указана"
@@ -59,6 +55,18 @@ class PostFragment : Fragment() {
                     sharePost(post)
                 }
             }
+
+            val avatarUrl = "http://10.0.2.2:9999/avatars/${post?.authorAvatar}"
+            Log.d("AvatarURL", avatarUrl)
+
+            Glide.with(requireContext())
+                .load(avatarUrl)
+                .circleCrop()
+                .placeholder(R.drawable.baseline_visibility_24)
+                .error(R.drawable.ic_cancel_48)
+                .timeout(10_000)
+                .into(binding.avatar)
+
             binding.menu.setOnClickListener {
                 PopupMenu(it.context, it).apply {
                     inflate(R.menu.options_post)
@@ -69,6 +77,7 @@ class PostFragment : Fragment() {
                                 findNavController().navigateUp()
                                 true
                             }
+
                             R.id.edit -> {
                                 post?.let { it1 -> viewModel.startEditing(it1) }
                                 findNavController().navigate(
