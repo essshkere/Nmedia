@@ -5,16 +5,16 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlin.math.floor
-import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.OkHttpClient
+import okhttp3.Request
+import kotlin.math.floor
+import ru.tatalaraydar.nmedia.api.PostsApi
 import ru.tatalaraydar.nmedia.dto.Post
 import java.io.IOException
 import java.util.concurrent.TimeUnit
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class PostRepositoryRoomImpl : PostRepository {
 
@@ -45,29 +45,24 @@ class PostRepositoryRoomImpl : PostRepository {
         }
     }
 
-    override fun getAllAsync(callback: PostRepository.GetAllCallback) {
-        val request: Request = Request.Builder()
-            .url("${BASE_URL}/api/slow/posts")
-            .build()
-
-        client.newCall(request)
-            .enqueue(object : Callback {
-                override fun onResponse(call: Call, response: Response) {
-                    val body = response.body?.string() ?: throw RuntimeException("body is null")
-                    try {
-                        callback.onSuccess(gson.fromJson(body, typeToken.type))
-                    } catch (e: Exception) {
-                        callback.onError(e)
-                    }
+    override fun getAllAsync(callback: PostRepository.Callback<List<Post>>) {
+        PostsApi.retrofitService.getAll().enqueue(object : Callback<List<Post>> {
+            override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
+                if (!response.isSuccessful) {
+                    callback.onError(RuntimeException(response.message()))
+                    return
                 }
 
-                override fun onFailure(call: Call, e: IOException) {
-                    callback.onError(e)
-                }
-            })
+                callback.onSuccess(response.body() ?: throw RuntimeException("body is null"))
+            }
+
+            override fun onFailure(call: Call<List<Post>>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+        })
     }
 
-    override fun save(post: Post, callback: PostRepository.CustomCallback<Unit>) {
+    override fun save(post: Post, callback: PostRepository.Callback<Post>) {
         val json = gson.toJson(post)
         val request = Request.Builder()
             .url("${BASE_URL}/api/slow/posts")
@@ -89,7 +84,7 @@ class PostRepositoryRoomImpl : PostRepository {
         })
     }
 
-    override fun removeById (id: Long, callback: PostRepository.CustomCallback<Unit>){
+    override fun removeById (id: Long, callback: PostRepository.Callback<Post>){
         val request = Request.Builder()
             .url("${BASE_URL}/api/slow/posts/$id")
             .delete()
@@ -108,7 +103,7 @@ class PostRepositoryRoomImpl : PostRepository {
         })
     }
 
-    override fun likeById(post: Post, callback: PostRepository.CustomCallback<Post>): Post {
+    override fun likeById(post: Post, callback: PostRepository.Callback<Post>) {
         val method = if (post.likedByMe) "DELETE" else "POST"
         val request = Request.Builder()
             .url("${BASE_URL}/api/slow/posts/${post.id}/likes")
@@ -124,7 +119,7 @@ class PostRepositoryRoomImpl : PostRepository {
                 } else {
                     callback.onError(IOException("Unexpected response code: ${response.code}"))
                 }}})
-        return post
+
     }
 
     private fun getPostById(id: Long): Post {

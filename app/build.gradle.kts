@@ -27,9 +27,11 @@ android {
                 "proguard-rules.pro"
             )
             manifestPlaceholders["usesCleartextTraffic"] = false
+            buildConfigField ("String", "BASE_URL", "https://netomedia.ru")
         }
         debug {
             manifestPlaceholders["usesCleartextTraffic"] = true
+            buildConfigField  ("String", "BASE_URL", "http://10.0.2.2:9999")
         }
     }
 
@@ -43,6 +45,7 @@ android {
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 }
 
@@ -55,6 +58,7 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.media3.common.ktx)
+    implementation(libs.transport.api)
 
 
     val core_version = "1.15.0"
@@ -72,13 +76,17 @@ dependencies {
     val room_version = "2.6.1"
     val firebase_version = "33.6.0"
     val play_services_base_version = "18.5.0"
-
     val okhttp_version = "4.12.0"
-
     val glide_version = "4.16.0"
+    val retrofit_version = "2.11.0"
+    val retrofitgson_version = "2.11.0"
+    val okhttplogging_version = "4.12.0"
 
 
 
+    implementation ("com.squareup.okhttp3:logging-interceptor:$okhttplogging_version")
+    implementation ("com.squareup.retrofit2:retrofit:$retrofit_version")
+    implementation ("com.squareup.retrofit2:converter-gson:$retrofitgson_version")
     implementation("androidx.core:core-ktx:$core_version")
     implementation("androidx.appcompat:appcompat:$appcompat_version")
     implementation("com.google.android.material:material:$mdc_version")
@@ -96,9 +104,8 @@ dependencies {
     implementation("com.google.firebase:firebase-messaging-ktx")
     implementation("com.google.android.gms:play-services-base:$play_services_base_version")
     implementation("com.squareup.okhttp3:okhttp:$okhttp_version")
-
     implementation ("com.github.bumptech.glide:glide:$glide_version")
-
+    implementation ("com.squareup.okhttp3:logging-interceptor:$okhttplogging_version")
 
     testImplementation("junit:junit:$junit_version")
     androidTestImplementation("androidx.test.ext:junit:$ext_junit_version")
