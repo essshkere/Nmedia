@@ -59,6 +59,8 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.media3.common.ktx)
     implementation(libs.transport.api)
+    implementation(libs.transport.api)
+    implementation(libs.transport.api)
 
 
     val core_version = "1.15.0"
