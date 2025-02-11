@@ -4,12 +4,13 @@ import ru.tatalaraydar.nmedia.dto.Post
 
 interface PostRepository {
     fun getAll(): List<Post>
-    fun save(post: Post, callback: PostRepository.CustomCallback<Unit>)
-    fun removeById(id: Long,callback: PostRepository.CustomCallback<Unit>)
-    fun likeById(post: Post, callback: PostRepository.CustomCallback<Post>): Post
+    fun save(post: Post, callback: Callback<Post>)
+    fun removeById(id: Long, callback: Callback<Unit>)
+    fun likeById(post: Post, callback: Callback<Post>)
+
     fun updateShareById(id: Long)
 
-    fun getAllAsync(callback: GetAllCallback)
+    fun getAllAsync(callback: Callback<List<Post>>)
 
     interface GetAllCallback {
         fun onSuccess(posts: List<Post>) {}
@@ -20,4 +21,14 @@ interface PostRepository {
         fun onSuccess(result: T)
         fun onError(error: Throwable)
     }
+
+    interface Callback<T> {
+        fun onSuccess(posts: T) {}
+        fun onError(e: Exception) {}
+    }
 }
+
+
+
+
+
