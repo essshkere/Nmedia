@@ -53,12 +53,12 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun save() {
         edited.value?.let { post ->
-            repository.save(post, object : PostRepository.CustomCallback<Unit> {
-                override fun onSuccess(result: Unit) {
+            repository.save(post, object : PostRepository.Callback<Post> {
+                override fun onSuccess(posts: Post) {
                     _postCreated.postValue(Unit)
                 }
-                override fun onError(error: Throwable) {
-                    _error.postValue(error)
+                override fun onError(e: Exception) {
+                    _error.postValue(e)
                 }
             })
         }
@@ -68,15 +68,15 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun removeById(id: Long) {
         val old = _data.value?.posts.orEmpty()
         _data.value = _data.value?.copy(posts = _data.value?.posts.orEmpty().filter { it.id != id })
-        repository.removeById(id, object : PostRepository.CustomCallback<Unit> {
+        repository.removeById(id, object : PostRepository.Callback<Unit>{
             override fun onSuccess(result: Unit) {
             }
-            override fun onError(error: Throwable) {
+            override fun onError(e: Exception) {
                 _data.postValue(_data.value?.copy(posts = old))
             }})}
 
     fun likeById(post: Post) {
-        repository.likeById(post, object : PostRepository.CustomCallback<Post> {
+        repository.likeById(post, object : PostRepository.Callback<Post> {
             override fun onSuccess(updatedPost: Post) {
                 val currentPosts = _data.value?.posts ?: emptyList()
                 _data.postValue(
@@ -84,13 +84,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                         posts = currentPosts.map {
                             if (it.id == updatedPost.id) updatedPost else it
                         }))}
-            override fun onError(error: Throwable) {
-                error.printStackTrace()
+            override fun onError(e: Exception) {
+                _error.postValue(e)
             }})}
 
     fun loadPosts() {
         _data.value = FeedModel(loading = true)
-        repository.getAllAsync(object : PostRepository.GetAllCallback {
+        repository.getAllAsync(object : PostRepository.Callback<List<Post>> {
             override fun onSuccess(posts: List<Post>) {
                 _data.postValue(FeedModel(posts = posts, empty = posts.isEmpty()))
             }

@@ -27,11 +27,13 @@ android {
                 "proguard-rules.pro"
             )
             manifestPlaceholders["usesCleartextTraffic"] = false
-            buildConfigField ("String", "BASE_URL", "https://netomedia.ru")
+
+            buildConfigField ("String", "BASEURL", "\"http://10.0.2.2:9999\"")
         }
         debug {
             manifestPlaceholders["usesCleartextTraffic"] = true
-            buildConfigField  ("String", "BASE_URL", "http://10.0.2.2:9999")
+            
+            buildConfigField ("String", "BASEURL", "\"http://10.0.2.2:9999\"")
         }
     }
 
