@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,9 +19,6 @@ import ru.tatalaraydar.nmedia.adapter.PostsAdapter
 import ru.tatalaraydar.nmedia.databinding.FragmentFeedBinding
 import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.viewmodel.PostViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
-import androidx.lifecycle.observe
 
 class FeedFragment : Fragment() {
 
@@ -41,12 +37,12 @@ class FeedFragment : Fragment() {
                 viewModel.removeById(post.id)
             }
 
-            override fun onLike(post: Post) {
-                viewModel.likeById(post)
+            override fun onLike(id: Long) {
+                viewModel.likeById(id)
             }
 
             override fun onEdit(post: Post) {
-                viewModel.startEditing(post)
+                viewModel.edit(post)
 
             }
 

@@ -3,7 +3,6 @@ package ru.tatalaraydar.nmedia.activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,8 +15,6 @@ import ru.tatalaraydar.nmedia.adapter.OnInteractionListener
 import ru.tatalaraydar.nmedia.adapter.PostsAdapter
 import ru.tatalaraydar.nmedia.databinding.FragmentPostBinding
 import ru.tatalaraydar.nmedia.dto.Post
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 
 import ru.tatalaraydar.nmedia.viewmodel.PostViewModel
 import ru.tatalaraydar.nmedia.repository.PostRepositoryRoomImpl.Companion.formatCount
@@ -72,7 +69,7 @@ class PostFragment : Fragment() {
                             }
 
                             R.id.edit -> {
-                                post?.let { it1 -> viewModel.startEditing(it1) }
+                                post?.let { it1 -> viewModel.edit(it1) }
                                 findNavController().navigate(
                                     R.id.action_postFragment_to_editPostFragment,
                                     Bundle().apply {
@@ -101,7 +98,7 @@ class PostFragment : Fragment() {
             }
 
             override fun onEdit(post: Post) {
-                viewModel.startEditing(post)
+                viewModel.edit(post)
             }
 
             override fun onShare(post: Post) {

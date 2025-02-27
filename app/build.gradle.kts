@@ -85,7 +85,7 @@ dependencies {
     val retrofit_version = "2.11.0"
     val retrofitgson_version = "2.11.0"
     val okhttplogging_version = "4.12.0"
-
+    val coroutines_version = "1.8.1"
 
 
     implementation ("com.squareup.okhttp3:logging-interceptor:$okhttplogging_version")
@@ -110,6 +110,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:$okhttp_version")
     implementation ("com.github.bumptech.glide:glide:$glide_version")
     implementation ("com.squareup.okhttp3:logging-interceptor:$okhttplogging_version")
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
 
     testImplementation("junit:junit:$junit_version")
     androidTestImplementation("androidx.test.ext:junit:$ext_junit_version")
