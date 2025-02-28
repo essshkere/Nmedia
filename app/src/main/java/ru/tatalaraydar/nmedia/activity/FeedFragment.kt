@@ -12,6 +12,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import ru.tatalaraydar.nmedia.R
 import ru.tatalaraydar.nmedia.activity.NewPostFragment.Companion.textArg
 import ru.tatalaraydar.nmedia.adapter.OnInteractionListener
@@ -37,8 +38,8 @@ class FeedFragment : Fragment() {
                 viewModel.removeById(post.id)
             }
 
-            override fun onLike(id: Long) {
-                viewModel.likeById(id)
+            override fun onLike(post: Post) {
+                viewModel.likeById(post.id)
             }
 
             override fun onEdit(post: Post) {
@@ -78,6 +79,16 @@ class FeedFragment : Fragment() {
             binding.emptyText.isVisible = state.empty
         }
 
+        viewModel.dataState.observe(viewLifecycleOwner) { state ->
+            binding.progress.isVisible = state.loading
+            binding.swiperefresh.isRefreshing = state.refreshing
+            if (state.error) {
+                Snackbar.make(binding.root, R.string.error_loading, Snackbar.LENGTH_LONG)
+                    .setAction(R.string.retry_loading) { viewModel.loadPosts() }
+                    .show()
+            }
+        }
+
         binding.retryButton.setOnClickListener {
             viewModel.loadPosts()
         }
@@ -95,6 +106,15 @@ class FeedFragment : Fragment() {
             }
         }
 
+        viewModel.data.observe(viewLifecycleOwner) { state ->
+            adapter.submitList(state.posts)
+            binding.emptyText.isVisible = state.empty
+        }
+
+        binding.swiperefresh.setOnRefreshListener {
+            viewModel.refreshPosts()
+        }
+
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 val data = result.data ?: return@registerForActivityResult
@@ -104,8 +124,6 @@ class FeedFragment : Fragment() {
                 viewModel.updatePost(postId, updatedContent)
             }
         }
-
-
         return binding.root
     }
 }

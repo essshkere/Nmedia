@@ -2,7 +2,6 @@ package ru.tatalaraydar.nmedia.api
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
@@ -11,7 +10,7 @@ import ru.tatalaraydar.nmedia.dto.Post
 import retrofit2.Response
 
 
-private val BASE_URL = "${BuildConfig.BASE_URL}/api/slow/"
+private val BASE_URL = "${BuildConfig.BASEURL}/api/slow/"
 
 private val logging = HttpLoggingInterceptor().apply {
     if (BuildConfig.DEBUG) {

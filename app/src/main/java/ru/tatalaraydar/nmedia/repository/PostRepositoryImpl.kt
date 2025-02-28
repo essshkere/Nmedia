@@ -7,7 +7,6 @@ import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -15,9 +14,6 @@ import kotlin.math.floor
 import ru.tatalaraydar.nmedia.api.PostsApi
 import ru.tatalaraydar.nmedia.dto.Post
 import java.util.concurrent.TimeUnit
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import ru.tatalaraydar.nmedia.error.ApiError
 import ru.tatalaraydar.nmedia.dao.PostDao
 import ru.tatalaraydar.nmedia.entity.PostEntity
@@ -28,9 +24,6 @@ import ru.tatalaraydar.nmedia.entity.toDto
 import ru.tatalaraydar.nmedia.entity.toEntity
 import ru.tatalaraydar.nmedia.error.UnknownError
 import okio.IOException
-import ru.tatalaraydar.nmedia.entity.toEntity
-
-
 
 
 class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
@@ -55,7 +48,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             }
 
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.insert(body.toEntity())
+            body.toEntity().forEach { dao.insert(it) }
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {

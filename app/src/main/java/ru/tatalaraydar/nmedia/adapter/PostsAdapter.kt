@@ -10,10 +10,11 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.tatalaraydar.nmedia.databinding.CardPostBinding
 import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.R
-import ru.tatalaraydar.nmedia.repository.PostRepositoryRoomImpl.Companion.formatCount
+import ru.tatalaraydar.nmedia.repository.PostRepositoryImpl.Companion.formatCount
 import android.util.Log
-import androidx.core.content.ContentProviderCompat.requireContext
+
 import com.bumptech.glide.Glide
+
 
 
 interface OnInteractionListener {

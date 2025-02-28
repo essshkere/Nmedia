@@ -17,7 +17,7 @@ import ru.tatalaraydar.nmedia.databinding.FragmentPostBinding
 import ru.tatalaraydar.nmedia.dto.Post
 
 import ru.tatalaraydar.nmedia.viewmodel.PostViewModel
-import ru.tatalaraydar.nmedia.repository.PostRepositoryRoomImpl.Companion.formatCount
+import ru.tatalaraydar.nmedia.repository.PostRepositoryImpl.Companion.formatCount
 
 
 class PostFragment : Fragment() {
@@ -46,7 +46,7 @@ class PostFragment : Fragment() {
             binding.buttonLikes.text = post?.likes?.let { formatCount(it) } ?: "0 лайков"
             binding.buttonShare.text = post?.share?.let { formatCount(it) } ?: "0 поделились"
             binding.buttonLikes.isChecked = post?.likedByMe == true
-            binding.buttonLikes.setOnClickListener { post?.let { it1 -> viewModel.likeById(it1) } }
+            binding.buttonLikes.setOnClickListener { post?.let { it1 -> viewModel.likeById(post.id) } }
             binding.buttonShare.setOnClickListener {
                 if (post != null) {
                     sharePost(post)
@@ -94,7 +94,7 @@ class PostFragment : Fragment() {
             }
 
             override fun onLike(post: Post) {
-                viewModel.likeById(post)
+                viewModel.likeById(post.id)
             }
 
             override fun onEdit(post: Post) {
