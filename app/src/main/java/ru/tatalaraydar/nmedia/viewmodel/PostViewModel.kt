@@ -77,15 +77,24 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
 
     fun removeById(id: Long) {
         viewModelScope.launch {
-            repository.removeById(id)
+            try {
+                repository.removeById(id)
+                _dataState.value = FeedModelState()
+            } catch (e: Exception) {
+                _dataState.value = FeedModelState(error = true)
+            }
         }
     }
 
     fun likeById(id: Long) {
         viewModelScope.launch {
-            repository.likeById(id)
+            try {
+                repository.likeById(id)
+                _dataState.value = FeedModelState()
+            } catch (e: Exception) {
+                _dataState.value = FeedModelState(error = true)
+            }
         }
-        //TODO
     }
 
     fun loadPosts() = viewModelScope.launch {

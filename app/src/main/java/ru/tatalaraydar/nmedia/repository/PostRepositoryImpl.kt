@@ -72,6 +72,35 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         }
     }
 
+    override suspend fun removeById(id: Long) {
+        try {
+            val response = PostsApi.service.removeById(id)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+            dao.removeById(id)
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
+
+    override suspend fun likeById(id: Long) {
+        try {
+            val response = PostsApi.service.likeById(id)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            dao.updateLikeById(id, body.likedByMe)
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
+
 //    override fun getAllAsync(callback: PostRepository.Callback<List<Post>>) {
 //        PostsApi.retrofitService.getAll().enqueue(object : Callback<List<Post>> {
 //            override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
@@ -105,9 +134,6 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
 //        })
 //    }
 
-    override suspend fun removeById(id: Long) {
-        TODO("Not yet implemented")
-    }
 
 //    override fun removeById(id: Long, callback: PostRepository.Callback<Unit>) {
 //        PostsApi.retrofitService.removeById(id).enqueue(object : Callback<Unit> {
@@ -130,9 +156,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
 //        })
 //    }
 
-    override suspend fun likeById(id: Long) {
-        TODO("Not yet implemented")
-    }
+
 
 
 //    override fun likeById(post: Post, callback: PostRepository.Callback<Post>) {

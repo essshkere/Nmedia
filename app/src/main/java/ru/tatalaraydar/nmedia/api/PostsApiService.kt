@@ -10,7 +10,7 @@ import ru.tatalaraydar.nmedia.dto.Post
 import retrofit2.Response
 
 
-private val BASE_URL = "${BuildConfig.BASEURL}/api/slow/"
+private val BASE_URL = "${BuildConfig.BASE_URL}/api/slow/"
 
 private val logging = HttpLoggingInterceptor().apply {
     if (BuildConfig.DEBUG) {
