@@ -112,6 +112,7 @@ dependencies {
     implementation ("com.github.bumptech.glide:glide:$glide_version")
     implementation ("com.squareup.okhttp3:logging-interceptor:$okhttplogging_version")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
+    implementation ("androidx.room:room-ktx:$room_version")
 
     testImplementation("junit:junit:$junit_version")
     androidTestImplementation("androidx.test.ext:junit:$ext_junit_version")

@@ -2,6 +2,7 @@ package ru.tatalaraydar.nmedia.repository
 
 
 import android.annotation.SuppressLint
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
@@ -19,11 +20,13 @@ import ru.tatalaraydar.nmedia.dao.PostDao
 import ru.tatalaraydar.nmedia.entity.PostEntity
 import ru.tatalaraydar.nmedia.error.NetworkError
 import androidx.lifecycle.*
+import androidx.room.Room
 import ru.tatalaraydar.nmedia.api.*
 import ru.tatalaraydar.nmedia.entity.toDto
 import ru.tatalaraydar.nmedia.entity.toEntity
 import ru.tatalaraydar.nmedia.error.UnknownError
 import okio.IOException
+import ru.tatalaraydar.nmedia.db.AppDb
 
 
 class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
@@ -38,6 +41,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
 
     private val _posts = MutableLiveData<List<Post>>()
     val posts: LiveData<List<Post>> get() = _posts
+
 
 
     override suspend fun getAll() {
@@ -92,8 +96,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
-            val body = response.body() ?: throw ApiError(response.code(), response.message())
-            dao.updateLikeById(id, body.likedByMe)
+            dao.updateLikeById(id)
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
@@ -101,86 +104,17 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         }
     }
 
-//    override fun getAllAsync(callback: PostRepository.Callback<List<Post>>) {
-//        PostsApi.retrofitService.getAll().enqueue(object : Callback<List<Post>> {
-//            override fun onResponse(call: Call<List<Post>>, response: Response<List<Post>>) {
-//                if (!response.isSuccessful) {
-//                    callback.onError(RuntimeException(response.message()))
-//                    return
-//                }
-//                callback.onSuccess(response.body() ?: throw RuntimeException("body is null"))
-//            }
-//
-//            override fun onFailure(call: Call<List<Post>>, t: Throwable) {
-//                callback.onError(Exception(t))
-//            }
-//        })
-//    }
-//
-//    override fun save(post: Post, callback: PostRepository.Callback<Post>) {
-//        PostsApi.retrofitService.save(post).enqueue(object : Callback<Post> {
-//            override fun onResponse(call: Call<Post>, response: Response<Post>) {
-//                if (!response.isSuccessful) {
-//                    callback.onError(RuntimeException("Error saving post: ${response.message()}"))
-//                    return
-//                }
-//                val savedPost = response.body() ?: throw RuntimeException("Body is null")
-//                callback.onSuccess(savedPost)
-//            }
-//
-//            override fun onFailure(call: Call<Post>, t: Throwable) {
-//                callback.onError(Exception("Error saving post", t))
-//            }
-//        })
-//    }
+    
 
+    private fun buildDatabase(context: Context) =
 
-//    override fun removeById(id: Long, callback: PostRepository.Callback<Unit>) {
-//        PostsApi.retrofitService.removeById(id).enqueue(object : Callback<Unit> {
-//            override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
-//                if (response.isSuccessful) {
-//                    val deletedPost = response.body()
-//                    if (deletedPost != null) {
-//                        callback.onSuccess(deletedPost)
-//                    } else {
-//                        callback.onError(IOException("Body is null, successful"))
-//                    }
-//                } else {
-//                    callback.onError(IOException("Unexpected response code: ${response.code()}"))
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<Unit>, t: Throwable) {
-//                callback.onError(Exception(t))
-//            }
-//        })
-//    }
+        Room.databaseBuilder(context, AppDb::class.java, "app.db")
 
+            .fallbackToDestructiveMigration()
 
+            //.allowMainThreadQueries()
 
-
-//    override fun likeById(post: Post, callback: PostRepository.Callback<Post>) {
-//        val call = if (post.likedByMe) {
-//            PostsApi.retrofitService.dislikeById(post.id)
-//        } else {
-//            PostsApi.retrofitService.likeById(post.id)
-//        }
-//
-//        call.enqueue(object : Callback<Post> {
-//            override fun onResponse(call: Call<Post>, response: Response<Post>) {
-//                if (response.isSuccessful) {
-//                    val likedPost = response.body() ?: throw RuntimeException("Body is null")
-//                    callback.onSuccess(likedPost)
-//                } else {
-//                    callback.onError(IOException("Unexpected response code: ${response.code()}"))
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<Post>, t: Throwable) {
-//                callback.onError(Exception("Error like", t))
-//            }
-//        })
-//    }
+            .build()
 
     override fun updateShareById(id: Long) {
         val request: Request = Request.Builder()

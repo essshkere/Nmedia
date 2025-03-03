@@ -7,20 +7,15 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.map
 import com.google.gson.Gson
-
 import okhttp3.OkHttpClient
 import ru.tatalaraydar.nmedia.db.AppDb
 import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.model.FeedModel
 import ru.tatalaraydar.nmedia.repository.PostRepository
 import ru.tatalaraydar.nmedia.repository.PostRepositoryImpl
-
 import ru.tatalaraydar.nmedia.util.SingleLiveEvent
-
-
 import androidx.lifecycle.*
 import kotlinx.coroutines.launch
-
 import ru.tatalaraydar.nmedia.model.FeedModelState
 
 private val empty = Post(
