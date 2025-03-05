@@ -10,7 +10,7 @@ import ru.tatalaraydar.nmedia.dto.Post
 import retrofit2.Response
 
 
-private val BASE_URL = "${BuildConfig.BASE_URL}/api/slow/"
+private val BASEURL  = "${BuildConfig.BASEURL}/api/slow/"
 
 private val logging = HttpLoggingInterceptor().apply {
     if (BuildConfig.DEBUG) {
@@ -24,7 +24,7 @@ private val okhttp = OkHttpClient.Builder()
 
 private val retrofit = Retrofit.Builder()
     .addConverterFactory(GsonConverterFactory.create())
-    .baseUrl(BASE_URL)
+    .baseUrl(BASEURL)
     .client(okhttp)
     .build()
 

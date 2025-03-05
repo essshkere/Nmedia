@@ -90,7 +90,10 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         }
     }
 
+
+
     override suspend fun likeById(id: Long) {
+        val currentState = dao.getLikeStateById(id) ?: false
         try {
             val response = PostsApi.service.likeById(id)
             if (!response.isSuccessful) {
@@ -98,8 +101,10 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             }
             dao.updateLikeById(id)
         } catch (e: IOException) {
+            dao.updateLikeState(id, currentState)
             throw NetworkError
         } catch (e: Exception) {
+            dao.updateLikeState(id, currentState)
             throw UnknownError
         }
     }
@@ -112,7 +117,6 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
 
             .fallbackToDestructiveMigration()
 
-            //.allowMainThreadQueries()
 
             .build()
 
