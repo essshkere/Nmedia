@@ -93,7 +93,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
 
 
     override suspend fun likeById(id: Long) {
-        val currentState = dao.getLikeStateById(id) ?: false
+       
         try {
             dao.updateLikeById(id)
             val response = PostsApi.service.likeById(id)
