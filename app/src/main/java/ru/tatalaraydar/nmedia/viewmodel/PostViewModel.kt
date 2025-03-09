@@ -15,8 +15,10 @@ import ru.tatalaraydar.nmedia.repository.PostRepository
 import ru.tatalaraydar.nmedia.repository.PostRepositoryImpl
 import ru.tatalaraydar.nmedia.util.SingleLiveEvent
 import androidx.lifecycle.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.tatalaraydar.nmedia.model.FeedModelState
+import kotlinx.coroutines.flow.*
 
 private val empty = Post(
     id = 0,
@@ -27,11 +29,16 @@ private val empty = Post(
 )
 
 class PostViewModel(application: Application) : AndroidViewModel(application) {
+
+
+
     private val gson = Gson()
     var postId: Long = 0L
     private val repository: PostRepository =
         PostRepositoryImpl(AppDb.getInstance(context = application).postDao())
-    val data: LiveData<FeedModel> = repository.data.map(::FeedModel)
+    val data: LiveData<FeedModel> = repository.data
+        .map(::FeedModel)
+        .asLiveData(Dispatchers.Default)
     private val _dataState = MutableLiveData<FeedModelState>()
     val dataState: LiveData<FeedModelState>
         get() = _dataState
@@ -39,6 +46,11 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit>
         get() = _postCreated
+    val newerCount: LiveData<Int> = data.switchMap {
+        repository.getNewerCount(it.posts.firstOrNull()?.id ?: 0L)
+            .catch { e -> e.printStackTrace() }
+            .asLiveData(Dispatchers.Default)
+    }
 
     init {
         loadPosts()
@@ -69,6 +81,8 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
         edited.value = empty
     }
+
+
 
     fun removeById(id: Long) {
         viewModelScope.launch {
@@ -102,6 +116,13 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+
+    fun makeAllPostsVisible() {
+        viewModelScope.launch {
+            repository.makeAllPostsVisible()
+        }
+    }
+
     fun refreshPosts() = viewModelScope.launch {
         try {
             _dataState.value = FeedModelState(refreshing = true)
@@ -111,6 +132,8 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             _dataState.value = FeedModelState(error = true)
         }
     }
+
+
 
     fun edit(post: Post) {
         edited.value = post

@@ -89,6 +89,8 @@ dependencies {
     val coroutines_version = "1.8.1"
 
 
+
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation ("com.squareup.okhttp3:logging-interceptor:$okhttplogging_version")
     implementation ("com.squareup.retrofit2:retrofit:$retrofit_version")
     implementation ("com.squareup.retrofit2:converter-gson:$retrofitgson_version")

@@ -23,15 +23,18 @@ import ru.tatalaraydar.nmedia.viewmodel.PostViewModel
 
 class FeedFragment : Fragment() {
 
-
+    private var _binding: FragmentFeedBinding? = null
+    private val binding get() = _binding!!
+    val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         val binding = FragmentFeedBinding.inflate(inflater, container, false)
-        val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
+
         val adapter = PostsAdapter(object : OnInteractionListener {
 
             override fun onRemove(post: Post) {
@@ -89,6 +92,8 @@ class FeedFragment : Fragment() {
             }
         }
 
+
+
         binding.retryButton.setOnClickListener {
             viewModel.loadPosts()
         }
@@ -111,9 +116,20 @@ class FeedFragment : Fragment() {
             binding.emptyText.isVisible = state.empty
         }
 
+        viewModel.newerCount.observe(viewLifecycleOwner) { newPostCount ->
+            if (newPostCount > 0) {
+
+                showNewPostsBanner(newPostCount)
+            }
+        }
+
+
+
         binding.swiperefresh.setOnRefreshListener {
             viewModel.refreshPosts()
         }
+
+
 
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
@@ -125,5 +141,20 @@ class FeedFragment : Fragment() {
             }
         }
         return binding.root
+
     }
+
+
+
+    private fun showNewPostsBanner(newPostCount: Int) {
+        Snackbar.make(binding.root, "Новые посты: $newPostCount", Snackbar.LENGTH_INDEFINITE)
+            .setAction("Показать") {
+
+                viewModel.makeAllPostsVisible()
+                binding.container.smoothScrollToPosition(0)
+            }
+            .show()
+    }
+
+
 }

@@ -16,7 +16,8 @@ data class PostEntity(
     var share: Int = 110,
     val views_post: Int = 1_000_000,
     var likedByMe: Boolean,
-    val videoURL: String = ""
+    val videoURL: String = "",
+    val isVisible: Boolean = false
 ) {
     fun toDto() = Post(
         id,
@@ -49,5 +50,8 @@ data class PostEntity(
     }
 }
 
-fun List<Post>.toEntity(): List<PostEntity> = map(PostEntity::fromDto)
 fun List<PostEntity>.toDto(): List<Post> = map(PostEntity::toDto)
+fun List<Post>.toEntity(): List<PostEntity> = map(PostEntity::fromDto)
+
+
+

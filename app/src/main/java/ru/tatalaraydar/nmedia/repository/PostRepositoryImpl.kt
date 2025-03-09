@@ -3,46 +3,34 @@ package ru.tatalaraydar.nmedia.repository
 
 import android.annotation.SuppressLint
 import android.content.Context
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
 import kotlin.math.floor
 import ru.tatalaraydar.nmedia.api.PostsApi
 import ru.tatalaraydar.nmedia.dto.Post
-import java.util.concurrent.TimeUnit
 import ru.tatalaraydar.nmedia.error.ApiError
 import ru.tatalaraydar.nmedia.dao.PostDao
 import ru.tatalaraydar.nmedia.entity.PostEntity
 import ru.tatalaraydar.nmedia.error.NetworkError
 import androidx.lifecycle.*
 import androidx.room.Room
+import kotlinx.coroutines.Dispatchers
 import ru.tatalaraydar.nmedia.api.*
 import ru.tatalaraydar.nmedia.entity.toDto
 import ru.tatalaraydar.nmedia.entity.toEntity
 import ru.tatalaraydar.nmedia.error.UnknownError
 import okio.IOException
 import ru.tatalaraydar.nmedia.db.AppDb
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
+import ru.tatalaraydar.nmedia.error.AppError
 
 
 class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
-    override val data = dao.getAll().map(List<PostEntity>::toDto)
-
-
-    private val client = OkHttpClient.Builder()
-        .connectTimeout(30, TimeUnit.SECONDS)
-        .build()
-    private val gson = Gson()
-    private val typeToken = object : TypeToken<List<Post>>() {}
-
-    private val _posts = MutableLiveData<List<Post>>()
-    val posts: LiveData<List<Post>> get() = _posts
-
-
+    override val data = dao.getAll()
+        .map(List<PostEntity>::toDto)
+        .flowOn(Dispatchers.Default)
 
     override suspend fun getAll() {
         try {
@@ -52,6 +40,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             }
 
             val body = response.body() ?: throw ApiError(response.code(), response.message())
+            // dao.insert(body.toEntity())
             body.toEntity().forEach { dao.insert(it) }
         } catch (e: IOException) {
             throw NetworkError
@@ -59,6 +48,24 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             throw UnknownError
         }
     }
+
+    override fun getNewerCount(id: Long): Flow<Int> = flow {
+        while (true) {
+            delay(10_000L)
+            val response = PostsApi.service.getNewer(id)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+
+            val body = response.body() ?: throw ApiError(response.code(), response.message())
+            val newPosts = body.toEntity().map { it.copy(isVisible = false) }
+            newPosts.forEach { dao.insert(it) }
+            emit(newPosts.size)
+        }
+    }
+        .catch { e -> throw AppError.from(e) }
+        .flowOn(Dispatchers.Default)
+
 
     override suspend fun save(post: Post) {
         try {
@@ -78,7 +85,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
 
     override suspend fun removeById(id: Long) {
         try {
-            dao.removeById(id) 
+            dao.removeById(id)
             val response = PostsApi.service.removeById(id)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
@@ -89,11 +96,12 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             throw UnknownError
         }
     }
-
-
+    override suspend fun makeAllPostsVisible() {
+        dao.makeAllPostsVisible()
+    }
 
     override suspend fun likeById(id: Long) {
-       
+
         try {
             dao.updateLikeById(id)
             val response = PostsApi.service.likeById(id)
@@ -109,7 +117,6 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         }
     }
 
-    
 
     private fun buildDatabase(context: Context) =
 
@@ -121,17 +128,17 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             .build()
 
     override fun updateShareById(id: Long) {
-        val request: Request = Request.Builder()
-            .post("{}".toRequestBody(jsonType))
-            .url("${BASE_URL}/api/slow/posts/$id/shares")
-            .build()
-        client.newCall(request)
-            .execute()
-            .close()
-        val currentPosts = _posts.value ?: emptyList()
-        _posts.postValue(currentPosts.map {
-            if (it.id == id) it.copy(share = it.share + 1) else it
-        })
+//        val request: Request = Request.Builder()
+//            .post("{}".toRequestBody(jsonType))
+//            .url("${BASE_URL}/api/slow/posts/$id/shares")
+//            .build()
+//        client.newCall(request)
+//            .execute()
+//            .close()
+//        val currentPosts = _posts.value ?: emptyList()
+//        _posts.postValue(currentPosts.map {
+//            if (it.id == id) it.copy(share = it.share + 1) else it
+//        })
     }
 
     companion object {
