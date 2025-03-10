@@ -17,7 +17,7 @@ data class PostEntity(
     val views_post: Int = 1_000_000,
     var likedByMe: Boolean,
     val videoURL: String = "",
-    val isVisible: Boolean = false
+    val isVisible: Boolean = true
 ) {
     fun toDto() = Post(
         id,

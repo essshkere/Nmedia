@@ -23,9 +23,15 @@ import ru.tatalaraydar.nmedia.viewmodel.PostViewModel
 
 class FeedFragment : Fragment() {
 
+
     private var _binding: FragmentFeedBinding? = null
     private val binding get() = _binding!!
     val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -33,7 +39,7 @@ class FeedFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
 
-        val binding = FragmentFeedBinding.inflate(inflater, container, false)
+        _binding = FragmentFeedBinding.inflate(inflater, container, false)
 
         val adapter = PostsAdapter(object : OnInteractionListener {
 
@@ -67,8 +73,9 @@ class FeedFragment : Fragment() {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.videoURL))
                 startActivity(intent)
             }
-                    override fun onViewPost(post: Post) {
-                val bundle = Bundle().apply {putLong("postId", post.id)}
+
+            override fun onViewPost(post: Post) {
+                val bundle = Bundle().apply { putLong("postId", post.id) }
                 findNavController().navigate(R.id.action_feedFragment_to_postFragment, bundle)
             }
         })
@@ -145,7 +152,6 @@ class FeedFragment : Fragment() {
     }
 
 
-
     private fun showNewPostsBanner(newPostCount: Int) {
         Snackbar.make(binding.root, "Новые посты: $newPostCount", Snackbar.LENGTH_INDEFINITE)
             .setAction("Показать") {
@@ -153,6 +159,7 @@ class FeedFragment : Fragment() {
                 viewModel.makeAllPostsVisible()
                 binding.container.smoothScrollToPosition(0)
             }
+            .setAnchorView(binding.save)
             .show()
     }
 
