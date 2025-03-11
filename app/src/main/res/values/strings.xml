@@ -1,30 +1,34 @@
 <resources>
     <string name="app_name" translatable="false">Nmedia</string>
-    <string name="nmedia" translatable="false">NMedia!</string>
+    <string name="cancel">cancel</string>
+    <string name="channel_remote_description">Notifications from remote server</string>
+    <string name="channel_remote_name">Server notifications</string>
+    <string name="chooser_share_post">Share post</string>
     <string name="description_post_author_avatar">avatar author post</string>
+    <string name="description_post_like">description post like\n</string>
     <string name="description_post_menu">post menu</string>
+    <string name="description_post_save">description_post_save</string>
+    <string name="description_take_photo" translatable="false">Take photo</string>
+    <string name="description_photo" translatable="false">Photo</string>
+    <string name="description_select_photo" translatable="false">Select photo</string>
+    <string name="edit_text">edit Text</string>
+    <string name="empty_posts">There are no posts.\nIf you create a new post, it will appear here</string>
+    <string name="error_empty_content">Content can\'t be empty</string>
+    <string name="error_loading">Something went wrong. Try again later</string>
     <string name="likes_button_description">button like</string>
     <string name="menu_button_description">button menu</string>
-    <string name="share_button_description">button share</string>
-    <string name="views_button_description">button views</string>
-    <string name="description_post_like">description post like\n</string>
-    <string name="retry_loading">Retry</string>
-    <string name="empty_posts">There are no posts.\nIf you create a new post, it will appear here</string>
-    <string name="error_loading">Something went wrong. Try again later</string>
-    <string name="error_empty_content">Content can\'t be empty</string>
-    <string name="menu_remove">Remove</string>
-    <string name="post_text">Post Text</string>
     <string name="menu_edit">Edit</string>
-    <string name="cancel">cancel</string>
-    <string name="chooser_share_post">Share post</string>
-    <string name="description_post_save">description_post_save</string>
-    <string name="edit_text">edit Text</string>
-    <string name="videourl">videoURL</string>
-    <string name="preview_video">preview_video</string>
-    <string name="notification_post" translatable="false">User %1$s posted a new post:</string>
-
+    <string name="menu_remove">Remove</string>
+    <string name="menu_save" translatable="false">Save</string>
+    <string name="nmedia" translatable="false">NMedia!</string>
     <string name="notification_other" translatable="false">The notification has arrived</string>
+    <string name="notification_post" translatable="false">User %1$s posted a new post:</string>
     <string name="notification_user_liked" translatable="false">User %1$s liked %2$s\'s post</string>
-    <string name="channel_remote_name">Server notifications</string>
-    <string name="channel_remote_description">Notifications from remote server</string>
+    <string name="post_text">Post Text</string>
+    <string name="preview_video">preview_video</string>
+    <string name="retry_loading">Retry</string>
+    <string name="share_button_description">button share</string>
+    <string name="videourl">videoURL</string>
+    <string name="views_button_description">button views</string>
+    <string name="remove" translatable="false">Remove</string>
 </resources>
