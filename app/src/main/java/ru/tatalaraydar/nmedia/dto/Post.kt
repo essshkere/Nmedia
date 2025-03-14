@@ -1,5 +1,7 @@
 package ru.tatalaraydar.nmedia.dto
 
+import ru.tatalaraydar.nmedia.entity.AttachmentType
+
 data class Post (
     val id: Long = 0,
     val author : String = "",
@@ -10,5 +12,11 @@ data class Post (
     var share : Int = 110,
     val views_post : Int = 1_000_000,
     var likedByMe: Boolean = false,
-    val videoURL: String = ""
+    val videoURL: String = "",
+    val attachment: Attachment? = null,
+)
+
+data class Attachment(
+    val url: String,
+    val type: AttachmentType,
 )
