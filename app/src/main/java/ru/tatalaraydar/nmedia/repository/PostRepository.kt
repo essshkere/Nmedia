@@ -3,6 +3,8 @@ package ru.tatalaraydar.nmedia.repository
 import androidx.lifecycle.LiveData
 import ru.tatalaraydar.nmedia.dto.Post
 import kotlinx.coroutines.flow.Flow
+import ru.tatalaraydar.nmedia.dto.Media
+import ru.tatalaraydar.nmedia.dto.MediaUpload
 
 interface PostRepository {
 
@@ -13,7 +15,9 @@ interface PostRepository {
     suspend fun removeById(id: Long)
     suspend fun likeById(id: Long)
     fun updateShareById(id: Long)
-     suspend fun makeAllPostsVisible()
+    suspend fun makeAllPostsVisible()
+    suspend fun saveWithAttachment(post: Post, upload: MediaUpload)
+    suspend fun upload(upload: MediaUpload): Media
 
 
 //    fun getAllAsync(callback: Callback<List<Post>>)

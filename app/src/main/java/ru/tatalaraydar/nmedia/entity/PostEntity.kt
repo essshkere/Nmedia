@@ -6,6 +6,30 @@ import androidx.room.PrimaryKey
 import ru.tatalaraydar.nmedia.dto.Attachment
 import ru.tatalaraydar.nmedia.dto.Post
 
+
+
+
+
+
+data class AttachmentEmbeddable(
+    var url: String,
+    var type: AttachmentType,
+) {
+    fun toDto() = Attachment(url, type)
+
+    companion object {
+        fun fromDto(dto: Attachment?) = dto?.let {
+            AttachmentEmbeddable(it.url, it.type)
+        }
+    }
+}
+
+
+fun List<PostEntity>.toDto(): List<Post> = map(PostEntity::toDto)
+fun List<Post>.toEntity(): List<PostEntity> = map(PostEntity::fromDto)
+
+
+
 @Entity
 data class PostEntity(
     @PrimaryKey(autoGenerate = true)
@@ -21,7 +45,7 @@ data class PostEntity(
     val videoURL: String = "",
     val isVisible: Boolean = true,
     @Embedded
-    var attachment: AttachmentEmbeddable?
+    var attachment: AttachmentEmbeddable? = null
 ) {
     fun toDto() = Post(
         id,
@@ -34,8 +58,8 @@ data class PostEntity(
         views_post,
         likedByMe,
         videoURL,
-        attachment?.toDto()
-    )
+        isVisible,
+        attachment?.toDto())
 
     companion object {
         fun fromDto(dto: Post) =
@@ -50,27 +74,9 @@ data class PostEntity(
                 dto.views_post,
                 dto.likedByMe,
                 dto.videoURL,
+                dto.isVisible,
                 AttachmentEmbeddable.fromDto(dto.attachment)
             )
-
-    }
-}
-
-fun List<PostEntity>.toDto(): List<Post> = map(PostEntity::toDto)
-fun List<Post>.toEntity(): List<PostEntity> = map(PostEntity::fromDto)
-
-
-
-data class AttachmentEmbeddable(
-    var url: String,
-    var type: AttachmentType,
-) {
-    fun toDto() = Attachment(url, type)
-
-    companion object {
-        fun fromDto(dto: Attachment?) = dto?.let {
-            AttachmentEmbeddable(it.url, it.type)
-        }
     }
 }
 

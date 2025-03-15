@@ -1,5 +1,6 @@
 package ru.tatalaraydar.nmedia.api
 
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -8,6 +9,7 @@ import retrofit2.http.*
 import ru.tatalaraydar.nmedia.BuildConfig
 import ru.tatalaraydar.nmedia.dto.Post
 import retrofit2.Response
+import ru.tatalaraydar.nmedia.dto.Media
 
 
 private val BASEURL  = "${BuildConfig.BASEURL}/api/slow/"
@@ -50,6 +52,10 @@ interface PostsApiService {
 
     @GET("posts/{id}/newer")
     suspend fun getNewer(@Path("id") id: Long): Response<List<Post>>
+
+    @Multipart
+    @POST("media")
+    suspend fun upload(@Part media: MultipartBody.Part): Response<Media>
 }
 
 object PostsApi {

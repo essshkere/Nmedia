@@ -13,7 +13,8 @@ data class Post (
     val views_post : Int = 1_000_000,
     var likedByMe: Boolean = false,
     val videoURL: String = "",
-    val attachment: Attachment? = null,
+    val isVisible: Boolean = true,
+    var attachment: Attachment? = null,
 )
 
 data class Attachment(
