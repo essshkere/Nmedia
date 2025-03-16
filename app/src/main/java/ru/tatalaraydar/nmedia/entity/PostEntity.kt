@@ -19,7 +19,10 @@ data class AttachmentEmbeddable(
 
     companion object {
         fun fromDto(dto: Attachment?) = dto?.let {
-            AttachmentEmbeddable(it.url, it.type)
+            AttachmentEmbeddable(
+                url = it.url.substringAfterLast("/"), //todo сохранил только имя файла
+                type = it.type
+            )
         }
     }
 }

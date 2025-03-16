@@ -15,9 +15,14 @@ data class Post (
     val videoURL: String = "",
     val isVisible: Boolean = true,
     var attachment: Attachment? = null,
-)
+) {
+    fun getFullImageUrl() = attachment?.url?.let {
+        "http://10.0.2.2:9999/media/$it"
+    }
+}
 
 data class Attachment(
     val url: String,
     val type: AttachmentType,
 )
+

@@ -9,7 +9,7 @@ import androidx.room.RoomDatabase
 import ru.tatalaraydar.nmedia.dao.PostDao
 import ru.tatalaraydar.nmedia.entity.PostEntity
 
-@Database(entities = [PostEntity::class], version = 1)
+@Database(entities = [PostEntity::class], version = 2)
 abstract class AppDb : RoomDatabase() {
     abstract fun postDao(): PostDao
 
@@ -26,7 +26,7 @@ abstract class AppDb : RoomDatabase() {
         private fun buildDatabase(context: Context) =
             Room.databaseBuilder(context, AppDb::class.java, "app.db")
                 .fallbackToDestructiveMigration()
-                .allowMainThreadQueries()
+//                .allowMainThreadQueries()
                 .build()
     }
 }

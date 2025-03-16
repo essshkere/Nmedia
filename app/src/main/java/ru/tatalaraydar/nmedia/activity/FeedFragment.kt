@@ -69,6 +69,8 @@ class FeedFragment : Fragment() {
 
             }
 
+
+
             override fun onVideolink(post: Post) {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.videoURL))
                 startActivity(intent)
@@ -77,6 +79,13 @@ class FeedFragment : Fragment() {
             override fun onViewPost(post: Post) {
                 val bundle = Bundle().apply { putLong("postId", post.id) }
                 findNavController().navigate(R.id.action_feedFragment_to_postFragment, bundle)
+            }
+
+            override fun onImageClick(post: Post) {
+                val bundle = Bundle().apply {
+                    putString("imageUrl", post.getFullImageUrl())
+                }
+                findNavController().navigate(R.id.action_feedFragment_to_fullScreenImageFragment, bundle)
             }
         })
 

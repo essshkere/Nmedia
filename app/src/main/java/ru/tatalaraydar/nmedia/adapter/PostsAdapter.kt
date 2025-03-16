@@ -14,8 +14,7 @@ import ru.tatalaraydar.nmedia.repository.PostRepositoryImpl.Companion.formatCoun
 import android.util.Log
 
 import com.bumptech.glide.Glide
-
-
+import ru.tatalaraydar.nmedia.entity.AttachmentType
 
 interface OnInteractionListener {
     fun onLike(post: Post) {}
@@ -24,6 +23,7 @@ interface OnInteractionListener {
     fun onShare(post: Post) {}
     fun onVideolink(post: Post) {}
     fun onViewPost(post: Post) {}
+    fun onImageClick(post: Post) {}
 }
 
 class PostsAdapter(
@@ -41,11 +41,10 @@ class PostsAdapter(
 }
 
 class PostViewHolder(
-
     private val binding: CardPostBinding,
     private val onInteractionListener: OnInteractionListener
 ) : RecyclerView.ViewHolder(binding.root) {
-    private val TAG = "postAdapter"
+
     fun bind(post: Post) {
         binding.apply {
             content.text = post.content
@@ -60,7 +59,6 @@ class PostViewHolder(
             buttonLikes.setOnClickListener { onInteractionListener.onLike(post) }
             content.setOnClickListener {
                 onInteractionListener.onViewPost(post)
-                Log.i(TAG, "press content")
             }
 
             menu.setOnClickListener {
@@ -89,23 +87,39 @@ class PostViewHolder(
                 videoLink.visibility = View.VISIBLE
                 videoPic.visibility = View.VISIBLE
                 videoLink.text = "Смотреть новое видео на канале!"
-                videoLink.setOnClickListener {
-                    Log.i(TAG, "Кнопка была нажата")
-                }
+                videoLink.setOnClickListener {                }
             } else {
                 videoPic.visibility = View.GONE
                 videoLink.visibility = View.GONE
             }
 
+
+            post.attachment?.takeIf { it.type == AttachmentType.IMAGE }?.let {
+                val fullImageUrl = post.getFullImageUrl()
+                if (fullImageUrl != null) {
+                    Glide.with(postImageView)
+                        .load(fullImageUrl)
+                        .into(postImageView)
+                    postImageView.visibility = View.VISIBLE
+                    postImageView.setOnClickListener {
+                        onInteractionListener.onImageClick(post)
+                    }
+                } else {
+                    postImageView.visibility = View.GONE
+                }
+            } ?: run {
+                postImageView.visibility = View.GONE
+            }
+
+            val avatarUrl = "http://10.0.2.2:9999/avatars/${post.authorAvatar}"
+            Glide.with(avatar)
+                .load(avatarUrl)
+                .circleCrop()
+                .placeholder(R.drawable.baseline_visibility_24)
+                .error(R.drawable.ic_cancel_48)
+                .timeout(10_000)
+                .into(avatar)
         }
-        val avatarUrl = "http://10.0.2.2:9999/avatars/${post?.authorAvatar}"
-        Glide.with(binding.avatar)
-            .load(avatarUrl)
-            .circleCrop()
-            .placeholder(R.drawable.baseline_visibility_24)
-            .error(R.drawable.ic_cancel_48)
-            .timeout(10_000)
-            .into(binding.avatar)
     }
 }
 

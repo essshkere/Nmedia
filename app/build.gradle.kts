@@ -87,9 +87,10 @@ dependencies {
     val retrofitgson_version = "2.11.0"
     val okhttplogging_version = "4.12.0"
     val coroutines_version = "1.8.1"
+    val imagepicker_version = "2.1"
 
 
-
+    implementation ("com.github.dhaval2404:imagepicker:$imagepicker_version")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     implementation ("com.squareup.okhttp3:logging-interceptor:$okhttplogging_version")
     implementation ("com.squareup.retrofit2:retrofit:$retrofit_version")

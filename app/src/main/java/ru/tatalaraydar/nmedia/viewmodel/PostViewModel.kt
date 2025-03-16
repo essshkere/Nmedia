@@ -1,6 +1,7 @@
 package ru.tatalaraydar.nmedia.viewmodel
 
 import android.app.Application
+import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -19,6 +20,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.tatalaraydar.nmedia.model.FeedModelState
 import kotlinx.coroutines.flow.*
+import ru.tatalaraydar.nmedia.model.PhotoModel
+import java.io.File
 
 private val empty = Post(
     id = 0,
@@ -27,7 +30,7 @@ private val empty = Post(
     likedByMe = false,
     published = ""
 )
-
+private val noPhoto = PhotoModel()
 class PostViewModel(application: Application) : AndroidViewModel(application) {
 
 
@@ -51,6 +54,10 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
             .catch { e -> e.printStackTrace() }
             .asLiveData(Dispatchers.Default)
     }
+
+    private val _photo = MutableLiveData(noPhoto)
+    val photo: LiveData<PhotoModel>
+        get() = _photo
 
     init {
         loadPosts()
@@ -82,6 +89,12 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         edited.value = empty
     }
 
+    fun changePhoto(uri: Uri?, file: File?) {
+        _photo.value = PhotoModel(uri, file)
+    }
+    fun removePhoto() {
+        _photo.value = null
+    }
 
 
     fun removeById(id: Long) {
