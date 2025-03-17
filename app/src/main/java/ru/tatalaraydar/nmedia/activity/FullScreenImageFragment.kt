@@ -26,6 +26,7 @@ class FullScreenImageFragment : Fragment() {
         if (imageUrl != null) {
             Glide.with(binding.imageView)
                 .load(imageUrl)
+                .timeout(10_000)
                 .into(binding.imageView)
         }
 

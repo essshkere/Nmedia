@@ -49,13 +49,13 @@ class NewPostFragment : Fragment() {
 
             binding.edit.setText(postText)
 
-//            binding.ok.setOnClickListener {
-//                val text = binding.edit.text.toString()
-//                if (text.isNotBlank()) {
-//                    viewModel.changeContent(text)
-//                    viewModel.save()
-//                }
-//            }
+            binding.ok.setOnClickListener {
+                val text = binding.edit.text.toString()
+                if (text.isNotBlank()) {
+                    viewModel.changeContent(text)
+                    viewModel.save()
+                }
+            }
         }
         val pickPhotoLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
