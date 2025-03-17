@@ -151,7 +151,6 @@ class NewPostFragment : Fragment() {
         var Bundle.textArg: String? by StringArg
     }
 
-
     object NewPostContract : ActivityResultContract<Unit, String?>() {
         override fun createIntent(context: Context, input: Unit) =
             Intent(context, NewPostFragment::class.java)
