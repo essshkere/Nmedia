@@ -82,7 +82,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/common_spacing"
         android:adjustViewBounds="true"
-        android:scaleType="centerCrop"
+        android:maxHeight="300dp"
+        android:scaleType="fitCenter"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -164,9 +165,9 @@
         android:layout_height="200dp"
         android:layout_marginLeft="12dp"
         android:layout_marginRight="12dp"
+        android:contentDescription="@string/preview_video"
         android:src="@drawable/video"
         android:visibility="gone"
-        android:contentDescription = "@string/preview_video"
         app:layout_constraintTop_toBottomOf="@id/content" />
 
     <View

@@ -99,6 +99,7 @@ class PostViewHolder(
                 if (fullImageUrl != null) {
                     Glide.with(postImageView)
                         .load(fullImageUrl)
+                        .timeout(10_000)
                         .into(postImageView)
                     postImageView.visibility = View.VISIBLE
                     postImageView.setOnClickListener {
