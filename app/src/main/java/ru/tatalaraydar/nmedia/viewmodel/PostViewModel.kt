@@ -20,15 +20,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.tatalaraydar.nmedia.model.FeedModelState
 import kotlinx.coroutines.flow.*
+import ru.tatalaraydar.nmedia.auth.AppAuth
 import ru.tatalaraydar.nmedia.model.PhotoModel
 import java.io.File
 
 private val empty = Post(
     id = 0,
     content = "",
+    authorId = 0,
     author = "",
+    authorAvatar = "",
     likedByMe = false,
-    published = ""
+    likes = 0,
+    published = 0.toString(),
 )
 private val noPhoto = PhotoModel()
 class PostViewModel(application: Application) : AndroidViewModel(application) {
@@ -39,9 +43,17 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     var postId: Long = 0L
     private val repository: PostRepository =
         PostRepositoryImpl(AppDb.getInstance(context = application).postDao())
-    val data: LiveData<FeedModel> = repository.data
-        .map(::FeedModel)
-        .asLiveData(Dispatchers.Default)
+    val data: LiveData<FeedModel> = AppAuth.getInstance()
+        .authStateFlow
+        .flatMapLatest { (myId, _) ->
+            repository.data
+                .map { posts ->
+                    FeedModel(
+                        posts.map { it.copy(ownedByMe = it.authorId == myId) },
+                        posts.isEmpty()
+                    )
+                }
+        }.asLiveData(Dispatchers.Default)
     private val _dataState = MutableLiveData<FeedModelState>()
     val dataState: LiveData<FeedModelState>
         get() = _dataState

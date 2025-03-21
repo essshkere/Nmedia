@@ -12,6 +12,9 @@
     <string name="description_photo" translatable="false">Photo</string>
     <string name="description_select_photo" translatable="false">Select photo</string>
     <string name="edit_text">edit Text</string>
+    <string name="sign_in" translatable="false">Sign In</string>
+    <string name="sign_up" translatable="false">Sign Up</string>
+    <string name="sign_out" translatable="false">Sign Out</string>
     <string name="empty_posts">There are no posts.\nIf you create a new post, it will appear here</string>
     <string name="error_empty_content">Content can\'t be empty</string>
     <string name="error_loading">Something went wrong. Try again later</string>

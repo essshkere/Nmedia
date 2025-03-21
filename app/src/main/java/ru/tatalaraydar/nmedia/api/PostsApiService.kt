@@ -9,6 +9,7 @@ import retrofit2.http.*
 import ru.tatalaraydar.nmedia.BuildConfig
 import ru.tatalaraydar.nmedia.dto.Post
 import retrofit2.Response
+import ru.tatalaraydar.nmedia.auth.AppAuth
 import ru.tatalaraydar.nmedia.dto.Media
 
 
@@ -22,6 +23,15 @@ private val logging = HttpLoggingInterceptor().apply {
 
 private val okhttp = OkHttpClient.Builder()
     .addInterceptor(logging)
+    .addInterceptor { chain ->
+        AppAuth.getInstance().authStateFlow.value.token?.let { token ->
+            val newRequest = chain.request().newBuilder()
+                .addHeader("Authorization", token)
+                .build()
+            return@addInterceptor chain.proceed(newRequest)
+        }
+        chain.proceed(chain.request())
+    }
     .build()
 
 private val retrofit = Retrofit.Builder()

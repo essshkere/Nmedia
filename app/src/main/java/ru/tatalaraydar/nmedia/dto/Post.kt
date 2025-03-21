@@ -5,6 +5,7 @@ import ru.tatalaraydar.nmedia.entity.AttachmentType
 data class Post (
     val id: Long = 0,
     val author : String = "",
+    val authorId: Long,
     val published: String = "",
     val authorAvatar :String = "",
     val content: String = "",
@@ -15,6 +16,7 @@ data class Post (
     val videoURL: String = "",
     val isVisible: Boolean = true,
     var attachment: Attachment? = null,
+    val ownedByMe: Boolean = false,
 ) {
     fun getFullImageUrl() = attachment?.url?.let {
         "http://10.0.2.2:9999/media/$it"

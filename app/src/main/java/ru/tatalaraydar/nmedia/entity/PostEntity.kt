@@ -7,10 +7,6 @@ import ru.tatalaraydar.nmedia.dto.Attachment
 import ru.tatalaraydar.nmedia.dto.Post
 
 
-
-
-
-
 data class AttachmentEmbeddable(
     var url: String,
     var type: AttachmentType,
@@ -32,12 +28,12 @@ fun List<PostEntity>.toDto(): List<Post> = map(PostEntity::toDto)
 fun List<Post>.toEntity(): List<PostEntity> = map(PostEntity::fromDto)
 
 
-
 @Entity
 data class PostEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Long,
     val author: String,
+    val authorId: Long,
     val published: String,
     val authorAvatar: String,
     val content: String,
@@ -53,6 +49,7 @@ data class PostEntity(
     fun toDto() = Post(
         id,
         author,
+        authorId,
         published,
         authorAvatar,
         content,
@@ -62,13 +59,15 @@ data class PostEntity(
         likedByMe,
         videoURL,
         isVisible,
-        attachment?.toDto())
+        attachment?.toDto()
+    )
 
     companion object {
         fun fromDto(dto: Post) =
             PostEntity(
                 dto.id,
                 dto.author,
+                dto.authorId,
                 dto.published,
                 dto.authorAvatar,
                 dto.content,
