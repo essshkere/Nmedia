@@ -1,7 +1,6 @@
 package ru.tatalaraydar.nmedia.activity
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -11,7 +10,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toFile
 import androidx.core.view.MenuProvider
@@ -30,33 +28,18 @@ import ru.tatalaraydar.nmedia.viewmodel.PostViewModel
 class NewPostFragment : Fragment() {
     private var fragmentBinding: FragmentNewPostBinding? = null
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         val binding = FragmentNewPostBinding.inflate(inflater, container, false)
         val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
         arguments?.textArg?.let(binding.edit::setText)
 
-        val intent = Intent()
         fragmentBinding = binding
 
-        val postText = intent.getStringExtra("text")
-        if (postText == null) {
 
-            binding.edit.setText(postText)
-
-            binding.ok.setOnClickListener {
-                val text = binding.edit.text.toString()
-                if (text.isNotBlank()) {
-                    viewModel.changeContent(text)
-                    viewModel.save()
-                }
-            }
-        }
         val pickPhotoLauncher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                 when (it.resultCode) {
@@ -101,23 +84,21 @@ class NewPostFragment : Fragment() {
         }
 
 
-
-        viewModel.postCreated.observe(viewLifecycleOwner) {
-            viewModel.loadPosts()
-            findNavController().navigateUp()
-        }
-
-        viewModel.photo.observe(viewLifecycleOwner) {
-            if (it.uri == null) {
+        viewModel.photo.observe(viewLifecycleOwner) { photo ->
+            if (photo.uri == null) {
                 binding.photoContainer.visibility = View.GONE
                 return@observe
             }
 
             binding.photoContainer.visibility = View.VISIBLE
-            binding.photo.setImageURI(it.uri)
+            binding.photo.setImageURI(photo.uri)
         }
 
 
+        viewModel.postCreated.observe(viewLifecycleOwner) {
+            viewModel.loadPosts()
+            findNavController().navigateUp()
+        }
 
         requireActivity().addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -128,38 +109,28 @@ class NewPostFragment : Fragment() {
                 when (menuItem.itemId) {
                     R.id.save -> {
                         fragmentBinding?.let {
-                            viewModel.changeContent(it.edit.text.toString())
-                            viewModel.save()
-                            AndroidUtils.hideKeyboard(requireView())
+                            val text = it.edit.text.toString()
+                            if (text.isNotBlank()) {
+                                viewModel.changeContent(text)
+                                viewModel.save()
+                                AndroidUtils.hideKeyboard(requireView())
+                            }
                         }
                         true
                     }
                     else -> false
                 }
-
         }, viewLifecycleOwner)
 
-
         return binding.root
-    }
-
-
-
-
-
-    companion object {
-        var Bundle.textArg: String? by StringArg
-    }
-
-    object NewPostContract : ActivityResultContract<Unit, String?>() {
-        override fun createIntent(context: Context, input: Unit) =
-            Intent(context, NewPostFragment::class.java)
-
-        override fun parseResult(resultCode: Int, intent: Intent?) = intent?.getStringExtra("text")
     }
 
     override fun onDestroyView() {
         fragmentBinding = null
         super.onDestroyView()
+    }
+
+    companion object {
+        var Bundle.textArg: String? by StringArg
     }
 }

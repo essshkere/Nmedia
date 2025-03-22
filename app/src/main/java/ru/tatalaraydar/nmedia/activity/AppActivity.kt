@@ -28,7 +28,6 @@ class AppActivity : AppCompatActivity() {
         val binding = ActivityAppBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
         requestNotificationsPermission()
 
         val viewModel: AuthViewModel by viewModels()
@@ -45,22 +44,20 @@ class AppActivity : AppCompatActivity() {
                         finish()
                     }
                     .show()
-                if (text?.contains("edit") == true) {
-                }
-                
-                findNavController(R.id.fragment_container).navigate(
-                    R.id.action_feedFragment_to_newPostFragment,
-                    Bundle().apply { textArg = text }
-                )
             } else {
-
-                findNavController(R.id.fragment_container).navigate(
-                    R.id.action_feedFragment_to_editPostFragment,
-                    Bundle().apply { textArg = text }
-                )
+                if (text.contains("edit")) {
+                    findNavController(R.id.fragment_container).navigate(
+                        R.id.action_feedFragment_to_editPostFragment,
+                        Bundle().apply { textArg = text }
+                    )
+                } else {
+                    findNavController(R.id.fragment_container).navigate(
+                        R.id.action_feedFragment_to_newPostFragment,
+                        Bundle().apply { textArg = text }
+                    )
+                }
             }
         }
-
 
         addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -75,19 +72,17 @@ class AppActivity : AppCompatActivity() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
                 when (menuItem.itemId) {
                     R.id.signin -> {
-                        // TODO: just hardcode it, implementation must be in homework
-                        AppAuth.getInstance().setAuth(5, "x-token")
+                        findNavController(R.id.fragment_container).navigate(R.id.action_feedFragment_to_loginFragment)
                         true
                     }
 
                     R.id.signup -> {
-                        // TODO: just hardcode it, implementation must be in homework
-                        AppAuth.getInstance().setAuth(5, "x-token")
+                        // TODO:  переход к фрагменту регистрации
                         true
                     }
 
                     R.id.signout -> {
-                        // TODO: just hardcode it, implementation must be in homework
+                        // TODO Выход из аккаунта
                         AppAuth.getInstance().removeAuth()
                         true
                     }
@@ -96,6 +91,7 @@ class AppActivity : AppCompatActivity() {
                 }
         })
     }
+
     private fun requestNotificationsPermission() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
             return

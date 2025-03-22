@@ -7,10 +7,10 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.*
 import ru.tatalaraydar.nmedia.BuildConfig
-import ru.tatalaraydar.nmedia.dto.Post
+import ru.tatalaraydar.nmedia.dto.*
 import retrofit2.Response
 import ru.tatalaraydar.nmedia.auth.AppAuth
-import ru.tatalaraydar.nmedia.dto.Media
+
 
 
 private val BASEURL  = "${BuildConfig.BASEURL}/api/slow/"
@@ -66,6 +66,14 @@ interface PostsApiService {
     @Multipart
     @POST("media")
     suspend fun upload(@Part media: MultipartBody.Part): Response<Media>
+
+
+    @FormUrlEncoded
+    @POST("users/authentication")
+    suspend fun authenticate(
+        @Field("login") login: String,
+        @Field("pass") pass: String
+    ): Response<AuthResponse>
 }
 
 object PostsApi {

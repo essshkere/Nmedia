@@ -6,22 +6,18 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.map
 import com.google.gson.Gson
 import okhttp3.OkHttpClient
 import ru.tatalaraydar.nmedia.db.AppDb
-import ru.tatalaraydar.nmedia.dto.Post
-import ru.tatalaraydar.nmedia.model.FeedModel
-import ru.tatalaraydar.nmedia.repository.PostRepository
-import ru.tatalaraydar.nmedia.repository.PostRepositoryImpl
+import ru.tatalaraydar.nmedia.repository.*
 import ru.tatalaraydar.nmedia.util.SingleLiveEvent
 import androidx.lifecycle.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import ru.tatalaraydar.nmedia.model.FeedModelState
 import kotlinx.coroutines.flow.*
 import ru.tatalaraydar.nmedia.auth.AppAuth
-import ru.tatalaraydar.nmedia.model.PhotoModel
+import ru.tatalaraydar.nmedia.dto.*
+import ru.tatalaraydar.nmedia.model.*
 import java.io.File
 
 private val empty = Post(
@@ -35,14 +31,14 @@ private val empty = Post(
     published = 0.toString(),
 )
 private val noPhoto = PhotoModel()
+
 class PostViewModel(application: Application) : AndroidViewModel(application) {
-
-
 
     private val gson = Gson()
     var postId: Long = 0L
     private val repository: PostRepository =
         PostRepositoryImpl(AppDb.getInstance(context = application).postDao())
+
     val data: LiveData<FeedModel> = AppAuth.getInstance()
         .authStateFlow
         .flatMapLatest { (myId, _) ->
@@ -54,13 +50,16 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
                     )
                 }
         }.asLiveData(Dispatchers.Default)
+
     private val _dataState = MutableLiveData<FeedModelState>()
     val dataState: LiveData<FeedModelState>
         get() = _dataState
+
     val edited = MutableLiveData(empty)
     private val _postCreated = SingleLiveEvent<Unit>()
     val postCreated: LiveData<Unit>
         get() = _postCreated
+
     val newerCount: LiveData<Int> = data.switchMap {
         repository.getNewerCount(it.posts.firstOrNull()?.id ?: 0L)
             .catch { e -> e.printStackTrace() }
@@ -87,11 +86,17 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     private val client = OkHttpClient()
 
     fun save() {
-        edited.value?.let {
+        edited.value?.let { post ->
             _postCreated.value = Unit
             viewModelScope.launch {
                 try {
-                    repository.save(it)
+                    if (_photo.value?.uri != null && _photo.value?.file != null) {
+                        // Если есть вложение, используем saveWithAttachment
+                        repository.saveWithAttachment(post, MediaUpload(_photo.value!!.file!!))
+                    } else {
+                        // Если вложения нет, сохраняем обычный пост
+                        repository.save(post)
+                    }
                     _dataState.value = FeedModelState()
                 } catch (e: Exception) {
                     _dataState.value = FeedModelState(error = true)
@@ -104,10 +109,10 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun changePhoto(uri: Uri?, file: File?) {
         _photo.value = PhotoModel(uri, file)
     }
+
     fun removePhoto() {
         _photo.value = null
     }
-
 
     fun removeById(id: Long) {
         viewModelScope.launch {
@@ -141,7 +146,6 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-
     fun makeAllPostsVisible() {
         viewModelScope.launch {
             repository.makeAllPostsVisible()
@@ -158,19 +162,12 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-
-
     fun edit(post: Post) {
         edited.value = post
     }
 
-
     fun updatePost(postId: Long, updatedContent: String) {
-//        val postToUpdate = data.value?.find { it.id == postId }
-//        if (postToUpdate != null) {
-//            val updatedPost = postToUpdate.copy(content = updatedContent)
-//            repository.save(updatedPost)
-//        }
+
     }
 
     fun changeContent(content: String) {
@@ -185,6 +182,3 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
         repository.updateShareById(id)
     }
 }
-
-
-

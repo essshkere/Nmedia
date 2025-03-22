@@ -19,32 +19,4 @@ interface PostRepository {
     suspend fun saveWithAttachment(post: Post, upload: MediaUpload)
     suspend fun upload(upload: MediaUpload): Media
 
-
-//    fun getAllAsync(callback: Callback<List<Post>>)
-//    fun save(post: Post, callback: Callback<Post>)
-//    fun removeById(id: Long, callback: Callback<Unit>)
-//    fun likeById(post: Post, callback: Callback<Post>)
-
-    // fun getAll(): List<Post>
-
-
-//    interface GetAllCallback {
-//        fun onSuccess(posts: List<Post>) {}
-//        fun onError(e: Exception) {}
-//    }
-//
-//    interface CustomCallback<T> {
-//        fun onSuccess(result: T)
-//        fun onError(error: Throwable)
-//    }
-//
-//    interface Callback<T> {
-//        fun onSuccess(posts: T) {}
-//        fun onError(e: Exception) {}
-//    }
 }
-
-
-
-
-

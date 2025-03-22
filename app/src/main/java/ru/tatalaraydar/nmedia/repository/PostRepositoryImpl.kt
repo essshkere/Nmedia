@@ -1,36 +1,17 @@
 package ru.tatalaraydar.nmedia.repository
 
 
-import android.annotation.SuppressLint
-import android.content.Context
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import okhttp3.MediaType.Companion.toMediaType
-import kotlin.math.floor
-import ru.tatalaraydar.nmedia.api.PostsApi
-import ru.tatalaraydar.nmedia.dto.Post
-import ru.tatalaraydar.nmedia.error.ApiError
-import ru.tatalaraydar.nmedia.dao.PostDao
-import ru.tatalaraydar.nmedia.entity.PostEntity
-import ru.tatalaraydar.nmedia.error.NetworkError
-import androidx.lifecycle.*
-import androidx.room.Room
-import kotlinx.coroutines.Dispatchers
-import ru.tatalaraydar.nmedia.api.*
-import ru.tatalaraydar.nmedia.entity.toDto
-import ru.tatalaraydar.nmedia.entity.toEntity
-import ru.tatalaraydar.nmedia.error.UnknownError
-import okio.IOException
-import ru.tatalaraydar.nmedia.db.AppDb
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import ru.tatalaraydar.nmedia.dto.*
+import ru.tatalaraydar.nmedia.error.*
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import ru.tatalaraydar.nmedia.dto.Attachment
-import ru.tatalaraydar.nmedia.dto.Media
-import ru.tatalaraydar.nmedia.dto.MediaUpload
-import ru.tatalaraydar.nmedia.entity.AttachmentType
+import ru.tatalaraydar.nmedia.api.PostsApi
+import ru.tatalaraydar.nmedia.dao.PostDao
+import ru.tatalaraydar.nmedia.entity.*
 import ru.tatalaraydar.nmedia.error.AppError
+import java.io.IOException
 
 
 class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
@@ -46,7 +27,6 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
             }
 
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            // dao.insert(body.toEntity())
             body.toEntity().forEach { dao.insert(it) }
         } catch (e: IOException) {
             throw NetworkError
@@ -72,7 +52,6 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         .catch { e -> throw AppError.from(e) }
         .flowOn(Dispatchers.Default)
 
-
     override suspend fun save(post: Post) {
         try {
             val response = PostsApi.service.save(post)
@@ -82,6 +61,36 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
 
             val body = response.body() ?: throw ApiError(response.code(), response.message())
             dao.insert(PostEntity.fromDto(body))
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
+
+    override suspend fun saveWithAttachment(post: Post, upload: MediaUpload) {
+        try {
+            val media = upload(upload)
+            val postWithAttachment =
+                post.copy(attachment = Attachment(media.id, AttachmentType.IMAGE))
+            save(postWithAttachment)
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
+
+    override suspend fun upload(upload: MediaUpload): Media {
+        try {
+            val media = MultipartBody.Part.createFormData(
+                "file", upload.file.name, upload.file.asRequestBody()
+            )
+            val response = PostsApi.service.upload(media)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+            return response.body() ?: throw ApiError(response.code(), response.message())
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
@@ -107,43 +116,7 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         dao.makeAllPostsVisible()
     }
 
-    override suspend fun saveWithAttachment(post: Post, upload: MediaUpload) {
-        try {
-            val media = upload(upload)
-            // TODO: add support for other types
-            val postWithAttachment =
-                post.copy(attachment = Attachment(media.id, AttachmentType.IMAGE))
-            save(postWithAttachment)
-        } catch (e: AppError) {
-            throw e
-        } catch (e: IOException) {
-            throw NetworkError
-        } catch (e: Exception) {
-            throw UnknownError
-        }
-    }
-
-    override suspend fun upload(upload: MediaUpload): Media {
-        try {
-            val media = MultipartBody.Part.createFormData(
-                "file", upload.file.name, upload.file.asRequestBody()
-            )
-
-            val response = PostsApi.service.upload(media)
-            if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
-            }
-
-            return response.body() ?: throw ApiError(response.code(), response.message())
-        } catch (e: IOException) {
-            throw NetworkError
-        } catch (e: Exception) {
-            throw UnknownError
-        }
-    }
-
     override suspend fun likeById(id: Long) {
-
         try {
             dao.updateLikeById(id)
             val response = PostsApi.service.likeById(id)
@@ -159,51 +132,6 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         }
     }
 
-
-    private fun buildDatabase(context: Context) =
-
-        Room.databaseBuilder(context, AppDb::class.java, "app.db")
-
-            .fallbackToDestructiveMigration()
-
-
-            .build()
-
     override fun updateShareById(id: Long) {
-//        val request: Request = Request.Builder()
-//            .post("{}".toRequestBody(jsonType))
-//            .url("${BASE_URL}/api/slow/posts/$id/shares")
-//            .build()
-//        client.newCall(request)
-//            .execute()
-//            .close()
-//        val currentPosts = _posts.value ?: emptyList()
-//        _posts.postValue(currentPosts.map {
-//            if (it.id == id) it.copy(share = it.share + 1) else it
-//        })
-    }
-
-    companion object {
-        private const val KEY = "id"
-        private const val ID = "posts"
-        private const val FILENAME = "posts.json"
-        private val gson = Gson()
-        private val type = TypeToken.getParameterized(List::class.java, Post::class.java).type
-
-        private const val BASE_URL = "http://10.0.2.2:9999"
-        private val jsonType = "application/json".toMediaType()
-
-        @SuppressLint("DefaultLocale")
-        fun formatCount(count: Int): String {
-            return when {
-                count >= 1_000_000 -> String.format("%.1fM", floor(count / 1_000_000.0 * 10) / 10)
-                    .replace(",", ".")
-
-                count >= 1_000 -> String.format("%.1fK", floor(count / 1_000.0 * 10) / 10)
-                    .replace(",", ".")
-
-                else -> count.toString()
-            }
-        }
     }
 }
