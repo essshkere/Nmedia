@@ -1,6 +1,7 @@
 package ru.tatalaraydar.nmedia.repository
 
 
+import android.annotation.SuppressLint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import ru.tatalaraydar.nmedia.dto.*
@@ -12,6 +13,7 @@ import ru.tatalaraydar.nmedia.dao.PostDao
 import ru.tatalaraydar.nmedia.entity.*
 import ru.tatalaraydar.nmedia.error.AppError
 import java.io.IOException
+import kotlin.math.floor
 
 
 class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
@@ -133,5 +135,22 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
     }
 
     override fun updateShareById(id: Long) {
+    }
+
+    companion object {
+
+
+        @SuppressLint("DefaultLocale")
+        fun formatCount(count: Int): String {
+            return when {
+                count >= 1_000_000 -> String.format("%.1fM", floor(count / 1_000_000.0 * 10) / 10)
+                    .replace(",", ".")
+
+                count >= 1_000 -> String.format("%.1fK", floor(count / 1_000.0 * 10) / 10)
+                    .replace(",", ".")
+
+                else -> count.toString()
+            }
+        }
     }
 }

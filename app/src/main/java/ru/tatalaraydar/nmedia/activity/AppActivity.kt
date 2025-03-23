@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
@@ -20,6 +21,7 @@ import ru.tatalaraydar.nmedia.auth.AppAuth
 import ru.tatalaraydar.nmedia.databinding.ActivityAppBinding
 import ru.tatalaraydar.nmedia.viewmodel.AuthViewModel
 
+
 class AppActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,9 +29,9 @@ class AppActivity : AppCompatActivity() {
 
         val binding = ActivityAppBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        enableEdgeToEdge()
+        setSupportActionBar(binding.topAppBar)
         requestNotificationsPermission()
-
         val viewModel: AuthViewModel by viewModels()
 
         intent?.let {
@@ -72,17 +74,18 @@ class AppActivity : AppCompatActivity() {
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
                 when (menuItem.itemId) {
                     R.id.signin -> {
+
                         findNavController(R.id.fragment_container).navigate(R.id.action_feedFragment_to_loginFragment)
                         true
                     }
 
                     R.id.signup -> {
-                        // TODO:  переход к фрагменту регистрации
+                        // TODO: Переход к фрагменту регистрации
                         true
                     }
 
                     R.id.signout -> {
-                        // TODO Выход из аккаунта
+                        // todo Выход из аккаунта
                         AppAuth.getInstance().removeAuth()
                         true
                     }
@@ -90,7 +93,13 @@ class AppActivity : AppCompatActivity() {
                     else -> false
                 }
         })
+
+
+        viewModel.data.observe(this) {
+            invalidateOptionsMenu()
+        }
     }
+
 
     private fun requestNotificationsPermission() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {

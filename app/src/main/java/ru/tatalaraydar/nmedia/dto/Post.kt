@@ -5,7 +5,7 @@ import ru.tatalaraydar.nmedia.entity.AttachmentType
 data class Post (
     val id: Long = 0,
     val author : String = "",
-    val authorId: Long,
+    val authorId: Long = 0,
     val published: String = "",
     val authorAvatar :String = "",
     val content: String = "",
