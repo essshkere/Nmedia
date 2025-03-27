@@ -41,15 +41,15 @@ private val retrofit = Retrofit.Builder()
     .build()
 
 
-interface PostsApiService {
+interface ApiService {
     @GET("posts")
     suspend fun getAll(): Response<List<Post>>
 
     @GET("posts/{id}")
     suspend fun getById(@Path("id") id: Long): Response<Post>
 
-    @POST("posts")
-    suspend fun save(@Body post: Post): Response<Post>
+    @POST("users/push-tokens")
+    suspend fun save(@Body pushToken: PushToken): Response<Unit>
 
     @DELETE("posts/{id}")
     suspend fun removeById(@Path("id") id: Long): Response<Unit>
@@ -62,6 +62,9 @@ interface PostsApiService {
 
     @GET("posts/{id}/newer")
     suspend fun getNewer(@Path("id") id: Long): Response<List<Post>>
+
+    @POST("posts")
+    suspend fun save(@Body post: Post): Response<Post>
 
     @Multipart
     @POST("media")
@@ -76,8 +79,8 @@ interface PostsApiService {
     ): Response<AuthResponse>
 }
 
-object PostsApi {
-    val service: PostsApiService by lazy {
-        retrofit.create(PostsApiService::class.java)
+object Api {
+    val service: ApiService by lazy {
+        retrofit.create(ApiService::class.java)
     }
 }

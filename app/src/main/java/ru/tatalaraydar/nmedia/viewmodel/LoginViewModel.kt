@@ -2,7 +2,7 @@ package ru.tatalaraydar.nmedia.viewmodel
 
 import kotlinx.coroutines.launch
 import retrofit2.Response
-import ru.tatalaraydar.nmedia.api.PostsApi
+import ru.tatalaraydar.nmedia.api.*
 import ru.tatalaraydar.nmedia.auth.AppAuth
 import ru.tatalaraydar.nmedia.dto.AuthResponse
 import ru.tatalaraydar.nmedia.error.*
@@ -29,7 +29,7 @@ class LoginViewModel : ViewModel() {
             try {
 
                 val response: Response<AuthResponse> =
-                    PostsApi.service.authenticate(login, password)
+                    Api.service.authenticate(login, password)
                 if (response.isSuccessful) {
                     val authResponse = response.body()!!
                     AppAuth.getInstance().setAuth(authResponse.id, authResponse.token)

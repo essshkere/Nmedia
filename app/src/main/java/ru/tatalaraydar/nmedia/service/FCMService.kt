@@ -16,6 +16,7 @@ import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 
 import ru.tatalaraydar.nmedia.R
+import ru.tatalaraydar.nmedia.auth.AppAuth
 import kotlin.random.Random
 
 class FCMService : FirebaseMessagingService() {
@@ -39,26 +40,18 @@ class FCMService : FirebaseMessagingService() {
         }
     }
 
+    override fun onMessageReceived(message: RemoteMessage) {
+        // TODO: replace this in homework
+        println(message.data["content"])
+    }
 
     override fun onNewToken(token: String) {
-        Log.d("FCM", token)
+        AppAuth.getInstance().sendPushToken(token)
         println(token)
+        Log.d("TOKEN", "Токен: $token")
     }
-    override fun onMessageReceived(message: RemoteMessage) {
-        Log.d("FCM2", "message receive")
-        message.data[action]?.let {
-            try {
-                when (Action.valueOf(it)) {
-                    Action.LIKE -> handleLike(gson.fromJson(message.data[content], Like::class.java))
-                    Action.POST -> handlePost(gson.fromJson(message.data[content], Post::class.java))
-                    else -> handleDefaultAction()
-                }
-            } catch (e: IllegalArgumentException) {
-                Log.e("FCM2", "other message")
-                handleDefaultAction()
-            }
-        }
-    }
+
+
 
     private fun handleDefaultAction() {
         val notification = NotificationCompat.Builder(this, channelId)
