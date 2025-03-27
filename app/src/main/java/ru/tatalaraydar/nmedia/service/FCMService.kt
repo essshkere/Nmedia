@@ -14,7 +14,6 @@ import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
-
 import ru.tatalaraydar.nmedia.R
 import ru.tatalaraydar.nmedia.auth.AppAuth
 import kotlin.random.Random
@@ -22,9 +21,9 @@ import kotlin.random.Random
 class FCMService : FirebaseMessagingService() {
     private val action = "action"
     private val content = "content"
+    private val recipientIdKey = "recipientId"
     private val channelId = "remote"
     private val gson = Gson()
-
 
     override fun onCreate() {
         super.onCreate()
@@ -41,96 +40,55 @@ class FCMService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
-        // TODO: replace this in homework
-        println(message.data["content"])
+        try {
+            val recipientId = message.data[recipientIdKey]?.toLongOrNull()
+            val auth = AppAuth.getInstance()
+
+            when {
+                recipientId == null -> {
+                    message.data[content]?.let { showNotification(it) }
+                }
+
+                recipientId == 0L && recipientId != auth.authStateFlow.value.id -> {
+                    auth.sendPushToken()
+                }
+
+                recipientId != 0L && recipientId != auth.authStateFlow.value.id -> {
+                    auth.sendPushToken()
+                }
+
+                else -> {
+                    message.data[content]?.let { showNotification(it) }
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("FCM", "Error processing message", e)
+        }
     }
 
     override fun onNewToken(token: String) {
         AppAuth.getInstance().sendPushToken(token)
-        println(token)
-        Log.d("TOKEN", "Токен: $token")
+        Log.d("FCM", "New token: $token")
     }
 
-
-
-    private fun handleDefaultAction() {
+    @SuppressLint("MissingPermission")
+    private fun showNotification(content: String) {
         val notification = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle(
-                getString(R.string.notification_other)
-            )
+            .setContentTitle(getString(R.string.notification_other))
+            .setContentText(content)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .build()
 
-        notify(notification)
-
-        Log.d("FCM2", "Неизвестное действие получено")
-    }
-
-    private fun handleLike(content: Like) {
-        val notification = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle(
-                getString(
-                    R.string.notification_user_liked,
-                    content.userName,
-                    content.postAuthor,
-                )
-            )
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .build()
-
-        notify(notification)
-    }
-
-    private fun handlePost(content: Post) {
-        val notification = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle(
-                getString(
-                    R.string.notification_post,
-                    content.userName
-                )
-            )
-            .setStyle(NotificationCompat.BigTextStyle().bigText(content.contentPost))
-
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .build()
-
-        notify(notification)
-    }
-
-
-    private fun notify(notification: Notification) {
-        if (
-            Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
-            checkSelfPermission(
-                Manifest.permission.POST_NOTIFICATIONS
-            ) == PackageManager.PERMISSION_GRANTED
-        ) {
+        if (checkNotificationPermission()) {
             NotificationManagerCompat.from(this)
                 .notify(Random.nextInt(100_000), notification)
         }
     }
 
-    enum class Action {
-        LIKE,
-        POST,
+    private fun checkNotificationPermission(): Boolean {
+        return Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+                checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) ==
+                PackageManager.PERMISSION_GRANTED
     }
-
-    data class Like(
-        val userId: Long,
-        val userName: String,
-        val postId: Long,
-        val postAuthor: String,
-    )
-
-    data class Post(
-        val userId: Long,
-        val userName: String,
-        val postId: Long,
-        val postAuthor: String,
-        val contentPost: String
-    )
-
 }

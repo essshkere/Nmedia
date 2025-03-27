@@ -137,20 +137,30 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
     override fun updateShareById(id: Long) {
     }
 
+    override suspend fun sendPushToken(token: PushToken) {
+        try {
+            val response = Api.service.save(token)
+            if (!response.isSuccessful) {
+                throw ApiError(response.code(), response.message())
+            }
+        } catch (e: IOException) {
+            throw NetworkError
+        } catch (e: Exception) {
+            throw UnknownError
+        }
+    }
+
     companion object {
-
-
         @SuppressLint("DefaultLocale")
         fun formatCount(count: Int): String {
             return when {
                 count >= 1_000_000 -> String.format("%.1fM", floor(count / 1_000_000.0 * 10) / 10)
                     .replace(",", ".")
-
                 count >= 1_000 -> String.format("%.1fK", floor(count / 1_000.0 * 10) / 10)
                     .replace(",", ".")
-
                 else -> count.toString()
             }
         }
+
     }
 }
