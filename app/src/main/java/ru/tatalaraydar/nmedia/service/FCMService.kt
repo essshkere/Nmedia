@@ -16,7 +16,10 @@ import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import ru.tatalaraydar.nmedia.R
 import ru.tatalaraydar.nmedia.auth.AppAuth
+import ru.tatalaraydar.nmedia.dto.*
 import kotlin.random.Random
+
+
 
 class FCMService : FirebaseMessagingService() {
     private val action = "action"
@@ -24,6 +27,8 @@ class FCMService : FirebaseMessagingService() {
     private val recipientIdKey = "recipientId"
     private val channelId = "remote"
     private val gson = Gson()
+
+
 
     override fun onCreate() {
         super.onCreate()
@@ -41,33 +46,43 @@ class FCMService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         try {
-            val contentJson = message.data["content"]
-            val recipientId = message.data["recipientId"]?.toLongOrNull()
-            val auth = AppAuth.getInstance()
-
-            val notificationContent = try {
-                gson.fromJson(contentJson, NotificationContent::class.java)
-            } catch (e: Exception) {
-                Log.e("FCM", "Error parsing notification content", e)
-                null
+            val contentJson = message.data["content"] ?: run {
+                Log.w("FCM", "Message content is null")
+                return
             }
+
+
+            val pushData = try {
+                gson.fromJson(contentJson, PushData::class.java).apply {
+                    Log.d("FCM", "Parsed push data: $this")
+                }
+            } catch (e: Exception) {
+                Log.e("FCM", "Error parsing push data", e)
+                return
+            }
+
+            val recipientId = pushData.recipientId
+            val auth = AppAuth.getInstance()
+            val myId = auth.authStateFlow.value.id
 
             when {
                 recipientId == null -> {
-                    notificationContent?.let { showNotification(it) }
+                    showNotification(pushData.content)
                 }
-                recipientId == 0L && recipientId != auth.authStateFlow.value.id -> {
+                recipientId == 0L && myId != 0L -> {
                     auth.sendPushToken()
+                    Log.d("FCM", "Resending token for anonymous auth")
                 }
-                recipientId != 0L && recipientId != auth.authStateFlow.value.id -> {
+                recipientId != myId -> {
                     auth.sendPushToken()
+                    Log.d("FCM", "Resending token for mismatched recipient")
                 }
                 else -> {
-                    notificationContent?.let { showNotification(it) }
+                    showNotification(pushData.content)
                 }
             }
         } catch (e: Exception) {
-            Log.e("FCM", "Error processing message", e)
+            Log.e("FCM", "Error processing FCM message", e)
         }
     }
 
@@ -85,11 +100,7 @@ class FCMService : FirebaseMessagingService() {
         }
     }
 
-    data class NotificationContent(
-        val title: String?,
-        val body: String,
-        val recipientId: Long?
-    )
+
 
 
     override fun onNewToken(token: String) {
