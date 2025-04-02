@@ -2,7 +2,6 @@ package ru.tatalaraydar.nmedia.service
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
@@ -16,22 +15,25 @@ import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import ru.tatalaraydar.nmedia.R
 import ru.tatalaraydar.nmedia.auth.AppAuth
-import ru.tatalaraydar.nmedia.dto.*
 import kotlin.random.Random
 
 
-
 class FCMService : FirebaseMessagingService() {
-    private val action = "action"
-    private val content = "content"
-    private val recipientIdKey = "recipientId"
     private val channelId = "remote"
     private val gson = Gson()
 
 
+    data class PushData(
+        val recipientId: Long?,
+        val content: String
+    )
 
     override fun onCreate() {
         super.onCreate()
+        createNotificationChannel()
+    }
+
+    private fun createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = getString(R.string.channel_remote_name)
             val descriptionText = getString(R.string.channel_remote_description)
@@ -51,61 +53,43 @@ class FCMService : FirebaseMessagingService() {
                 return
             }
 
+            Log.d("FCM", "Received JSON: $contentJson")
 
             val pushData = try {
-                gson.fromJson(contentJson, PushData::class.java).apply {
-                    Log.d("FCM", "Parsed push data: $this")
+                gson.fromJson(contentJson, PushData::class.java).also {
+                    Log.d("FCM", "Parsed push data: $it")
                 }
             } catch (e: Exception) {
                 Log.e("FCM", "Error parsing push data", e)
                 return
             }
 
-            val recipientId = pushData.recipientId
-            val auth = AppAuth.getInstance()
-            val myId = auth.authStateFlow.value.id
-
-            when {
-                recipientId == null -> {
-                    showNotification(pushData.content)
-                }
-                recipientId == 0L && myId != 0L -> {
-                    auth.sendPushToken()
-                    Log.d("FCM", "Resending token for anonymous auth")
-                }
-                recipientId != myId -> {
-                    auth.sendPushToken()
-                    Log.d("FCM", "Resending token for mismatched recipient")
-                }
-                else -> {
-                    showNotification(pushData.content)
-                }
-            }
+            handlePushData(pushData)
         } catch (e: Exception) {
             Log.e("FCM", "Error processing FCM message", e)
         }
     }
 
-    private fun showNotification(content: NotificationContent) {
-        val notification = NotificationCompat.Builder(this, channelId)
-            .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle(content.title ?: getString(R.string.notification_other))
-            .setContentText(content.body)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .build()
+    private fun handlePushData(pushData: PushData) {
+        val recipientId = pushData.recipientId
+        val auth = AppAuth.getInstance()
+        val myId = auth.authStateFlow.value.id
 
-        if (checkNotificationPermission()) {
-            NotificationManagerCompat.from(this)
-                .notify(Random.nextInt(100_000), notification)
+        when {
+            recipientId == null -> {
+                showNotification(pushData.content)
+            }
+            recipientId == 0L && myId != 0L -> {
+                auth.sendPushToken()
+                Log.d("FCM", "Resending token for anonymous auth")
+            }
+            recipientId != myId -> {
+                Log.d("FCM", "Ignoring notification for another user")
+            }
+            else -> {
+                showNotification(pushData.content)
+            }
         }
-    }
-
-
-
-
-    override fun onNewToken(token: String) {
-        AppAuth.getInstance().sendPushToken(token)
-        Log.d("FCM", "New token: $token")
     }
 
     @SuppressLint("MissingPermission")
@@ -121,6 +105,11 @@ class FCMService : FirebaseMessagingService() {
             NotificationManagerCompat.from(this)
                 .notify(Random.nextInt(100_000), notification)
         }
+    }
+
+    override fun onNewToken(token: String) {
+        Log.d("FCM", "New token: $token")
+        AppAuth.getInstance().sendPushToken(token)
     }
 
     private fun checkNotificationPermission(): Boolean {
