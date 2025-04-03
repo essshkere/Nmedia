@@ -52,8 +52,7 @@ class FeedFragment : Fragment() {
             }
 
             override fun onEdit(post: Post) {
-                viewModel.edit(post)
-
+                viewModel.edit(post.id, post.content)
             }
 
             override fun onShare(post: Post) {
@@ -122,7 +121,7 @@ class FeedFragment : Fragment() {
         viewModel.edited.observe(viewLifecycleOwner) { post ->
             if (post.id != 0L) {
                 findNavController().navigate(
-                    R.id.action_feedFragment_to_editPostFragment,
+                    R.id.action_feedFragment_to_newPostFragment,
                     Bundle().apply { textArg = post.content })
             }
         }

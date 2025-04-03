@@ -49,7 +49,7 @@ class AppActivity : AppCompatActivity() {
             } else {
                 if (text.contains("edit")) {
                     findNavController(R.id.fragment_container).navigate(
-                        R.id.action_feedFragment_to_editPostFragment,
+                        R.id.action_feedFragment_to_newPostFragment,
                         Bundle().apply { textArg = text }
                     )
                 } else {

@@ -21,120 +21,78 @@ import ru.tatalaraydar.nmedia.repository.PostRepositoryImpl.Companion.formatCoun
 
 
 class PostFragment : Fragment() {
+    private var _binding: FragmentPostBinding? = null
+    private val binding get() = _binding!!
+    private val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
     private var postId: Long = 0L
-
-    val viewModel: PostViewModel by viewModels(ownerProducer = ::requireParentFragment)
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-        val binding = FragmentPostBinding.inflate(inflater, container, false)
-
-        arguments?.let { postId = it.getLong("postId", -1) }
-
-
-
-        viewModel.findPostIdById(postId).observe(viewLifecycleOwner) { post ->
-
-            binding.author.text = post?.author ?: "Автор не указан"
-            binding.content.text = post?.content ?: "Содержимое отсутствует"
-            binding.published.text = post?.published ?: "Дата публикации не указана"
-            binding.viewsPost.text = post?.views_post?.let { formatCount(it) } ?: "0 просмотров"
-            binding.buttonLikes.text = post?.likes?.let { formatCount(it) } ?: "0 лайков"
-            binding.buttonShare.text = post?.share?.let { formatCount(it) } ?: "0 поделились"
-            binding.buttonLikes.isChecked = post?.likedByMe == true
-            binding.buttonLikes.setOnClickListener { post?.let { it1 -> viewModel.likeById(post.id) } }
-            binding.buttonShare.setOnClickListener {
-                if (post != null) {
-                    sharePost(post)
-                }
-            }
-
-
-
-
-
-            binding.menu.setOnClickListener {
-                PopupMenu(it.context, it).apply {
-                    inflate(R.menu.options_post)
-                    setOnMenuItemClickListener { item ->
-                        when (item.itemId) {
-                            R.id.remove -> {
-                                viewModel.removeById(post?.id ?: 0)
-                                findNavController().navigateUp()
-                                true
-                            }
-
-                            R.id.edit -> {
-                                post?.let { it1 -> viewModel.edit(it1) }
-                                findNavController().navigate(
-                                    R.id.action_postFragment_to_editPostFragment,
-                                    Bundle().apply {
-                                        putLong("post_id", post?.id ?: 0)
-                                        putString("textArg", post?.content)
-                                    }
-                                )
-                                true
-                            }
-
-                            else -> false
-                        }
-                    }
-                }.show()
-            }
-        }
-
-        val adapter = PostsAdapter(object : OnInteractionListener {
-
-            override fun onRemove(post: Post) {
-                viewModel.removeById(post.id)
-            }
-
-            override fun onLike(post: Post) {
-                viewModel.likeById(post.id)
-            }
-
-            override fun onEdit(post: Post) {
-                viewModel.edit(post)
-            }
-
-            override fun onShare(post: Post) {
-                viewModel.share(post.id)
-                val intent = Intent().apply {
-                    action = Intent.ACTION_SEND
-                    putExtra(Intent.EXTRA_TEXT, post.content)
-                    type = "text/plain"
-                }
-                val shareIntent =
-                    Intent.createChooser(intent, getString(R.string.chooser_share_post))
-                startActivity(shareIntent)
-
-            }
-
-            override fun onVideolink(post: Post) {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(post.videoURL))
-                startActivity(intent)
-            }
-        })
-
-//        viewModel.edited.observe(viewLifecycleOwner) { post ->
-//            if (post.id != 0L) {
-//                findNavController().navigate(
-//                    R.id.action_feedFragment_to_editPostFragment,
-//                    Bundle().apply { textArg = post.content })
-//            }
-//        }
-
-//        viewModel.data.observe(viewLifecycleOwner) { posts ->
-//            adapter.submitList(posts)
-//        }
-
+        _binding = FragmentPostBinding.inflate(inflater, container, false)
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        postId = arguments?.getLong("postId") ?: 0L
+
+        viewModel.data.observe(viewLifecycleOwner) { state ->
+            state.posts.find { it.id == postId }?.let { post ->
+                bindPost(post)
+            }
+        }
+    }
+
+    private fun bindPost(post: Post) {
+        binding.apply {
+            author.text = post.author ?: "Автор не указан"
+            content.text = post.content ?: "Содержимое отсутствует"
+            published.text = post.published ?: "Дата публикации не указана"
+            viewsPost.text = post.views_post?.let { formatCount(it) } ?: "0 просмотров"
+            buttonLikes.text = post.likes?.let { formatCount(it) } ?: "0 лайков"
+            buttonShare.text = post.share?.let { formatCount(it) } ?: "0 поделились"
+            buttonLikes.isChecked = post.likedByMe == true
+
+            buttonLikes.setOnClickListener { viewModel.likeById(post.id) }
+            buttonShare.setOnClickListener { sharePost(post) }
+
+            menu.setOnClickListener { showPopupMenu(it, post) }
+        }
+    }
+
+    private fun showPopupMenu(view: View, post: Post) {
+        PopupMenu(view.context, view).apply {
+            inflate(R.menu.options_post)
+            setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.remove -> {
+                        viewModel.removeById(post.id)
+                        findNavController().navigateUp()
+                        true
+                    }
+                    R.id.edit -> {
+                        navigateToEditPost(post)
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }.show()
+    }
+
+    private fun navigateToEditPost(post: Post) {
+        findNavController().navigate(
+            R.id.action_postFragment_to_newPostFragment,
+            Bundle().apply {
+                putLong("post_id", post.id)
+                putString("textArg", post.content)
+            }
+        )
+    }
 
     private fun sharePost(post: Post) {
         viewModel.share(post.id)
@@ -143,7 +101,11 @@ class PostFragment : Fragment() {
             putExtra(Intent.EXTRA_TEXT, post.content)
             type = "text/plain"
         }
-        val shareIntent = Intent.createChooser(intent, getString(R.string.chooser_share_post))
-        startActivity(shareIntent)
+        startActivity(Intent.createChooser(intent, getString(R.string.chooser_share_post)))
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
