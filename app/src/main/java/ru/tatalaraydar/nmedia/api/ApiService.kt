@@ -9,6 +9,7 @@ import retrofit2.http.*
 import ru.tatalaraydar.nmedia.BuildConfig
 import ru.tatalaraydar.nmedia.dto.*
 import retrofit2.Response
+import ru.netology.nmedia.BuildConfig
 import ru.tatalaraydar.nmedia.auth.AppAuth
 
 

@@ -15,103 +15,80 @@ import androidx.core.view.MenuProvider
 import androidx.navigation.findNavController
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_INDEFINITE
 import com.google.android.material.snackbar.Snackbar
-import ru.tatalaraydar.nmedia.R
-import ru.tatalaraydar.nmedia.activity.NewPostFragment.Companion.textArg
+import dagger.hilt.android.AndroidEntryPoint
+import ru.netology.nmedia.R
+import ru.netology.nmedia.databinding.ActivityAppBinding
 import ru.tatalaraydar.nmedia.auth.AppAuth
-import ru.tatalaraydar.nmedia.databinding.ActivityAppBinding
 import ru.tatalaraydar.nmedia.viewmodel.AuthViewModel
+import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class AppActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityAppBinding
+
+    @Inject lateinit var appAuth: AppAuth
+    private val viewModel: AuthViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val binding = ActivityAppBinding.inflate(layoutInflater)
+        binding = ActivityAppBinding.inflate(layoutInflater)
         setContentView(binding.root)
         enableEdgeToEdge()
+
         setSupportActionBar(binding.topAppBar)
         requestNotificationsPermission()
-        val viewModel: AuthViewModel by viewModels()
+        setupAuthMenu()
+        handleIntent()
+    }
 
-        intent?.let {
-            if (it.action != Intent.ACTION_SEND) {
-                return@let
+    private fun setupAuthMenu() {
+        addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.menu_main, menu)
+                menu.setGroupVisible(R.id.unauthenticated, !viewModel.authenticated)
+                menu.setGroupVisible(R.id.authenticated, viewModel.authenticated)
             }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean = when (menuItem.itemId) {
+                R.id.signin -> {
+                    findNavController(R.id.fragment_container).navigate(R.id.action_feedFragment_to_loginFragment)
+                    true
+                }
+                R.id.signup -> true
+                R.id.signout -> {
+                    appAuth.removeAuth()
+                    true
+                }
+                else -> false
+            }
+        })
+
+        viewModel.data.observe(this) { invalidateOptionsMenu() }
+    }
+
+    private fun handleIntent() {
+        intent?.let {
+            if (it.action != Intent.ACTION_SEND) return@let
 
             val text = it.getStringExtra(Intent.EXTRA_TEXT)
             if (text.isNullOrBlank()) {
                 Snackbar.make(binding.root, R.string.error_empty_content, LENGTH_INDEFINITE)
-                    .setAction(android.R.string.ok) {
-                        finish()
-                    }
+                    .setAction(android.R.string.ok) { finish() }
                     .show()
             } else {
-                if (text.contains("edit")) {
-                    findNavController(R.id.fragment_container).navigate(
-                        R.id.action_feedFragment_to_newPostFragment,
-                        Bundle().apply { textArg = text }
-                    )
-                } else {
-                    findNavController(R.id.fragment_container).navigate(
-                        R.id.action_feedFragment_to_newPostFragment,
-                        Bundle().apply { textArg = text }
-                    )
-                }
+                findNavController(R.id.fragment_container).navigate(
+                    R.id.action_feedFragment_to_newPostFragment,
+                    Bundle().apply { textArg = text }
+                )
             }
-        }
-
-        addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.menu_main, menu)
-
-                menu.let {
-                    it.setGroupVisible(R.id.unauthenticated, !viewModel.authenticated)
-                    it.setGroupVisible(R.id.authenticated, viewModel.authenticated)
-                }
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean =
-                when (menuItem.itemId) {
-                    R.id.signin -> {
-
-                        findNavController(R.id.fragment_container).navigate(R.id.action_feedFragment_to_loginFragment)
-                        true
-                    }
-
-                    R.id.signup -> {
-                        // TODO: Переход к фрагменту регистрации
-                        true
-                    }
-
-                    R.id.signout -> {
-                        // todo Выход из аккаунта
-                        AppAuth.getInstance().removeAuth()
-                        true
-                    }
-
-                    else -> false
-                }
-        })
-
-
-        viewModel.data.observe(this) {
-            invalidateOptionsMenu()
         }
     }
 
-
     private fun requestNotificationsPermission() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            return
-        }
-
-        val permission = Manifest.permission.POST_NOTIFICATIONS
-
-        if (checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED) {
-            return
-        }
-
-        requestPermissions(arrayOf(permission), 1)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+        if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) return
+        requestPermissions(arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
     }
 }

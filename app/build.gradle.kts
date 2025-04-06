@@ -3,16 +3,17 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("org.jetbrains.kotlin.kapt")
     id("com.google.gms.google-services")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
-    namespace = "ru.tatalaraydar.nmedia"
+    namespace = "ru.netology.nmedia"
     compileSdk = 35
 
     defaultConfig {
         applicationId = "ru.netology.nmedia"
-        minSdk = 23
-        targetSdk = 35
+        minSdk = 22
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -26,22 +27,24 @@ android {
                 "proguard-rules.pro"
             )
             manifestPlaceholders["usesCleartextTraffic"] = false
-
-            buildConfigField ("String", "BASEURL", "\"http://10.0.2.2:9999\"")
+            buildConfigField("String", "BASE_URL", "\"https://netomedia.ru\"")
+            buildConfigField("String", "BASEURL", "\"http://10.0.2.2:9999\"")
         }
         debug {
             manifestPlaceholders["usesCleartextTraffic"] = true
-            
-            buildConfigField ("String", "BASEURL", "\"http://10.0.2.2:9999\"")
+            buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:9999\"")
+            buildConfigField("String", "BASEURL", "\"http://10.0.2.2:9999\"")
         }
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
+
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
+        freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
     }
 
     buildFeatures {
@@ -52,6 +55,7 @@ android {
 }
 
 dependencies {
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -60,8 +64,6 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.media3.common.ktx)
-    implementation(libs.transport.api)
-    implementation(libs.transport.api)
     implementation(libs.transport.api)
     implementation(libs.androidx.swiperefreshlayout)
 
@@ -88,13 +90,12 @@ dependencies {
     val okhttplogging_version = "4.12.0"
     val coroutines_version = "1.8.1"
     val imagepicker_version = "2.1"
+    val hilt_version = "2.56"
 
-
-    implementation ("com.github.dhaval2404:imagepicker:$imagepicker_version")
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
-    implementation ("com.squareup.okhttp3:logging-interceptor:$okhttplogging_version")
-    implementation ("com.squareup.retrofit2:retrofit:$retrofit_version")
-    implementation ("com.squareup.retrofit2:converter-gson:$retrofitgson_version")
+    implementation("com.github.dhaval2404:imagepicker:$imagepicker_version")
+    implementation("com.squareup.okhttp3:logging-interceptor:$okhttplogging_version")
+    implementation("com.squareup.retrofit2:retrofit:$retrofit_version")
+    implementation("com.squareup.retrofit2:converter-gson:$retrofitgson_version")
     implementation("androidx.core:core-ktx:$core_version")
     implementation("androidx.appcompat:appcompat:$appcompat_version")
     implementation("com.google.android.material:material:$mdc_version")
@@ -112,10 +113,11 @@ dependencies {
     implementation("com.google.firebase:firebase-messaging-ktx")
     implementation("com.google.android.gms:play-services-base:$play_services_base_version")
     implementation("com.squareup.okhttp3:okhttp:$okhttp_version")
-    implementation ("com.github.bumptech.glide:glide:$glide_version")
-    implementation ("com.squareup.okhttp3:logging-interceptor:$okhttplogging_version")
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
-    implementation ("androidx.room:room-ktx:$room_version")
+    implementation("com.github.bumptech.glide:glide:$glide_version")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version")
+    implementation("androidx.room:room-ktx:$room_version")
+    implementation("com.google.dagger:hilt-android:$hilt_version")
+    kapt("com.google.dagger:hilt-compiler:$hilt_version")
 
     testImplementation("junit:junit:$junit_version")
     androidTestImplementation("androidx.test.ext:junit:$ext_junit_version")

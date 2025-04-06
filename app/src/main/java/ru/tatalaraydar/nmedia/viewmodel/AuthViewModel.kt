@@ -1,16 +1,31 @@
 package ru.tatalaraydar.nmedia.viewmodel
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.asLiveData
-import kotlinx.coroutines.Dispatchers
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import ru.tatalaraydar.nmedia.auth.AppAuth
-import ru.tatalaraydar.nmedia.auth.AuthState
+import javax.inject.Inject
 
-class AuthViewModel : ViewModel() {
-    val data: LiveData<AuthState> = AppAuth.getInstance()
-        .authStateFlow
-        .asLiveData(Dispatchers.Default)
+@HiltViewModel
+class AuthViewModel @Inject constructor(
+    private val appAuth: AppAuth
+) : ViewModel() {
+
+    private val _data = MutableStateFlow(appAuth.authStateFlow.value)
+    val data: StateFlow<AppAuth.AuthState> = _data.asStateFlow()
+
     val authenticated: Boolean
-        get() = AppAuth.getInstance().authStateFlow.value.id != 0L
+        get() = _data.value.id != 0L
+
+    init {
+        viewModelScope.launch {
+            appAuth.authStateFlow.collect { authState ->
+                _data.value = authState
+            }
+        }
+    }
 }

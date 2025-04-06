@@ -1,59 +1,56 @@
 package ru.tatalaraydar.nmedia.viewmodel
 
-import kotlinx.coroutines.launch
-import retrofit2.Response
-import ru.tatalaraydar.nmedia.api.*
-import ru.tatalaraydar.nmedia.auth.AppAuth
-import ru.tatalaraydar.nmedia.dto.AuthResponse
-import ru.tatalaraydar.nmedia.error.*
-import ru.tatalaraydar.nmedia.util.SingleLiveEvent
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import ru.tatalaraydar.nmedia.api.ApiService
+import ru.tatalaraydar.nmedia.auth.AppAuth
+import ru.tatalaraydar.nmedia.error.ApiError
+import ru.tatalaraydar.nmedia.error.NetworkError
+import ru.tatalaraydar.nmedia.error.UnknownError
 import java.io.IOException
+import javax.inject.Inject
 
-class LoginViewModel : ViewModel() {
+@HiltViewModel
+class LoginViewModel @Inject constructor(
+    private val apiService: ApiService,
+    private val appAuth: AppAuth
+) : ViewModel() {
 
-    private val _authState = MutableLiveData<AuthState>()
-    val authState: LiveData<AuthState> get() = _authState
-
-    private val _error = SingleLiveEvent<AppError>()
-    val error: LiveData<AppError> get() = _error
+    private val _authState = MutableStateFlow<AuthState>(AuthState.Initial)
+    val authState: StateFlow<AuthState> = _authState
 
     fun login(login: String, password: String) {
         _authState.value = AuthState.Loading
 
-
         viewModelScope.launch {
             try {
-
-                val response: Response<AuthResponse> =
-                    Api.service.authenticate(login, password)
+                val response = apiService.authenticate(login, password)
                 if (response.isSuccessful) {
-                    val authResponse = response.body()!!
-                    AppAuth.getInstance().setAuth(authResponse.id, authResponse.token)
-                    _authState.value = AuthState.Success
+                    response.body()?.let {
+                        appAuth.setAuth(it.id, it.token)
+                        _authState.value = AuthState.Success
+                    } ?: run {
+                        _authState.value = AuthState.Error(ApiError(response.code(), "Empty response body"))
+                    }
                 } else {
-
-                    _error.value = ApiError(response.code(), "error_api")
-                    _authState.value = AuthState.Error
+                    _authState.value = AuthState.Error(ApiError(response.code(), response.message()))
                 }
             } catch (e: IOException) {
-
-                _error.value = NetworkError
-                _authState.value = AuthState.Error
+                _authState.value = AuthState.Error(NetworkError)
             } catch (e: Exception) {
-
-                _error.value = UnknownError
-                _authState.value = AuthState.Error
+                _authState.value = AuthState.Error(UnknownError)
             }
         }
     }
 
     sealed class AuthState {
-        object Success : AuthState()
-        object Error : AuthState()
+        object Initial : AuthState()
         object Loading : AuthState()
+        object Success : AuthState()
+        class Error(val error: Throwable) : AuthState()
     }
 }
