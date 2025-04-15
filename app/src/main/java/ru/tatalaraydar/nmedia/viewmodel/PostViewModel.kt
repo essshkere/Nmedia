@@ -5,9 +5,11 @@ import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ru.tatalaraydar.nmedia.dto.MediaUpload
 import ru.tatalaraydar.nmedia.dto.Post
@@ -24,7 +26,11 @@ class PostViewModel @Inject constructor(
 ) : AndroidViewModel(application) {
 
     private val _data = MutableStateFlow(FeedModel())
-    val data: StateFlow<FeedModel> = _data.asStateFlow()
+    val data: Flow<FeedModel> = repository.data.map {
+
+        FeedModel(it, empty = it.isEmpty())
+
+    }
 
     private val _dataState = MutableStateFlow(FeedModelState())
     val dataState: StateFlow<FeedModelState> = _dataState.asStateFlow()

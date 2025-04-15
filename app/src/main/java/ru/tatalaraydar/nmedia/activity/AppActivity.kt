@@ -12,19 +12,24 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.google.android.material.snackbar.BaseTransientBottomBar.LENGTH_INDEFINITE
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.ActivityAppBinding
 import ru.tatalaraydar.nmedia.auth.AppAuth
+import ru.tatalaraydar.nmedia.util.StringArg
 import ru.tatalaraydar.nmedia.viewmodel.AuthViewModel
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class AppActivity : AppCompatActivity() {
-
+    var Bundle.textArg: String? by StringArg
     private lateinit var binding: ActivityAppBinding
 
     @Inject lateinit var appAuth: AppAuth
@@ -65,7 +70,11 @@ class AppActivity : AppCompatActivity() {
             }
         })
 
-        viewModel.data.observe(this) { invalidateOptionsMenu() }
+        viewModel.data.flowWithLifecycle(lifecycle)
+
+            .onEach { invalidateOptionsMenu() }
+
+            .launchIn(lifecycleScope)
     }
 
     private fun handleIntent() {

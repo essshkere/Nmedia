@@ -80,7 +80,7 @@ dependencies {
     val lifecycle_version = "2.8.7"
     val gson_version = "2.11.0"
     val nav_version = "2.8.4"
-    val room_version = "2.6.1"
+    val room_version = "2.7.0"
     val firebase_version = "33.6.0"
     val play_services_base_version = "18.5.0"
     val okhttp_version = "4.12.0"

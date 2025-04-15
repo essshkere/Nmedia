@@ -6,12 +6,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import ru.tatalaraydar.nmedia.dto.Post
-import ru.tatalaraydar.nmedia.repository.PostRepositoryImpl.Companion.formatCount
 import com.bumptech.glide.Glide
 import ru.netology.nmedia.databinding.CardPostBinding
+import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.entity.AttachmentType
-import javax.inject.Inject
+import ru.tatalaraydar.nmedia.repository.PostRepositoryImpl.Companion.formatCount
 
 interface OnInteractionListener {
     fun onLike(post: Post) {}
@@ -23,7 +22,7 @@ interface OnInteractionListener {
     fun onImageClick(post: Post) {}
 }
 
-class PostsAdapter @Inject constructor(
+class PostsAdapter (
     val onInteractionListener: OnInteractionListener
 ) : ListAdapter<Post, PostViewHolder>(PostDiffCallback) {
 

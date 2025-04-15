@@ -10,7 +10,6 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
-import ru.tatalaraydar.nmedia.api.Api
 import ru.tatalaraydar.nmedia.api.ApiService
 import ru.tatalaraydar.nmedia.dao.PostDao
 import ru.tatalaraydar.nmedia.dto.Attachment
@@ -140,7 +139,7 @@ class PostRepositoryImpl @Inject constructor(
             val media = MultipartBody.Part.createFormData(
                 "file", upload.file.name, upload.file.asRequestBody()
             )
-            val response = Api.service.upload(media)
+            val response = apiService.upload(media)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }
@@ -154,7 +153,7 @@ class PostRepositoryImpl @Inject constructor(
 
     override suspend fun sendPushToken(token: PushToken) {
         try {
-            val response = Api.service.save(token)
+            val response = apiService.save(token)
             if (!response.isSuccessful) {
                 throw ApiError(response.code(), response.message())
             }

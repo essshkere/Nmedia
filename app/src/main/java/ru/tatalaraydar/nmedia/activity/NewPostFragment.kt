@@ -3,25 +3,34 @@ package ru.tatalaraydar.nmedia.activity
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.github.dhaval2404.imagepicker.ImagePicker
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentNewPostBinding
-
 import ru.tatalaraydar.nmedia.util.AndroidUtils
+import ru.tatalaraydar.nmedia.util.StringArg
 import ru.tatalaraydar.nmedia.viewmodel.PostViewModel
 import java.io.File
 
 @AndroidEntryPoint
 class NewPostFragment : Fragment() {
-
+    var Bundle.textArg: String? by StringArg
     private val viewModel: PostViewModel by viewModels()
     private var _binding: FragmentNewPostBinding? = null
 
@@ -58,17 +67,18 @@ class NewPostFragment : Fragment() {
             _binding?.edit?.setText(it)
         }
 
-        viewModel.photo.observe(viewLifecycleOwner) { photo ->
-            if (photo.uri == null) {
+        viewModel.photo.flowWithLifecycle(viewLifecycleOwner.lifecycle).onEach { photoModel ->
+            if (photoModel.uri == null) {
                 _binding?.photoContainer?.visibility = View.GONE
-                return@observe
+                return@onEach
             }
 
             with(_binding!!) {
                 photoContainer.visibility = View.VISIBLE
-                photo.setImageURI(photo.uri)
+                photo.setImageURI(photoModel.uri)
             }
         }
+            .launchIn(viewLifecycleOwner.lifecycleScope)
 
         setupMenu()
         setupPhotoHandlers()

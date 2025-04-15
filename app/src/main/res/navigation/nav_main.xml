@@ -16,7 +16,6 @@
             app:destination="@id/newPostFragment" />
 
 
-
         <action
             android:id="@+id/action_feedFragment_to_postFragment"
             app:destination="@id/postFragment" />
@@ -35,15 +34,6 @@
         android:name="ru.tatalaraydar.nmedia.activity.NewPostFragment"
         android:label="activity_edit_post"
         tools:layout="@layout/fragment_new_post">
-
-        <argument
-            android:name="post_id"
-            android:defaultValue="0"
-            app:argType="long" />
-
-        <argument
-            android:name="textArg"
-            app:argType="string" />
     </fragment>
 
     <fragment
@@ -51,19 +41,10 @@
         android:name="ru.tatalaraydar.nmedia.activity.PostFragment"
         android:label="PostFragment">
 
-        <argument
-            android:name="postId"
-            app:argType="long" />
 
         <action
             android:id="@+id/action_postFragment_to_newPostFragment"
             app:destination="@id/newPostFragment">
-            <argument
-                android:name="post_id"
-                app:argType="long" />
-            <argument
-                android:name="textArg"
-                app:argType="string" />
         </action>
     </fragment>
 
@@ -73,9 +54,6 @@
         android:label="FullScreenImageFragment"
         tools:layout="@layout/fragment_full_screen_image">
 
-        <argument
-            android:name="imageUrl"
-            app:argType="string" />
     </fragment>
 
     <fragment
@@ -83,5 +61,4 @@
         android:name="ru.tatalaraydar.nmedia.activity.LoginFragment"
         android:label="LoginFragment"
         tools:layout="@layout/fragment_login" />
-
 </navigation>
