@@ -91,7 +91,9 @@ dependencies {
     val coroutines_version = "1.8.1"
     val imagepicker_version = "2.1"
     val hilt_version = "2.56"
+    val paging_version = "3.3.6"
 
+    implementation ("androidx.paging:paging-runtime-ktx:$paging_version")
     implementation("com.github.dhaval2404:imagepicker:$imagepicker_version")
     implementation("com.squareup.okhttp3:logging-interceptor:$okhttplogging_version")
     implementation("com.squareup.retrofit2:retrofit:$retrofit_version")

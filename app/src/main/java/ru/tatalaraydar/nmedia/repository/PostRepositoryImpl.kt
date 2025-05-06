@@ -1,12 +1,16 @@
 package ru.tatalaraydar.nmedia.repository
 
 import android.annotation.SuppressLint
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+
 import kotlinx.coroutines.flow.map
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -34,8 +38,10 @@ class PostRepositoryImpl @Inject constructor(
     private val apiService: ApiService
 ) : PostRepository {
 
-    override val data: Flow<List<Post>> = dao.getAll()
-        .map { posts -> posts.map(PostEntity::toDto) }
+    override val data: Flow<PagingData<Post>> = Pager(
+        config = PagingConfig(pageSize = 5, enablePlaceholders = false),
+        pagingSourceFactory = { PostPagingSource(apiService) },
+    ).flow
 
     override suspend fun getAll() {
         try {

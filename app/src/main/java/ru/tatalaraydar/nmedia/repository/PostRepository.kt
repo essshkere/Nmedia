@@ -1,6 +1,7 @@
 package ru.tatalaraydar.nmedia.repository
 
 import androidx.lifecycle.LiveData
+import androidx.paging.PagingData
 import ru.tatalaraydar.nmedia.dto.Post
 import kotlinx.coroutines.flow.Flow
 import ru.tatalaraydar.nmedia.dto.Media
@@ -8,8 +9,9 @@ import ru.tatalaraydar.nmedia.dto.MediaUpload
 import ru.tatalaraydar.nmedia.dto.PushToken
 
 interface PostRepository {
+
     fun getNewerCount(id: Long): Flow<Int>
-    val data: Flow<List<Post>>
+    val data: Flow<PagingData<Post>>
     suspend fun getAll()
     suspend fun save(post: Post)
     suspend fun removeById(id: Long)
