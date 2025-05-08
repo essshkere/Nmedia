@@ -21,4 +21,5 @@ interface PostRepository {
     suspend fun saveWithAttachment(post: Post, upload: MediaUpload)
     suspend fun upload(upload: MediaUpload): Media
     suspend fun sendPushToken(token: PushToken)
+    suspend fun clearAll()
 }

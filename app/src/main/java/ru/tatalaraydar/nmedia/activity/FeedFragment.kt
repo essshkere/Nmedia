@@ -75,15 +75,21 @@ class FeedFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                adapter.loadStateFlow.collectLatest { loadState ->
-                    binding.swiperefresh.isRefreshing = loadState.refresh is LoadState.Loading
-                    binding.progress.isVisible = loadState.refresh is LoadState.Loading
-                    binding.errorGroup.isVisible = loadState.refresh is LoadState.Error
-                    binding.emptyText.isVisible = adapter.itemCount == 0
-                }
+                viewModel.data.collectLatest(adapter::submitData)
             }
         }
 
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                adapter.loadStateFlow.collectLatest { state ->
+                    binding.swiperefresh.isRefreshing =
+                        state.refresh is LoadState.Loading ||
+                                state.prepend is LoadState.Loading ||
+                                state.append is LoadState.Loading
+                }
+            }
+        }
         _binding?.apply {
             retryButton.setOnClickListener { viewModel.loadPosts() }
             save.setOnClickListener {

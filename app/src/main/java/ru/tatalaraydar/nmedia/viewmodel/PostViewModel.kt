@@ -13,7 +13,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.tatalaraydar.nmedia.auth.AppAuth
 import ru.tatalaraydar.nmedia.dto.MediaUpload
@@ -55,6 +57,19 @@ class PostViewModel @Inject constructor(
 
     init {
         loadPosts()
+        auth.authStateFlow
+            .onEach { refreshAll() }
+            .launchIn(viewModelScope)
+    }
+
+    private fun refreshAll() {
+        viewModelScope.launch {
+            try {
+                repository.getAll()
+            } catch (e: Exception) {
+                _dataState.value = _dataState.value.copy(error = true)
+            }
+        }
     }
 
     fun loadPosts() = viewModelScope.launch {

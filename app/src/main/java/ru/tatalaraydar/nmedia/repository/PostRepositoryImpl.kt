@@ -46,16 +46,15 @@ class PostRepositoryImpl @Inject constructor(
     override suspend fun getAll() {
         try {
             val response = apiService.getAll()
-            if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
-            }
+            if (!response.isSuccessful) throw ApiError(response.code(), response.message())
 
             val body = response.body() ?: throw ApiError(response.code(), response.message())
-            body.toEntity().forEach { dao.insert(it) }
-        } catch (e: IOException) {
-            throw NetworkError
+
+
+            dao.clearAll()
+            body.forEach { dao.insert(it.toEntity()) }
         } catch (e: Exception) {
-            throw UnknownError
+            throw AppError.from(e)
         }
     }
 

@@ -22,6 +22,14 @@ class AppAuth @Inject constructor(
     @ApplicationContext private val context: Context,
     private val apiService: ApiService
 ) {
+    @Synchronized
+    fun removeAuth() {
+        _authStateFlow.value = AuthState()
+        prefs.edit { clear() }
+        sendPushToken()
+    }
+
+
     private val prefs = context.getSharedPreferences("auth", Context.MODE_PRIVATE)
     private val idKey = "id"
     private val tokenKey = "token"
@@ -46,12 +54,7 @@ class AppAuth @Inject constructor(
         sendPushToken()
     }
 
-    @Synchronized
-    fun removeAuth() {
-        _authStateFlow.value = AuthState()
-        prefs.edit { clear() }
-        sendPushToken()
-    }
+
 
     fun sendPushToken(token: String? = null) {
         CoroutineScope(Dispatchers.Default).launch {

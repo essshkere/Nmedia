@@ -28,4 +28,31 @@ class AuthViewModel @Inject constructor(
             }
         }
     }
+
+    fun login(login: String, password: String) {
+        _authState.value = AuthState.Loading
+
+        viewModelScope.launch {
+            try {
+                val response = apiService.authenticate(login, password)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        appAuth.setAuth(it.id, it.token)
+                        _authState.value = AuthState.Success
+                    }
+                }
+            } catch (e: Exception) {
+                _authState.value = AuthState.Error(e)
+            }
+        }
+    }
+
+    fun logout() {
+        viewModelScope.launch {
+            appAuth.removeAuth()
+        }
+    }
+
+
+
 }
