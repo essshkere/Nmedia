@@ -52,7 +52,7 @@ class PostRepositoryImpl @Inject constructor(
 
 
             dao.clearAll()
-            body.forEach { dao.insert(it.toEntity()) }
+            body.forEach { dao.insert(PostEntity.fromDto(it)) }
         } catch (e: Exception) {
             throw AppError.from(e)
         }
@@ -74,6 +74,9 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun clearAll() {
+        dao.clearAll()
+    }
     override suspend fun removeById(id: Long) {
         try {
             dao.removeById(id)

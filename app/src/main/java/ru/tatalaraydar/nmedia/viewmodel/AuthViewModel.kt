@@ -7,13 +7,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import ru.tatalaraydar.nmedia.api.ApiService
 import ru.tatalaraydar.nmedia.auth.AppAuth
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val appAuth: AppAuth
+    private val appAuth: AppAuth,
+    private val apiService: ApiService
 ) : ViewModel() {
+
+    private val _authState = MutableStateFlow<AuthState>(AuthState.Initial)
+    val authState: StateFlow<AuthState> = _authState.asStateFlow()
 
     private val _data = MutableStateFlow(appAuth.authStateFlow.value)
     val data: StateFlow<AppAuth.AuthState> = _data.asStateFlow()
@@ -53,6 +58,10 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-
-
+    sealed class AuthState {
+        object Initial : AuthState()
+        object Loading : AuthState()
+        object Success : AuthState()
+        class Error(val error: Throwable) : AuthState()
+    }
 }
