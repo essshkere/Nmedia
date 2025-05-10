@@ -10,10 +10,9 @@ import ru.tatalaraydar.nmedia.dto.PushToken
 
 interface PostRepository {
 
-    fun getNewerCount(id: Long): Flow<Int>
+
     val data: Flow<PagingData<Post>>
-    suspend fun getAll()
-    suspend fun save(post: Post)
+    suspend fun save(post: Post,upload: MediaUpload?)
     suspend fun removeById(id: Long)
     suspend fun likeById(id: Long)
     fun updateShareById(id: Long)
@@ -22,4 +21,7 @@ interface PostRepository {
     suspend fun upload(upload: MediaUpload): Media
     suspend fun sendPushToken(token: PushToken)
     suspend fun clearAll()
+    fun getNewerCount(id: Long): Flow<Int>
+
+    suspend fun getAll()
 }

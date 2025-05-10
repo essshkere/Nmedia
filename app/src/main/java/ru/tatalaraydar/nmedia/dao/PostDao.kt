@@ -1,5 +1,6 @@
 package ru.tatalaraydar.nmedia.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -13,6 +14,9 @@ interface PostDao {
     @Query("SELECT * FROM PostEntity WHERE isVisible = 1 ORDER BY id DESC")
     fun getAll(): Flow<List<PostEntity>>
 
+    @Query("SELECT * FROM PostEntity ORDER BY id DESC")
+    fun pagingSource(): PagingSource<Int, PostEntity>
+
     @Query("UPDATE PostEntity SET isVisible = 1")
     suspend fun makeAllPostsVisible()
 
@@ -22,6 +26,8 @@ interface PostDao {
     @Query("DELETE FROM PostEntity")
     suspend fun clearAll()
 
+    @Query("DELETE FROM PostEntity")
+    suspend fun removeAll()
 
     @Query("UPDATE PostEntity SET content = :content WHERE id = :id")
     suspend fun edit(id: Long, content: String)
