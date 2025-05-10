@@ -3,9 +3,9 @@ package ru.tatalaraydar.nmedia.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import ru.netology.nmedia.databinding.CardPostBinding
@@ -56,6 +56,7 @@ class PostViewHolder(
 
     fun bind(post: Post) {
         binding.apply {
+            menu.isVisible = post.ownedByMe
             author.text = post.author
             published.text = post.published
             content.text = post.content

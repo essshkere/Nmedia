@@ -1,13 +1,10 @@
 package ru.tatalaraydar.nmedia.activity
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -24,8 +21,6 @@ import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.viewmodel.PostViewModel
 
 
-
-
 @AndroidEntryPoint
 class FeedFragment : Fragment() {
 
@@ -34,44 +29,41 @@ class FeedFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val interactionListener = object : OnInteractionListener {
-        override fun onLike(post: Post) { viewModel.likeById(post.id) }
+        override fun onLike(post: Post) {
+            viewModel.likeById(post.id)
+        }
+
         override fun onShare(post: Post) = viewModel.share(post)
-        override fun onRemove(post: Post) { viewModel.removeById(post.id) }
+        override fun onRemove(post: Post) {
+            viewModel.removeById(post.id)
+        }
 
         override fun onViewPost(post: Post) {
             val bundle = Bundle().apply { putLong("postId", post.id) }
             findNavController().navigate(R.id.action_feedFragment_to_postFragment, bundle)
         }
 
+
         override fun onImageClick(post: Post) {
             post.attachment?.url?.let { url ->
-                val bundle = Bundle().apply { putString("imageUrl", url) }
                 findNavController().navigate(
                     R.id.action_feedFragment_to_fullScreenImageFragment,
-                    bundle
+                    Bundle().apply { putString("imageUrl", url) }
                 )
             }
         }
 
         override fun onVideolink(post: Post) {
-            // todo
+            // TODO
         }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentFeedBinding.inflate(inflater, container, false)
-        return _binding!!.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        _binding = FragmentFeedBinding.bind(view)
 
         val adapter = PostsAdapter(interactionListener)
-        _binding?.container?.adapter = adapter
+        binding.container.adapter = adapter
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -79,26 +71,26 @@ class FeedFragment : Fragment() {
             }
         }
 
-
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                adapter.loadStateFlow.collectLatest { state ->
-                    binding.swiperefresh.isRefreshing =
-                        state.refresh is LoadState.Loading ||
-                                state.prepend is LoadState.Loading ||
-                                state.append is LoadState.Loading
+            adapter.loadStateFlow.collectLatest { state ->
+                binding.apply {
+                    errorGroup.isVisible = state.refresh is LoadState.Error
+                    emptyText.isVisible = adapter.itemCount == 0 &&
+                            state.refresh !is LoadState.Loading
+                    progress.isVisible = state.refresh is LoadState.Loading &&
+                            adapter.itemCount == 0
+                    swiperefresh.isRefreshing = state.refresh is LoadState.Loading
                 }
             }
         }
-        _binding?.apply {
-            retryButton.setOnClickListener { viewModel.loadPosts() }
-            save.setOnClickListener {
-                findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
-            }
-            swiperefresh.setOnRefreshListener {
-                viewModel.refreshPosts()
-                swiperefresh.isRefreshing = false
-            }
+
+        binding.retryButton.setOnClickListener { adapter.retry() }
+        binding.save.setOnClickListener {
+            findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
+        }
+
+        binding.swiperefresh.setOnRefreshListener {
+            adapter.refresh()
         }
     }
 

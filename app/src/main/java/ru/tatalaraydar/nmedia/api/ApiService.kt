@@ -7,9 +7,6 @@ import ru.tatalaraydar.nmedia.dto.*
 
 
 interface ApiService {
-    @GET("posts")
-    suspend fun getAll(): Response<List<Post>>
-
     @GET("posts/{id}")
     suspend fun getById(@Path("id") id: Long): Response<Post>
 
@@ -40,16 +37,12 @@ interface ApiService {
     @DELETE("posts/{id}/likes")
     suspend fun dislikeById(@Path("id") id: Long): Response<Post>
 
-    @GET("posts/{id}/newer")
-    suspend fun getNewer(@Path("id") id: Long): Response<List<Post>>
-
     @POST("posts")
     suspend fun save(@Body post: Post): Response<Post>
 
     @Multipart
     @POST("media")
     suspend fun upload(@Part media: MultipartBody.Part): Response<Media>
-
 
     @FormUrlEncoded
     @POST("users/authentication")
