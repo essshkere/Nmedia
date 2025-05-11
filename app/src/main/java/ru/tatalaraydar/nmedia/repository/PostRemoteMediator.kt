@@ -68,7 +68,7 @@ class PostRemoteMediator(
                                     id = body.first().id,
                                 )
                             )
-                            postDao.insert(body.toEntity())
+                            postDao.insert(body.toEntity().first())
                         }
                     }
 
@@ -79,7 +79,7 @@ class PostRemoteMediator(
                                 id = body.last().id,
                             )
                         )
-                        postDao.insert(body.toEntity())
+                        postDao.insert(body.toEntity().first())
                     }
 
                     LoadType.PREPEND -> Unit

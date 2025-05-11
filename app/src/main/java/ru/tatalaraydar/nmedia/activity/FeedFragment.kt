@@ -29,9 +29,10 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
     private val binding get() = _binding!!
 
     private val interactionListener = object : OnInteractionListener {
-        override fun onLike(post: Post) = viewModel.likeById(post.id)
+
+        override fun onLike(post: Post) { viewModel.likeById(post.id) }
         override fun onShare(post: Post) = viewModel.share(post)
-        override fun onRemove(post: Post) = viewModel.removeById(post.id)
+        override fun onRemove(post: Post) { viewModel.removeById(post.id)}
 
         override fun onViewPost(post: Post) {
             findNavController().navigate(

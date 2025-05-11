@@ -44,7 +44,7 @@ android {
 
     kotlinOptions {
         jvmTarget = "17"
-        freeCompilerArgs += listOf("-Xopt-in=kotlin.RequiresOptIn")
+        freeCompilerArgs += listOf("-opt-in=kotlin.RequiresOptIn")
     }
 
     buildFeatures {
@@ -68,29 +68,29 @@ dependencies {
     implementation(libs.androidx.swiperefreshlayout)
 
 
-    val core_version = "1.15.0"
+    val core_version = "1.16.0"
     val appcompat_version = "1.7.0"
     val mdc_version = "1.12.0"
     val constraintlayout_version = "2.2.0"
-    val recyclerview_version = "1.3.2"
+    val recyclerview_version = "1.4.0"
     val junit_version = "4.13.2"
     val ext_junit_version = "1.2.1"
     val espresso_core_version = "3.6.1"
-    val activity_version = "1.9.3"
-    val lifecycle_version = "2.8.7"
+    val activity_version = "1.10.1"
+    val lifecycle_version = "2.9.0"
     val gson_version = "2.11.0"
-    val nav_version = "2.8.4"
-    val room_version = "2.7.0"
-    val firebase_version = "33.6.0"
-    val play_services_base_version = "18.5.0"
+    val nav_version = "2.9.0"
+    val room_version = "2.7.1"
+    val firebase_version = "33.13.0"
+    val play_services_base_version = "18.7.0"
     val okhttp_version = "4.12.0"
     val glide_version = "4.16.0"
     val retrofit_version = "2.11.0"
     val retrofitgson_version = "2.11.0"
     val okhttplogging_version = "4.12.0"
-    val coroutines_version = "1.8.1"
+    val coroutines_version = "1.10.2"
     val imagepicker_version = "2.1"
-    val hilt_version = "2.56"
+    val hilt_version = "2.56.2"
     val paging_version = "3.3.6"
 
 

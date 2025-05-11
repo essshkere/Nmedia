@@ -68,7 +68,7 @@ class PostViewModel @Inject constructor(
     private fun refreshAll() {
         viewModelScope.launch {
             try {
-                repository.getAll()
+
             } catch (e: Exception) {
                 _dataState.value = _dataState.value.copy(error = true)
             }
@@ -78,7 +78,7 @@ class PostViewModel @Inject constructor(
     fun loadPosts() = viewModelScope.launch {
         _dataState.value = _dataState.value.copy(loading = true)
         try {
-            repository.getAll()
+
             _dataState.value = _dataState.value.copy(loading = false, error = false)
         } catch (e: Exception) {
             _dataState.value = _dataState.value.copy(loading = false, error = true)
@@ -92,7 +92,7 @@ class PostViewModel @Inject constructor(
                     if (photo.value.uri != null) {
                         repository.saveWithAttachment(post, MediaUpload(photo.value.file!!))
                     } else {
-                        repository.save(post)
+                        repository.save(post, photo.value.file?.let { MediaUpload(it) })
                     }
                     _edited.value = emptyPost()
                     _photo.value = PhotoModel()
@@ -132,7 +132,6 @@ class PostViewModel @Inject constructor(
     fun refreshPosts() = viewModelScope.launch {
         _dataState.value = _dataState.value.copy(refreshing = true)
         try {
-            repository.getAll()
             _dataState.value = _dataState.value.copy(refreshing = false, error = false)
         } catch (e: Exception) {
             _dataState.value = _dataState.value.copy(refreshing = false, error = true)
