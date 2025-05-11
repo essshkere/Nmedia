@@ -22,27 +22,23 @@ import ru.tatalaraydar.nmedia.viewmodel.PostViewModel
 
 
 @AndroidEntryPoint
-class FeedFragment : Fragment() {
+class FeedFragment : Fragment(R.layout.fragment_feed) {
 
     private val viewModel: PostViewModel by activityViewModels()
     private var _binding: FragmentFeedBinding? = null
     private val binding get() = _binding!!
 
     private val interactionListener = object : OnInteractionListener {
-        override fun onLike(post: Post) {
-            viewModel.likeById(post.id)
-        }
-
+        override fun onLike(post: Post) = viewModel.likeById(post.id)
         override fun onShare(post: Post) = viewModel.share(post)
-        override fun onRemove(post: Post) {
-            viewModel.removeById(post.id)
-        }
+        override fun onRemove(post: Post) = viewModel.removeById(post.id)
 
         override fun onViewPost(post: Post) {
-            val bundle = Bundle().apply { putLong("postId", post.id) }
-            findNavController().navigate(R.id.action_feedFragment_to_postFragment, bundle)
+            findNavController().navigate(
+                R.id.action_feedFragment_to_postFragment,
+                Bundle().apply { putLong("postId", post.id) }
+            )
         }
-
 
         override fun onImageClick(post: Post) {
             post.attachment?.url?.let { url ->
@@ -65,18 +61,19 @@ class FeedFragment : Fragment() {
         val adapter = PostsAdapter(interactionListener)
         binding.container.adapter = adapter
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.data.collectLatest(adapter::submitData)
+        binding.apply {
+            container.adapter = adapter
+            retryButton.setOnClickListener { adapter.retry() }
+            save.setOnClickListener {
+                findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
             }
+            swiperefresh.setOnRefreshListener { adapter.refresh() }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            adapter.loadStateFlow.collectLatest { loadState ->
-                binding.apply {
-                    errorGroup.isVisible = loadState.refresh is LoadState.Error
-                    progress.isVisible = loadState.refresh is LoadState.Loading
-                    swiperefresh.isRefreshing = loadState.refresh is LoadState.Loading
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.posts.collectLatest { pagingData ->
+                    adapter.submitData(pagingData)
                 }
             }
         }
@@ -93,19 +90,10 @@ class FeedFragment : Fragment() {
                 }
             }
         }
-
-        binding.retryButton.setOnClickListener { adapter.retry() }
-        binding.save.setOnClickListener {
-            findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
-        }
-
-        binding.swiperefresh.setOnRefreshListener {
-            adapter.refresh()
-        }
     }
 
     override fun onDestroyView() {
-        _binding = null
         super.onDestroyView()
+        _binding = null
     }
 }

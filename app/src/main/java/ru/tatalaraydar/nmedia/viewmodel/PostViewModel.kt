@@ -55,6 +55,9 @@ class PostViewModel @Inject constructor(
     private val _photo = MutableStateFlow(PhotoModel())
     val photo: StateFlow<PhotoModel> = _photo.asStateFlow()
 
+    val posts: Flow<PagingData<Post>> = repository.data
+        .cachedIn(viewModelScope)
+
     init {
         loadPosts()
         auth.authStateFlow

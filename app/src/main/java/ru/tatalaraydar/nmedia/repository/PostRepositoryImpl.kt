@@ -6,12 +6,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
@@ -26,9 +21,7 @@ import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.dto.PushToken
 import ru.tatalaraydar.nmedia.entity.AttachmentType
 import ru.tatalaraydar.nmedia.entity.PostEntity
-import ru.tatalaraydar.nmedia.entity.toEntity
 import ru.tatalaraydar.nmedia.error.ApiError
-import ru.tatalaraydar.nmedia.error.AppError
 import ru.tatalaraydar.nmedia.error.NetworkError
 import ru.tatalaraydar.nmedia.error.UnknownError
 import java.io.IOException
@@ -54,24 +47,6 @@ class PostRepositoryImpl @Inject constructor(
         pagingSourceFactory = postDao::pagingSource,
     ).flow.map { pagingData ->
         pagingData.map(PostEntity::toDto)
-    }
-
-
-
-    override suspend fun getAll() {
-        try {
-            val response = apiService.getAll()
-            if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
-            }
-
-            val body = response.body() ?: throw ApiError(response.code(), response.message())
-            postDao.insert(body.toEntity())
-        } catch (e: IOException) {
-            throw NetworkError
-        } catch (e: Exception) {
-            throw UnknownError
-        }
     }
 
     override suspend fun clearAll() {
@@ -106,23 +81,6 @@ class PostRepositoryImpl @Inject constructor(
             throw UnknownError
         }
     }
-
-    override fun getNewerCount(id: Long): Flow<Int> = flow {
-        while (true) {
-            delay(10_000L)
-            val response = apiService.getNewer(id)
-            if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
-            }
-
-            val body = response.body() ?: throw ApiError(response.code(), response.message())
-            val newPosts = body.toEntity().map { it.copy(isVisible = false) }
-            newPosts.forEach { postDao.insert(it) }
-            emit(newPosts.size)
-        }
-    }
-        .catch { e -> throw AppError.from(e) }
-        .flowOn(Dispatchers.Default)
 
     override suspend fun makeAllPostsVisible() {
         postDao.makeAllPostsVisible()

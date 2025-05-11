@@ -93,7 +93,7 @@ dependencies {
     val hilt_version = "2.56"
     val paging_version = "3.3.6"
 
-    implementation("androidx.room:room-paging:$room_version")
+
     implementation ("androidx.paging:paging-runtime-ktx:$paging_version")
     implementation("com.github.dhaval2404:imagepicker:$imagepicker_version")
     implementation("com.squareup.okhttp3:logging-interceptor:$okhttplogging_version")
@@ -121,6 +121,9 @@ dependencies {
     implementation("androidx.room:room-ktx:$room_version")
     implementation("com.google.dagger:hilt-android:$hilt_version")
     kapt("com.google.dagger:hilt-compiler:$hilt_version")
+    implementation("androidx.room:room-paging:$room_version")
+
+
 
     testImplementation("junit:junit:$junit_version")
     androidTestImplementation("androidx.test.ext:junit:$ext_junit_version")
