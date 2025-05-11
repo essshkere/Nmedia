@@ -72,6 +72,16 @@ class FeedFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
+            adapter.loadStateFlow.collectLatest { loadState ->
+                binding.apply {
+                    errorGroup.isVisible = loadState.refresh is LoadState.Error
+                    progress.isVisible = loadState.refresh is LoadState.Loading
+                    swiperefresh.isRefreshing = loadState.refresh is LoadState.Loading
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
             adapter.loadStateFlow.collectLatest { state ->
                 binding.apply {
                     errorGroup.isVisible = state.refresh is LoadState.Error
@@ -95,7 +105,7 @@ class FeedFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         _binding = null
+        super.onDestroyView()
     }
 }

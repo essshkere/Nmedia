@@ -74,28 +74,6 @@ class PostRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun save(post: Post, upload: MediaUpload?) {
-        try {
-            val postWithAttachment = upload?.let {
-                upload(it)
-            }?.let {
-                // TODO
-                post.copy(attachment = Attachment(it.id, AttachmentType.IMAGE))
-            }
-            val response = apiService.save(postWithAttachment ?: post)
-            if (!response.isSuccessful) {
-                throw ApiError(response.code(), response.message())
-            }
-
-            val body = response.body() ?: throw ApiError(response.code(), response.message())
-            postDao.insert(PostEntity.fromDto(body))
-        } catch (e: IOException) {
-            throw NetworkError
-        } catch (e: Exception) {
-            throw UnknownError
-        }
-    }
-
     override suspend fun clearAll() {
         postDao.clearAll()
     }
@@ -150,18 +128,27 @@ class PostRepositoryImpl @Inject constructor(
         postDao.makeAllPostsVisible()
     }
 
-    override suspend fun saveWithAttachment(post: Post, upload: MediaUpload) {
+    override suspend fun save(post: Post, upload: MediaUpload?) {
         try {
-            val media = upload(upload)
-            val postWithAttachment =
-                post.copy(attachment = Attachment(media.id, AttachmentType.IMAGE))
-            save(postWithAttachment)
+            val postWithAttachment = upload?.let { media ->
+                val uploadedMedia = upload(media)
+                post.copy(attachment = Attachment(uploadedMedia.id, AttachmentType.IMAGE))
+            } ?: post
+
+            val response = apiService.save(postWithAttachment)
+            if (!response.isSuccessful) throw ApiError(response.code(), response.message())
+
+            response.body()?.let { savedPost ->
+                postDao.insert(PostEntity.fromDto(savedPost))
+            } ?: throw ApiError(response.code(), "Empty response body")
         } catch (e: IOException) {
             throw NetworkError
         } catch (e: Exception) {
             throw UnknownError
         }
     }
+
+    override suspend fun saveWithAttachment(post: Post, upload: MediaUpload) = save(post, upload)
 
 
     override suspend fun upload(upload: MediaUpload): Media {
