@@ -40,7 +40,7 @@ class PostRepositoryImpl @Inject constructor(
     override val data: Flow<PagingData<Post>> = Pager(
         config = PagingConfig(
             pageSize = 25,
-            prefetchDistance = 0,
+            prefetchDistance = 10,
             enablePlaceholders = false
         ),
         remoteMediator = PostRemoteMediator(apiService, appDb, postDao, postRemoteKeyDao),
