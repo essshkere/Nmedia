@@ -8,15 +8,17 @@ import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.dto.PushToken
 
 interface PostRepository {
-    val data: Flow<PagingData<Post>>
-    suspend fun save(post: Post,upload: MediaUpload?)
-    suspend fun removeById(id: Long)
-    suspend fun likeById(id: Long)
-    fun updateShareById(id: Long)
-    suspend fun makeAllPostsVisible()
-    suspend fun saveWithAttachment(post: Post, upload: MediaUpload)
-    suspend fun upload(upload: MediaUpload): Media
-    suspend fun sendPushToken(token: PushToken)
+
     suspend fun clearAll()
+    val data: Flow<PagingData<Post>>
+    suspend fun likeById(id: Long)
+    suspend fun makeAllPostsVisible()
+    suspend fun removeById(id: Long)
+    suspend fun save(post: Post, upload: MediaUpload?)
+    suspend fun saveWithAttachment(post: Post, upload: MediaUpload)
+    suspend fun sendPushToken(token: PushToken)
+    suspend fun upload(upload: MediaUpload): Media
+    fun updateShareById(id: Long)
+
 
 }
