@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.netology.nmedia.databinding.LoadStateBinding
 
 class PagingLoadStateAdapter(
-    private val onInteractionListener: OnInteractionListener,
+    private val retry: () -> Unit
 ) : LoadStateAdapter<PagingLoadStateAdapter.LoadStateViewHolder>() {
 
     interface OnInteractionListener {
@@ -17,11 +17,12 @@ class PagingLoadStateAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState): LoadStateViewHolder {
-        val layoutInflater = LayoutInflater.from(parent.context)
-        return LoadStateViewHolder(
-            LoadStateBinding.inflate(layoutInflater, parent, false),
-            onInteractionListener
+        val binding = LoadStateBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
         )
+        return LoadStateViewHolder(binding, retry)
     }
 
     override fun onBindViewHolder(holder: LoadStateViewHolder, loadState: LoadState) {
@@ -30,17 +31,14 @@ class PagingLoadStateAdapter(
 
     class LoadStateViewHolder(
         private val binding: LoadStateBinding,
-        private val onInteractionListener: OnInteractionListener,
+        private val retry: () -> Unit
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(loadState: LoadState) {
             binding.apply {
                 progress.isVisible = loadState is LoadState.Loading
                 retry.isVisible = loadState is LoadState.Error
-
-                retry.setOnClickListener {
-                    onInteractionListener.onRetry()
-                }
+                retry.setOnClickListener { retry() }
             }
         }
     }

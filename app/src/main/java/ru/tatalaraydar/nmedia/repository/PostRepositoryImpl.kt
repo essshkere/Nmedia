@@ -5,6 +5,8 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.PagingSource
+import androidx.paging.PagingState
 import androidx.paging.map
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -44,6 +46,41 @@ class PostRepositoryImpl @Inject constructor(
     ).flow.map { pagingData ->
         pagingData.map(PostEntity::toDto)
     }
+
+    fun getPagingSource(): PagingSource<Int, Post> = object : PagingSource<Int, Post>() {
+        override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Post> {
+            try {
+                val page = params.key ?: 0
+                val response = apiService.getPosts(page, params.loadSize)
+
+                if (!response.isSuccessful) throw ApiError(response.code(), response.message())
+
+                val posts = response.body() ?: return LoadResult.Page(
+                    data = emptyList(),
+                    prevKey = null,
+                    nextKey = null
+                )
+
+                return LoadResult.Page(
+                    data = posts,
+                    prevKey = if (page == 0) null else page - 1,
+                    nextKey = if (posts.isEmpty()) null else page + 1
+                )
+            } catch (e: Exception) {
+                return LoadResult.Error(e)
+            }
+        }
+
+        override fun getRefreshKey(state: PagingState<Int, Post>): Int? {
+            return state.anchorPosition?.let { anchorPosition ->
+                state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
+                    ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
+            }
+        }
+    }
+
+
+
 
     override suspend fun clearAll() {
         postDao.clearAll()

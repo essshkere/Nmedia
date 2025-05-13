@@ -1,9 +1,10 @@
 package ru.tatalaraydar.nmedia.viewmodel
 
-import android.app.Application
 import android.net.Uri
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
@@ -23,14 +24,23 @@ import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.model.FeedModel
 import ru.tatalaraydar.nmedia.model.FeedModelState
 import ru.tatalaraydar.nmedia.model.PhotoModel
-import ru.tatalaraydar.nmedia.repository.PostRepository
+import ru.tatalaraydar.nmedia.repository.PostRepositoryImpl
 import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
 class PostViewModel @Inject constructor(
-    private val repository: PostRepository, application: Application, auth: AppAuth,
-) : AndroidViewModel(application) {
+    private val repository: PostRepositoryImpl, auth: AppAuth
+) : ViewModel() {
+
+    val posts: Flow<PagingData<Post>> = Pager(
+        config = PagingConfig(
+            pageSize = 10,
+            enablePlaceholders = false,
+            initialLoadSize = 20
+        ),
+        pagingSourceFactory = { repository.getPagingSource() }
+    ).flow.cachedIn(viewModelScope)
 
     private val cached = repository
         .data
@@ -55,8 +65,7 @@ class PostViewModel @Inject constructor(
     private val _photo = MutableStateFlow(PhotoModel())
     val photo: StateFlow<PhotoModel> = _photo.asStateFlow()
 
-    val posts: Flow<PagingData<Post>> = repository.data
-        .cachedIn(viewModelScope)
+
 
     init {
         loadPosts()
@@ -140,13 +149,14 @@ class PostViewModel @Inject constructor(
 
     private fun emptyPost() = Post(
         id = 0,
-        content = "",
+        authorId = 0,
         author = "",
         authorAvatar = "",
-        published = "",
+        content = "",
+        published = 0,
         likedByMe = false,
         likes = 0,
-        share = 0,
-        views_post = 0
+        attachment =null,
+        ownedByMe = false
     )
 }
