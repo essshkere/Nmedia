@@ -36,6 +36,14 @@ class FeedAdapter(
     private val typeAd = 0
     private val typePost = 1
 
+    override fun getItemViewType(position: Int): Int {
+        return when (getItem(position)) {
+            is Ad -> typeAd
+            is Post -> typePost
+            null -> throw IllegalArgumentException("Unknown view type")
+        }
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         return when (viewType) {

@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ru.tatalaraydar.nmedia.auth.AppAuth
+import ru.tatalaraydar.nmedia.dto.FeedItem
 import ru.tatalaraydar.nmedia.dto.MediaUpload
 import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.model.FeedModel
@@ -46,15 +47,21 @@ class PostViewModel @Inject constructor(
         .data
         .cachedIn(viewModelScope)
 
-    private val _data = MutableStateFlow(FeedModel())
-    val data: Flow<PagingData<Post>> = auth.authStateFlow
+    val data: Flow<PagingData<FeedItem>> = auth.authStateFlow
         .flatMapLatest { (myId, _) ->
             cached.map { pagingData ->
                 pagingData.map { post ->
-                    post.copy(ownedByMe = post.authorId == myId)
+                    if (post is Post) {
+                        post.copy(ownedByMe = post.authorId == myId)
+                    } else {
+                        post
+                    }
                 }
             }
         }
+
+    private val _data = MutableStateFlow(FeedModel())
+
 
     private val _dataState = MutableStateFlow(FeedModelState())
     val dataState: StateFlow<FeedModelState> = _dataState.asStateFlow()
