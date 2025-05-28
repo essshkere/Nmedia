@@ -92,6 +92,9 @@ dependencies {
     val imagepicker_version = "2.1"
     val hilt_version = "2.56.2"
     val paging_version = "3.3.6"
+    val core_desugaring_version = "2.1.5"
+
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
 
 
     implementation ("androidx.paging:paging-runtime-ktx:$paging_version")

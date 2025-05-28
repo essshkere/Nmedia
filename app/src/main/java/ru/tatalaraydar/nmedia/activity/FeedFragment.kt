@@ -82,7 +82,7 @@ class FeedFragment : Fragment(R.layout.fragment_feed) {
 
     private fun observePosts() {
         lifecycleScope.launch {
-            viewModel.posts.collectLatest { pagingData ->
+            viewModel.data.collectLatest { pagingData ->
                 adapter.submitData(pagingData)
             }
         }

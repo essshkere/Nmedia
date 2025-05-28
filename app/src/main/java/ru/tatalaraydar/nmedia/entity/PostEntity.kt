@@ -34,51 +34,49 @@ data class PostEntity(
     val id: Long,
     val author: String,
     val authorId: Long,
-    val published: String,
+    val published: Long,
     val authorAvatar: String,
     val content: String,
-    var likes: Int = 999,
-    var share: Int = 110,
-    val views_post: Int = 1_000_000,
+    var likes: Int,
+    var share: Int,
+    val views_post: Int,
     var likedByMe: Boolean,
     val videoURL: String = "",
     val isVisible: Boolean = true,
     @Embedded
-    var attachment: AttachmentEmbeddable? = null
+    var attachment: AttachmentEmbeddable? = null,
+    val ownedByMe: Boolean
 ) {
     fun toDto() = Post(
-        id,
-        author,
-        authorId,
-        published,
-        authorAvatar,
-        content,
-        likes,
-        share,
-        views_post,
-        likedByMe,
-        videoURL,
-        isVisible,
-        attachment?.toDto()
+        id = id,
+        author = author,
+        authorId = authorId,
+        authorAvatar = authorAvatar,
+        content = content,
+        published = published,
+        likes = likes,
+        share = share,
+        views_post = views_post,
+        likedByMe = likedByMe,
+        ownedByMe = ownedByMe,
+        attachment = attachment?.toDto()
     )
 
     companion object {
-        fun fromDto(dto: Post) =
-            PostEntity(
-                dto.id,
-                dto.author,
-                dto.authorId,
-                dto.published,
-                dto.authorAvatar,
-                dto.content,
-                dto.likes,
-                dto.share,
-                dto.views_post,
-                dto.likedByMe,
-                dto.videoURL,
-                dto.isVisible,
-                AttachmentEmbeddable.fromDto(dto.attachment)
-            )
+        fun fromDto(dto: Post) = PostEntity(
+            id = dto.id,
+            author = dto.author,
+            authorId = dto.authorId,
+            authorAvatar = dto.authorAvatar,
+            content = dto.content,
+            published = dto.published,
+            likes = dto.likes,
+            share = dto.share,
+            views_post = dto.views_post,
+            likedByMe = dto.likedByMe,
+            ownedByMe = dto.ownedByMe,
+            attachment = AttachmentEmbeddable.fromDto(dto.attachment)
+        )
     }
 }
 

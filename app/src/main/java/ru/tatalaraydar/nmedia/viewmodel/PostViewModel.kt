@@ -164,6 +164,8 @@ class PostViewModel @Inject constructor(
         likedByMe = false,
         likes = 0,
         attachment =null,
-        ownedByMe = false
+        ownedByMe = false,
+        share = 0,
+        views_post = 0
     )
 }
