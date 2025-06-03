@@ -14,6 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import ru.netology.nmedia.R
 import ru.netology.nmedia.databinding.FragmentPostBinding
+import ru.tatalaraydar.nmedia.dto.Post
 import ru.tatalaraydar.nmedia.viewmodel.PostViewModel
 
 @AndroidEntryPoint
@@ -32,11 +33,11 @@ class PostFragment : Fragment(R.layout.fragment_post) {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.data.collect { pagingData ->
                     pagingData.map { post ->
-                        if (post.id == postId) {
+                        if (post.id == postId && post is Post) {
                             with(binding) {
                                 author.text = post.author
                                 content.text = post.content
-                                published.text = post.published
+                                published.text = post.published.toString()
                                 buttonLikes.text = post.likes.toString()
                                 buttonShare.text = post.share.toString()
                                 viewsPost.text = post.views_post.toString()
